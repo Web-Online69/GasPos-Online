@@ -222,3 +222,16 @@
  .app-shell .trade-dialog .trade-item input,.app-shell .trade-dialog .trade-item select{font-size:12px;padding:8px 10px;height:39px}
  .app-shell .trade-grand-total{margin-top:12px}
 }
+
+/* Six-column trade rows: full + empty cylinders */
+.app-shell .trade-item-head,.app-shell .trade-item{grid-template-columns:minmax(150px,1fr) 63px 63px 96px 116px 33px;gap:7px}
+.app-shell .trade-item-head span:nth-child(4){text-align:center}
+.app-shell .trade-item-head span:nth-child(5){text-align:right}
+@media(max-width:650px){
+ .app-shell .trade-item{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px 10px}
+ .app-shell .trade-item .trade-line-product{grid-column:1/-1}
+ .app-shell .trade-item .trade-line-quantity{grid-column:1}
+ .app-shell .trade-item .trade-line-empty{grid-column:2}
+ .app-shell .trade-item .trade-line-price{grid-column:1/-1}
+ .app-shell .trade-item .trade-line-subtotal{grid-column:1/-1}
+}
