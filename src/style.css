@@ -288,3 +288,13 @@
 .app-shell .receive-fields>label{display:block;min-width:0;margin:0;color:#b5ccd5;font-size:11px}
 .app-shell .receive-fields input{margin-top:5px;width:100%}
 @media(max-width:650px){.app-shell .trade-toolbar{align-items:start}.app-shell .purchase-toolbar-actions{gap:6px}.app-shell .purchase-toolbar-actions>button{font-size:10px!important;padding:7px 9px!important;min-height:35px!important}.app-shell .receive-fields{gap:8px}}
+
+/* Separate LPG refill and new-cylinder acquisition prices */
+.app-shell .trade-item:has(.trade-line-cylinder),.app-shell .trade-item-head:has(span:nth-child(7)){grid-template-columns:minmax(125px,1fr) 55px 55px 85px 85px 99px 30px;gap:6px}
+.app-shell .trade-item-head:has(span:nth-child(7)) span:nth-child(5){text-align:center}
+.app-shell .trade-item-head:has(span:nth-child(7)) span:nth-child(6){text-align:right}
+.app-shell .trade-item .trade-line-cylinder{min-width:0}
+.app-shell .trade-item .trade-cylinder-price[readonly]{background:#203644;border-style:dashed;color:#9eb7be}
+.app-shell .purchase-detail-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 13px;margin:12px 0 15px;color:#b9d0d9;font-size:11px}
+@media(max-width:750px){.app-shell .trade-item:has(.trade-line-cylinder){grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 10px}.app-shell .trade-item:has(.trade-line-cylinder) .trade-line-cylinder{grid-column:1/-1}.app-shell .trade-item-head:has(span:nth-child(7)){display:none}}
+@media(max-width:480px){.app-shell .purchase-detail-meta{grid-template-columns:1fr}}
