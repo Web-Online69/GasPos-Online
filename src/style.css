@@ -277,3 +277,14 @@
 .app-shell .trade-item .trade-mode-field select{min-width:0;flex:1;max-width:250px;font-size:12px}
 .app-shell .trade-item .trade-exchange:has(input:disabled){opacity:.5}
 @media(max-width:650px){.app-shell .purchase-meta{grid-template-columns:1fr}.app-shell .trade-item .trade-mode-field{display:block}.app-shell .trade-item .trade-mode-field>span{display:block;margin-bottom:5px}.app-shell .trade-item .trade-mode-field select{max-width:100%}}
+
+/* Purchase workflow: invoice, staged goods receipt, and action toolbar */
+.app-shell .purchase-toolbar-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;min-width:0}
+.app-shell .purchase-toolbar-actions .trade-secondary{display:inline-flex;width:auto;max-width:max-content;min-height:38px;align-items:center;justify-content:center;padding:8px 12px;border:1px solid #436778;border-radius:8px;background:#263f4d;color:#cde8e8;font-size:11px;font-weight:650;white-space:nowrap}
+.app-shell .receive-item{border:1px solid #354d5d;border-radius:10px;padding:12px;margin:10px 0;background:#152b3a}
+.app-shell .receive-item strong{display:block;font-size:12px}
+.app-shell .receive-item small{display:block;font-size:11px;color:#9db4c1;margin:4px 0 11px}
+.app-shell .receive-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.app-shell .receive-fields>label{display:block;min-width:0;margin:0;color:#b5ccd5;font-size:11px}
+.app-shell .receive-fields input{margin-top:5px;width:100%}
+@media(max-width:650px){.app-shell .trade-toolbar{align-items:start}.app-shell .purchase-toolbar-actions{gap:6px}.app-shell .purchase-toolbar-actions>button{font-size:10px!important;padding:7px 9px!important;min-height:35px!important}.app-shell .receive-fields{gap:8px}}
