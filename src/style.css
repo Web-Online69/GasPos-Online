@@ -93,3 +93,24 @@ html,body,#app{width:100%;max-width:100%;overflow-x:hidden}
 .product-actions button{min-height:47px;font-size:14px;font-weight:700}
 .product-actions .product-save{background:#08a5a6}
 @media(max-width:650px){.app-content:has(.product-list) .app-data-panel{padding:16px 13px;border-radius:16px}.app-content:has(.product-list) .app-panel-head h2{font-size:16px}.app-content:has(.product-list) .product-add{padding:10px 12px}.app-content:has(.product-list) .product-search{gap:8px}.app-content:has(.product-list) .product-search span{padding:7px;font-size:10px}.product-modal{padding:23px 19px;border-radius:19px}.product-modal-overlay{align-items:end;padding:0}.product-modal{width:100%;max-width:none;border-radius:23px 23px 0 0;max-height:92dvh;padding-bottom:max(22px,env(safe-area-inset-bottom))}}
+
+/* Compact application typography — dashboard and all work menus only */
+.app-shell{font-size:12px}
+.app-topbar .topbar-mark strong{font-size:14px}
+.app-side-link{font-size:12px;padding:10px 11px}
+.app-heading h1,.app-content:has(.product-list) .app-heading h1{font-size:22px;letter-spacing:0}
+.app-heading>span{font-size:12px}
+.app-section-label{font-size:15px}
+.app-kpi small{font-size:11px}
+.app-kpi strong{font-size:24px}
+.app-menu-tile strong{font-size:12px}
+.app-menu-tile small{font-size:10px}
+.app-panel-head h2,.app-content:has(.product-list) .app-panel-head h2{font-size:14px}
+.app-content:has(.product-list) .product-detail strong{font-size:12px}
+.app-content:has(.product-list) .product-detail small{font-size:10px}
+.app-content:has(.product-list) .product-add,.app-content:has(.product-list) .product-edit{font-size:11px}
+.app-content:has(.product-list) .product-search input{font-size:12px}
+.product-modal h2{font-size:18px}
+.product-modal label,.product-modal input,.product-actions button{font-size:12px}
+.back-to-home,.app-content:has(.product-list)>.back-to-home{font-size:11px}
+@media(max-width:650px){.app-heading h1,.app-content:has(.product-list) .app-heading h1{font-size:20px}.app-topbar .topbar-mark strong{font-size:12px}.app-kpi strong{font-size:21px}.app-menu-tile strong{font-size:11px}.app-content:has(.product-list) .product-detail strong{font-size:12px}.app-content:has(.product-list) .app-panel-head h2{font-size:13px}}
