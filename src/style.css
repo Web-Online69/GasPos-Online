@@ -246,3 +246,16 @@
 .app-shell #finance-kpis .app-kpi strong{font-size:clamp(16px,1.7vw,23px);overflow-wrap:anywhere}
 .app-shell .stock-history{margin-top:16px}
 @media(max-width:650px){.app-shell #finance-kpis{grid-template-columns:1fr;gap:8px}.app-shell #finance-kpis .app-kpi{min-height:70px;padding:11px 14px}.app-shell #finance-kpis .app-kpi strong{font-size:20px;margin-top:5px}.app-shell .trade-actions-cell{min-width:105px}.app-shell .trade-actions-cell>button{min-width:45px;font-size:10px;padding:5px 6px}}
+
+/* Trade table: fixed column geometry, never split Tanggal into vertical letters */
+.app-shell .product-table-wrap:has(.trade-table){width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.app-shell table.trade-table{width:100%;min-width:760px;table-layout:fixed;border-collapse:collapse}
+.app-shell table.trade-table th,.app-shell table.trade-table td{box-sizing:border-box;white-space:normal;word-break:normal;overflow-wrap:normal;vertical-align:middle}
+.app-shell table.trade-table th:nth-child(1),.app-shell table.trade-table td:nth-child(1){width:29%;overflow-wrap:anywhere}
+.app-shell table.trade-table th:nth-child(2),.app-shell table.trade-table td:nth-child(2){width:21%;overflow-wrap:anywhere}
+.app-shell table.trade-table th:nth-child(3),.app-shell table.trade-table td:nth-child(3){width:12%;white-space:nowrap}
+.app-shell table.trade-table th:nth-child(4),.app-shell table.trade-table td:nth-child(4){width:15%;white-space:nowrap}
+.app-shell table.trade-table th:nth-child(5),.app-shell table.trade-table td:nth-child(5){width:23%;white-space:normal}
+.app-shell table.trade-table th:last-child{text-align:left}
+.app-shell table.trade-table .trade-actions-cell{min-width:0}
+@media(max-width:800px){.app-shell table.trade-table{min-width:700px}.app-shell table.trade-table th,.app-shell table.trade-table td{padding:11px 10px;font-size:11px}}
