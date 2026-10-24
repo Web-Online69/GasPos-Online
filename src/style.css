@@ -191,3 +191,13 @@
 .app-shell .trade-grand-total strong{color:#a5ece0}
 @media(max-width:650px){.app-shell .trade-dialog{width:100%}.app-shell .trade-item-head,.app-shell .trade-item{grid-template-columns:minmax(0,1fr) 53px 81px 92px 28px;gap:4px}.app-shell .trade-item-head{font-size:9px}.app-shell .trade-item .trade-subtotal{font-size:9px}.app-shell .trade-dialog .trade-item input,.app-shell .trade-dialog .trade-item select{padding:7px 5px;font-size:11px}.app-shell .trade-dialog form .trade-remove{width:28px;min-width:28px;max-width:28px;font-size:16px}}
 @media(max-width:420px){.app-shell .trade-item-head,.app-shell .trade-item{grid-template-columns:minmax(0,1fr) 48px 70px 72px 26px;gap:3px}.app-shell .trade-item .trade-subtotal{font-size:8px;white-space:normal;line-height:1.25}.app-shell .trade-dialog .trade-item input,.app-shell .trade-dialog .trade-item select{font-size:10px;padding:5px 3px}.app-shell .trade-dialog form .trade-remove{width:26px;min-width:26px;max-width:26px}}
+
+/* Controls for approved transactions and staff management */
+.app-shell .trade-table .trade-approve,.app-shell .user-toggle{display:inline-flex;align-items:center;justify-content:center;width:auto;max-width:max-content;min-height:31px;padding:6px 10px;border-radius:7px;border:1px solid #47787a;background:#19494a;color:#c9f7f2;font-size:11px;font-weight:650;white-space:nowrap}
+.app-shell .trade-table .trade-approve:hover,.app-shell .user-toggle:hover{background:#1d6668}
+.app-shell .trade-table .trade-approve:disabled,.app-shell .user-toggle:disabled{opacity:.5}
+.app-shell .user-id{color:#91c2ca;font-family:ui-monospace,Consolas,monospace;font-size:12px;letter-spacing:.3px}
+.app-shell .trade-dialog .trade-error{line-height:1.5}
+.app-shell .product-table-wrap{max-width:100%;overflow-x:auto}
+.app-shell .product-table th,.app-shell .product-table td{word-break:normal;overflow-wrap:anywhere}
+@media(max-width:650px){.app-shell .trade-table th:last-child{width:auto}.app-shell .trade-table .trade-approve{font-size:10px;padding:5px 7px}.app-shell .user-toggle{font-size:10px;padding:6px 8px}}
