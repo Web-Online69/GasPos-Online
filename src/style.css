@@ -11,3 +11,6 @@
 .app-topbar .menu-toggle{border:0;background:transparent;color:#d9f3ff;font-size:26px;cursor:pointer;padding:5px 10px 5px 0;line-height:1;flex-shrink:0}
 .app-topbar{justify-content:flex-start;gap:10px}.app-topbar>.role-chip{margin-left:auto}
 @media(max-width:650px){.app-shell .app-sidebar{display:flex;width:245px}.app-topbar .menu-toggle{font-size:24px}}
+
+/* No bottom navigation: restore comfortable bottom spacing on mobile */
+@media(max-width:650px){.app-content{padding-bottom:32px}.app-bottom-nav{display:none!important}}
