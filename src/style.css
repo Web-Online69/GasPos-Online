@@ -259,3 +259,11 @@
 .app-shell table.trade-table th:last-child{text-align:left}
 .app-shell table.trade-table .trade-actions-cell{min-width:0}
 @media(max-width:800px){.app-shell table.trade-table{min-width:700px}.app-shell table.trade-table th,.app-shell table.trade-table td{padding:11px 10px;font-size:11px}}
+
+/* Optional one-for-one cylinder exchange — explicit and mobile-friendly */
+.app-shell .trade-item{position:relative}
+.app-shell .trade-item .trade-exchange{grid-column:1 / -1;display:flex;align-items:center;gap:8px;width:max-content;max-width:100%;margin:2px 0 6px;padding:0;color:#bcd4dc;font-size:11px;font-weight:500;cursor:pointer}
+.app-shell .trade-item .trade-exchange input[type=checkbox]{display:block;flex:none;width:16px!important;height:16px!important;min-height:16px;max-width:16px;min-width:16px;padding:0;accent-color:#16a5a7;cursor:pointer}
+.app-shell .trade-item .trade-exchange>span{line-height:1.4}
+.app-shell .trade-item .trade-empty[readonly]{background:#213846;border-color:#43636a;color:#b9e5df}
+@media(max-width:650px){.app-shell .trade-item .trade-exchange{grid-column:1/-1;font-size:11px;margin:0 0 2px}}
