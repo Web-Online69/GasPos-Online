@@ -59,3 +59,37 @@ html,body,#app{width:100%;max-width:100%;overflow-x:hidden}
 
 /* Back-to-home control shared by all submenus */
 .back-to-home{display:inline-flex;align-items:center;gap:7px;margin:0 0 19px;padding:10px 15px;min-height:42px;border:1px solid #487286;border-radius:11px;background:#203e53;color:#b9f1ee;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.back-to-home:hover,.back-to-home:focus-visible{background:#2b5668;color:white;outline-offset:3px}@media(max-width:650px){.back-to-home{min-height:44px;margin-bottom:17px;width:auto;max-width:100%}}
+
+/* Polished, compact APK-like Master Tabung screen */
+.app-content:has(.product-list){max-width:900px}
+.app-content:has(.product-list)>.back-to-home{border:0;background:transparent;color:#8bd8d9;padding:5px 0;margin-bottom:19px;font-size:13px}
+.app-content:has(.product-list) .app-heading{margin-bottom:22px}
+.app-content:has(.product-list) .app-heading p{color:#6adad6;font-size:10px;letter-spacing:1.7px}
+.app-content:has(.product-list) .app-heading h1{font-size:clamp(25px,5vw,30px);letter-spacing:-.6px}
+.app-content:has(.product-list) .app-heading>span{font-size:13px;color:#9cb2c2}
+.app-content:has(.product-list) .app-data-panel{border-radius:20px;border:1px solid #344a59;background:#172533;padding:22px;box-shadow:0 14px 35px #07121c38}
+.app-content:has(.product-list) .app-panel-head{border:0;margin:0 0 17px;padding:0;min-height:44px}
+.app-content:has(.product-list) .app-panel-head h2{font-size:17px;letter-spacing:-.2px}
+.app-content:has(.product-list) .product-add{background:#11a7a7;border-radius:11px;box-shadow:0 5px 16px #00a4a422;padding:12px 17px;font-size:13px;min-height:43px}
+.app-content:has(.product-list) .product-search{position:relative;display:flex;align-items:center;gap:12px;border-bottom:1px solid #334858;padding-bottom:16px;margin-bottom:5px}
+.app-content:has(.product-list) .product-search input{height:46px;background:#0d1b29;border-color:#354d5d;padding:0 15px;border-radius:12px;font-size:13px;box-shadow:none}
+.app-content:has(.product-list) .product-search input:focus{border-color:#15bbbb;outline:2px solid #12a7a722}
+.app-content:has(.product-list) .product-search span{padding:7px 10px;border-radius:99px;background:#243b48;color:#a2c9cf}
+.app-content:has(.product-list) .product-row{border-bottom:1px solid #304250;padding:15px 4px;min-height:72px}
+.app-content:has(.product-list) .product-row:last-child{border-bottom:0}
+.app-content:has(.product-list) .product-symbol{height:43px;width:43px;border-radius:12px;background:#173f45;color:#79d7cc;font-size:22px}
+.app-content:has(.product-list) .product-detail strong{font-weight:700;font-size:14px;color:#f1f7fa}
+.app-content:has(.product-list) .product-detail small{font-weight:600;color:#79acb7;font-size:12px}
+.app-content:has(.product-list) .product-edit{background:#253947;border-color:#405968;color:#d0e6ed;font-size:12px;font-weight:700;padding:10px 14px}
+.product-modal-overlay{padding:16px;background:#040b12c9;backdrop-filter:blur(4px)}
+.product-modal{background:#1a2a39;border:1px solid #476477;border-radius:22px;padding:27px;max-height:calc(100dvh - 32px);overflow:auto;box-shadow:0 18px 70px #000a}
+.product-modal h2{font-size:23px;letter-spacing:-.4px}
+.product-modal .note{margin-bottom:15px}
+.product-modal label{font-size:13px;color:#ccdae4}
+.product-modal input{height:50px;border-color:#405b6e;background:#0b1b29;border-radius:12px}
+.product-modal input[readonly]{color:#94b0bf;background:#243541;border-style:dashed}
+.product-modal input:focus:not([readonly]){outline:2px solid #15c1bf55;border-color:#19bab8}
+.product-actions{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:18px}
+.product-actions button{min-height:47px;font-size:14px;font-weight:700}
+.product-actions .product-save{background:#08a5a6}
+@media(max-width:650px){.app-content:has(.product-list) .app-data-panel{padding:16px 13px;border-radius:16px}.app-content:has(.product-list) .app-panel-head h2{font-size:16px}.app-content:has(.product-list) .product-add{padding:10px 12px}.app-content:has(.product-list) .product-search{gap:8px}.app-content:has(.product-list) .product-search span{padding:7px;font-size:10px}.product-modal{padding:23px 19px;border-radius:19px}.product-modal-overlay{align-items:end;padding:0}.product-modal{width:100%;max-width:none;border-radius:23px 23px 0 0;max-height:92dvh;padding-bottom:max(22px,env(safe-area-inset-bottom))}}
