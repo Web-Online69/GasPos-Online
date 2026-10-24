@@ -179,3 +179,15 @@
 .app-shell .trade-dialog form .trade-item-add{margin-top:2px}
 .app-shell .trade-actions{border-top:1px solid #324859;padding-top:13px;margin-top:12px}
 @media(max-width:650px){.app-shell .trade-item,.app-shell .trade-item-head{grid-template-columns:minmax(0,1fr) 70px 34px;gap:6px}.app-shell .trade-dialog{padding-bottom:max(17px,env(safe-area-inset-bottom))}.app-shell .trade-item-head{font-size:10px}}
+
+/* Transaction pricing: aligned columns, horizontally scrollable on phones */
+.app-shell .trade-dialog{width:min(100%,760px)}
+.app-shell .trade-item-head,.app-shell .trade-item{grid-template-columns:minmax(160px,1fr) 75px 110px 125px 33px;gap:7px}
+.app-shell #trade-items{width:100%}
+.app-shell .trade-item-head{font-size:10px}
+.app-shell .trade-item-head span:nth-child(4){text-align:right}
+.app-shell .trade-item .trade-subtotal{display:flex;align-items:center;justify-content:flex-end;min-height:41px;color:#a5ddd3;font-weight:700;font-size:11px;white-space:nowrap}
+.app-shell .trade-grand-total{display:flex;justify-content:flex-end;gap:12px;margin:10px 0;padding:10px 0;border-top:1px solid #38515e;color:#acbfca;font-size:12px}
+.app-shell .trade-grand-total strong{color:#a5ece0}
+@media(max-width:650px){.app-shell .trade-dialog{width:100%}.app-shell .trade-item-head,.app-shell .trade-item{grid-template-columns:minmax(0,1fr) 53px 81px 92px 28px;gap:4px}.app-shell .trade-item-head{font-size:9px}.app-shell .trade-item .trade-subtotal{font-size:9px}.app-shell .trade-dialog .trade-item input,.app-shell .trade-dialog .trade-item select{padding:7px 5px;font-size:11px}.app-shell .trade-dialog form .trade-remove{width:28px;min-width:28px;max-width:28px;font-size:16px}}
+@media(max-width:420px){.app-shell .trade-item-head,.app-shell .trade-item{grid-template-columns:minmax(0,1fr) 48px 70px 72px 26px;gap:3px}.app-shell .trade-item .trade-subtotal{font-size:8px;white-space:normal;line-height:1.25}.app-shell .trade-dialog .trade-item input,.app-shell .trade-dialog .trade-item select{font-size:10px;padding:5px 3px}.app-shell .trade-dialog form .trade-remove{width:26px;min-width:26px;max-width:26px}}
