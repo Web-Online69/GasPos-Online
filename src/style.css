@@ -165,3 +165,17 @@
  .app-shell .trade-dialog form .trade-remove{width:33px;min-width:33px;max-width:33px}
  .app-shell .trade-actions button{min-width:85px}
 }
+
+/* Trade form final alignment: labels, even-height inputs, compact actions */
+.app-shell .trade-dialog{padding-bottom:20px}
+.app-shell .trade-dialog>p{margin-bottom:13px}
+.app-shell .trade-dialog form>label{margin-top:12px;margin-bottom:6px}
+.app-shell .trade-item-head{display:grid;grid-template-columns:minmax(0,1fr) 88px 35px;gap:7px;margin:0 0 6px;color:#9eb6c4;font-size:10px;font-weight:650}
+.app-shell .trade-item-head span:nth-child(2),.app-shell .trade-item-head span:nth-child(3){text-align:center}
+.app-shell .trade-item,.app-shell .trade-item-head{grid-template-columns:minmax(0,1fr) 88px 35px;gap:7px}
+.app-shell .trade-item{align-items:center;margin-bottom:7px}
+.app-shell .trade-dialog form .trade-remove{height:41px;min-height:41px}
+.app-shell .trade-dialog form .trade-remove:disabled{opacity:.35;cursor:not-allowed}
+.app-shell .trade-dialog form .trade-item-add{margin-top:2px}
+.app-shell .trade-actions{border-top:1px solid #324859;padding-top:13px;margin-top:12px}
+@media(max-width:650px){.app-shell .trade-item,.app-shell .trade-item-head{grid-template-columns:minmax(0,1fr) 70px 34px;gap:6px}.app-shell .trade-dialog{padding-bottom:max(17px,env(safe-area-inset-bottom))}.app-shell .trade-item-head{font-size:10px}}
