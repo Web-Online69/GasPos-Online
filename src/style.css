@@ -298,3 +298,10 @@
 .app-shell .purchase-detail-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 13px;margin:12px 0 15px;color:#b9d0d9;font-size:11px}
 @media(max-width:750px){.app-shell .trade-item:has(.trade-line-cylinder){grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 10px}.app-shell .trade-item:has(.trade-line-cylinder) .trade-line-cylinder{grid-column:1/-1}.app-shell .trade-item-head:has(span:nth-child(7)){display:none}}
 @media(max-width:480px){.app-shell .purchase-detail-meta{grid-template-columns:1fr}}
+
+/* Sale workflows: visual consistency with purchase and delivery */
+.app-shell .trade-toolbar .purchase-toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.app-shell .trade-item .trade-line-cylinder{min-width:0}
+.app-shell .trade-item .trade-line-cylinder input[readonly]{background:#203644;border:1px dashed #45616d;color:#a5b6c1}
+.app-shell .trade-history-title{font-size:13px;color:#d9e7ec;margin:20px 0 10px}
+@media(max-width:750px){.app-shell .trade-item:has(.trade-line-cylinder){grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 10px}.app-shell .trade-item:has(.trade-line-cylinder) .trade-line-cylinder{grid-column:1/-1}.app-shell .trade-item:has(.trade-line-cylinder) .trade-line-cylinder>span{display:block;color:#a8bfcd;font-size:10px;margin-bottom:5px}.app-shell .trade-item-head:has(span:nth-child(7)){display:none}}
