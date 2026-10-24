@@ -267,3 +267,13 @@
 .app-shell .trade-item .trade-exchange>span{line-height:1.4}
 .app-shell .trade-item .trade-empty[readonly]{background:#213846;border-color:#43636a;color:#b9e5df}
 @media(max-width:650px){.app-shell .trade-item .trade-exchange{grid-column:1/-1;font-size:11px;margin:0 0 2px}}
+
+/* Purchase-specific inputs and acquisition type */
+.app-shell .purchase-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;margin:12px 0 3px}
+.app-shell .purchase-meta>label{display:block;min-width:0;margin:0;font-size:11px;font-weight:650;color:#b5cbd6}
+.app-shell .purchase-meta>label input{margin-top:6px;width:100%}
+.app-shell .trade-item .trade-mode-field{grid-column:1/-1;display:flex;align-items:center;gap:12px;min-width:0;margin:6px 0 0}
+.app-shell .trade-item .trade-mode-field>span{flex:none;color:#a9c5cd;font-size:11px;font-weight:650}
+.app-shell .trade-item .trade-mode-field select{min-width:0;flex:1;max-width:250px;font-size:12px}
+.app-shell .trade-item .trade-exchange:has(input:disabled){opacity:.5}
+@media(max-width:650px){.app-shell .purchase-meta{grid-template-columns:1fr}.app-shell .trade-item .trade-mode-field{display:block}.app-shell .trade-item .trade-mode-field>span{display:block;margin-bottom:5px}.app-shell .trade-item .trade-mode-field select{max-width:100%}}
