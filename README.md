@@ -98,7 +98,7 @@ Kredensial Supabase dikonfigurasikan sesuai variabel lingkungan frontend yang di
 
 ## Catatan migrasi
 
-Folder `legacy/cloudflare` hanya referensi kode lama; bukan aplikasi yang dideploy. GASPOS menggunakan proyek/database sendiri. **Repositori dan database BMS tidak boleh diubah sebagai bagian dari pekerjaan GASPOS.**
+Folder aplikasi lama `legacy/cloudflare` sudah dihapus dari branch `main` (commit `069bfcb1cfc9ba2e326347f9e5fae94545c52d75`). Sumber aplikasi aktif berada di `src/`, dengan satu build Vite yang diterbitkan melalui GitHub Pages. Jangan membuat kembali folder aplikasi lama. GASPOS menggunakan proyek/database sendiri. **Repositori dan database BMS tidak boleh diubah sebagai bagian dari pekerjaan GASPOS.**
 
 ---
 
