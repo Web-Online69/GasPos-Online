@@ -1,0 +1,99 @@
+{
+  "environment": "Isolated local PGlite PostgreSQL; no production data; auth.uid simulated, not login test",
+  "results": [
+    {
+      "name": "Unregistered authenticated user cannot add expense",
+      "status": "FAIL",
+      "detail": "Operation accepted"
+    },
+    {
+      "name": "Inactive user cannot add expense",
+      "status": "FAIL",
+      "detail": "Operation accepted"
+    },
+    {
+      "name": "Retest unregistered user",
+      "status": "FAIL",
+      "detail": "Operation accepted"
+    },
+    {
+      "name": "Retest inactive user",
+      "status": "FAIL",
+      "detail": "Operation accepted"
+    },
+    {
+      "name": "Double ACC rejected",
+      "status": "PASS",
+      "detail": "Dokumen sudah diproses atau tidak ditemukan"
+    },
+    {
+      "name": "ACC receipt stock exactly 100",
+      "status": "PASS"
+    },
+    {
+      "name": "Logistics receipt posts linked purchase/HPP",
+      "status": "FAIL",
+      "detail": "Purchase status after ACC: DRAFT"
+    },
+    {
+      "name": "Overload rejected",
+      "status": "PASS",
+      "detail": "Jumlah melebihi muatan sopir"
+    },
+    {
+      "name": "Invalid customer rejected",
+      "status": "PASS",
+      "detail": "Pelanggan tidak valid"
+    },
+    {
+      "name": "Unconfirmed return rejected",
+      "status": "PASS",
+      "detail": "Semua pengiriman harus dikonfirmasi penerima sebelum pulang"
+    },
+    {
+      "name": "Wrong return count rejected",
+      "status": "PASS",
+      "detail": "Jumlah pulang tidak cocok"
+    },
+    {
+      "name": "Return stock 55 full / 38 empty",
+      "status": "PASS"
+    },
+    {
+      "name": "Duplicate invoice rejected",
+      "status": "PASS",
+      "detail": "Pengiriman sudah ditagihkan atau tidak ditemukan"
+    },
+    {
+      "name": "Invoice does not mutate stock",
+      "status": "PASS"
+    },
+    {
+      "name": "Finance cannot adjust stock",
+      "status": "PASS",
+      "detail": "Khusus Owner"
+    },
+    {
+      "name": "Overpayment rejected",
+      "status": "PASS",
+      "detail": "Pembayaran melebihi sisa tagihan"
+    },
+    {
+      "name": "HPP and P&L after Owner receipt fallback",
+      "status": "PASS",
+      "detail": {
+        "revenue": "832500.00",
+        "hpp": "765000.00",
+        "gross_profit": "67500.00",
+        "operating_expenses": "20000.00",
+        "net_profit": "47500.00",
+        "unpriced_sold_qty": 0,
+        "method": "Estimasi HPP rata-rata tertimbang keseluruhan: pembelian dikurangi retur pembelian plus nilai stok awal; penjualan dikurangi retur penjualan. Belum menggunakan HPP FIFO/per tanggal, biaya angkut persediaan, atau penyesuaian periode"
+      }
+    }
+  ],
+  "stock": {
+    "full": 55,
+    "empty": 38
+  }
+}

@@ -9,6 +9,12 @@
 - **Database dan autentikasi:** Supabase PostgreSQL / Supabase Auth, khusus GASPOS dan terpisah dari BMS.
 - **Biaya infrastruktur:** memanfaatkan layanan free tier; tetap mengikuti batas/ketentuan penyedia.
 
+## Audit terbaru
+
+Lihat [laporan audit 27 Oktober 2026](docs/audit/2026-10-27.md). Perbaikan RPC/RLS diuji pada salinan PostgreSQL terisolasi. **Live trial empat akun, HP dan cetak masih BLOCKED oleh akses login/akun uji; aplikasi belum dinyatakan 100% selesai.**
+
+Verifikasi lokal: `npm ci`, `npm run test:audit`, `npm run build`.
+
 ## Hak akses — empat peran final
 
 | Peran | Tugas dan menu |
@@ -26,7 +32,7 @@ Tidak direncanakan peran kelima. Owner membuat akun petugas menggunakan **ID log
 
 1. **Master data:** Owner mengelola jenis tabung, supplier, pelanggan, dan harga terkait.
 2. **Pembelian:** Owner mencatat transaksi pembelian dari supplier; tabung penuh dan kosong dipisahkan.
-3. **Penerimaan fisik:** Logistik mengajukan barang masuk/keluar; **ACC Owner** memposting mutasi stok gudang satu kali.
+3. **Penerimaan fisik:** Logistik memilih **Pembelian terkait** pada Barang Masuk/Keluar; **ACC Owner** menyelesaikan penerimaan pembelian dan memposting mutasi stok sekali. Mutasi umum tidak menyelesaikan tagihan pembelian.
 4. **Surat Jalan (SJ):** Pengeluaran yang disetujui dapat dicetak; Logistik menetapkan Sopir dan nomor kendaraan berdasarkan SJ keluar yang sudah ACC.
 5. **Pengiriman:** Satu perjalanan dapat melayani banyak pelanggan. Sopir mencatat setiap kunjungan: pelanggan, jumlah tabung penuh dikirim, jumlah kosong diterima, dan catatan. Jumlah penuh tidak boleh melebihi muatan.
 6. **Bukti serah terima:** Konfirmasi mencakup nama penerima, waktu, dan gambar tanda tangan yang digores langsung pada layar (disimpan sebagai data koordinat; tanpa upload foto). Ini tetap perlu verifikasi praktik lapangan, bukan autentikasi identitas pelanggan secara independen.

@@ -1,34 +1,11 @@
 # Supabase GASPOS
 
-Project: `gaspos-online` (`lflnbaqpmkjjyxpznozg`)
-Organization: GuzLeiteWebApp
-Region: ap-southeast-1 (Singapore)
-Dashboard: https://supabase.com/dashboard/project/lflnbaqpmkjjyxpznozg
+Proyek gaspos-online (`lflnbaqpmkjjyxpznozg`), terpisah dari BMS.
 
-## Database changes already applied
+Empat peran: OWNER, LOGISTIK, SALES_SOPIR, KEUANGAN. Otorisasi memakai keanggotaan aktif di gas_members, RLS dan RPC. Akun petugas dibuat Owner melalui Edge Function gaspos-invite-member tanpa undangan email.
 
-1. `initialize_gaspos_private_core`: 9 public tables created with RLS enabled.
-2. `gaspos_role_based_access_policies`: role lookup using private database function and separate access for Owner and Logistik. 13 RLS policies verified on 9 tables.
+Audit 27 Oktober 2026: lihat [laporan dan batas verifikasi](../docs/audit/2026-10-27.md). SQL audit sudah diterapkan ke proyek melalui migrasi Supabase dan disimpan di audit_access_and_receipts.sql serta audit_finance.sql. File ini merupakan patch terhadap skema yang sudah ada, bukan installer database kosong. Fixture skema tanpa data produksi untuk pengujian ada di scripts/audit/fixtures.
 
-Existing tables:
-`gas_products`, `gas_partners`, `gas_members`, `gas_customer_prices`, `gas_documents`, `gas_document_items`, `gas_stock_movements`, `gas_financial_entries`, `gas_payments`.
+Penerimaan pembelian harus menggunakan pengajuan pembelian terkait agar ACC memperbarui pembelian dan stok tepat satu kali. Jalur mutasi umum terpisah dari pembelian. Jangan menerima pembelian yang sama lagi melalui jalur lain.
 
-## Security model
-
-- Auth identities are supplied by Supabase Auth. Roles are stored in `gas_members`, not editable user metadata.
-- Owner and Logistik have read access to products, partners, documents, items and stock movement records.
-- Logistik **cannot select** the financial tables (`gas_customer_prices`, `gas_financial_entries`, `gas_payments`).
-- Users may create only own draft/pending documents and add items only to own draft documents.
-- Direct mutation of stock events and direct approval of documents is currently blocked for all client roles pending secure transactional RPC implementation.
-- No admin/service-role credential should be placed in browser code or committed to GitHub.
-
-## Remaining before live use
-
-- Provision Owner and Logistik users securely; validate ownership and session claims.
-- Implement transactional, idempotent approval, partial receipts, reserved stock, empty cylinders in transit and invoice numbering in server-side functions.
-- Implement UI with Supabase Auth; verify row and column access by signing in as each role.
-- Print Surat Jalan (no prices) and Owner-only Invoice; test totals and report.
-- Backups, security advisors, index / capacity review.
-- Hosting/domain remains undecided.
-
-This is not production ready. BMS is not modified.
+Live trial empat akun masih memerlukan login Owner aman dan akun petugas. Build dan uji lokal bukan pengganti pengujian tersebut. Jangan menyimpan service-role key atau password di frontend/repository.
