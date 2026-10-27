@@ -11,9 +11,9 @@
 
 ## Audit terbaru
 
-Lihat [laporan audit 27 Oktober 2026](docs/audit/2026-10-27.md). Perbaikan RPC/RLS diuji pada salinan PostgreSQL terisolasi. **Live trial empat akun, HP dan cetak masih BLOCKED oleh akses login/akun uji; aplikasi belum dinyatakan 100% selesai.**
+Lihat [laporan audit 27 Oktober 2026](docs/audit/2026-10-27.md). Perbaikan RPC/RLS diuji pada salinan PostgreSQL terisolasi. **Login Owner dan dokumen cetak invoice sudah diperiksa langsung. Live trial empat akun/HP masih menunggu akun petugas dan pengujian lengkap; aplikasi belum dinyatakan 100% selesai.**
 
-Verifikasi lokal: `npm ci`, `npm run test:audit`, `npm run build`.
+Verifikasi lokal: `npm ci`, `npm run test:audit`, `npm run test:members`, `npm run build`.
 
 ## Hak akses — empat peran final
 

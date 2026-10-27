@@ -8,4 +8,4 @@ Audit 27 Oktober 2026: lihat [laporan dan batas verifikasi](../docs/audit/2026-1
 
 Penerimaan pembelian harus menggunakan pengajuan pembelian terkait agar ACC memperbarui pembelian dan stok tepat satu kali. Jalur mutasi umum terpisah dari pembelian. Jangan menerima pembelian yang sama lagi melalui jalur lain.
 
-Live trial empat akun masih memerlukan login Owner aman dan akun petugas. Build dan uji lokal bukan pengganti pengujian tersebut. Jangan menyimpan service-role key atau password di frontend/repository.
+Login Owner aman sudah diuji. Live trial empat akun masih memerlukan pembuatan credential petugas dan pengujian. Edge Function gaspos-invite-member versi 5 menggunakan native fetch; sumber disimpan di functions/gaspos-invite-member/index.ts. Build dan uji lokal bukan pengganti pengujian tersebut. Jangan menyimpan service-role key atau password di frontend/repository.

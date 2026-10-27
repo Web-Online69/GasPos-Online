@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:audit": "FIX=1 node scripts/audit/database.mjs"
+    "test:audit": "FIX=1 node scripts/audit/database.mjs",
+    "test:members": "node --test scripts/audit/member-function.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.76.0"
