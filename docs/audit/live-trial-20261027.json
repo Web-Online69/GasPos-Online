@@ -1,0 +1,467 @@
+{
+  "date": "2026-10-27",
+  "application_commit": "f9fea6aa1ecd08454dd3e95ce8b7c612c1aaeacb",
+  "mode": "Real Supabase Auth password login, REST/RPC with each role JWT; isolated labelled trial rows in existing GASPOS project. Not four-role browser/HP automation.",
+  "accounts": [
+    {
+      "role": "OWNER",
+      "username": "trial_owner_1027",
+      "user_id": "192ee15f-00c9-4ec9-a197-abe7ad6afd9a",
+      "login": "PASS"
+    },
+    {
+      "role": "LOGISTIK",
+      "username": "trial_logistik_1027",
+      "user_id": "2dc5defa-4db1-4502-8d0b-fd3e44e513f4",
+      "login": "PASS"
+    },
+    {
+      "role": "SALES_SOPIR",
+      "username": "trial_sales_sopir_1027",
+      "user_id": "a02d530d-c5fd-402f-8ad1-ab69b7d6cee2",
+      "login": "PASS"
+    },
+    {
+      "role": "KEUANGAN",
+      "username": "trial_keuangan_1027",
+      "user_id": "806b897e-6b11-4469-8520-8e442aff828a",
+      "login": "PASS"
+    }
+  ],
+  "entities": {
+    "tag": "GASPOS-TRIAL-20261027",
+    "product_id": "ee84e952-533d-4f8e-b585-16e33a8348e2",
+    "supplier_id": "04881ae6-f724-4d64-abe3-7e38822b06ce",
+    "customer_ids": [
+      "5941d4b0-b89d-458b-8c2d-2c2b9a089c1f",
+      "14197212-32d3-4c1a-b1a6-0eb54971a9cc",
+      "40237209-ca4c-4977-8391-094471450244"
+    ],
+    "trip_id": "19a31de9-d755-4021-a564-29c8c1219529",
+    "purchase_id": "a3695b6f-4df6-4a0a-a601-9c37a19b91a2",
+    "invoice_ids": [
+      "901abf54-f2d6-4eae-a4a2-5b4bf1f85f8c",
+      "d4de1d87-1a38-43a6-9c85-c4a092ee3c4c",
+      "73c1e4c3-bab5-41b9-a12d-df715137440d"
+    ]
+  },
+  "stock_after_receipt": {
+    "product_id": "ee84e952-533d-4f8e-b585-16e33a8348e2",
+    "full_balance": 100,
+    "empty_balance": 0
+  },
+  "stock_before_invoice": {
+    "product_id": "ee84e952-533d-4f8e-b585-16e33a8348e2",
+    "full_balance": 55,
+    "empty_balance": 38
+  },
+  "stock_after_invoice": {
+    "product_id": "ee84e952-533d-4f8e-b585-16e33a8348e2",
+    "full_balance": 55,
+    "empty_balance": 38
+  },
+  "trial_financial_delta": {
+    "revenue": "832500.0",
+    "hpp": "765000.0",
+    "gross_profit": "67500.0",
+    "operating_expenses": "20000.0",
+    "net_profit": "47500.0"
+  },
+  "trade_balances": [
+    {
+      "id": "73c1e4c3-bab5-41b9-a12d-df715137440d",
+      "document_type": "SALE",
+      "document_total": 185000.0,
+      "paid_total": 185000.0
+    },
+    {
+      "id": "901abf54-f2d6-4eae-a4a2-5b4bf1f85f8c",
+      "document_type": "SALE",
+      "document_total": 370000.0,
+      "paid_total": 370000.0
+    },
+    {
+      "id": "a3695b6f-4df6-4a0a-a601-9c37a19b91a2",
+      "document_type": "PURCHASE",
+      "document_total": 1700000.0,
+      "paid_total": 1700000.0
+    },
+    {
+      "id": "d4de1d87-1a38-43a6-9c85-c4a092ee3c4c",
+      "document_type": "SALE",
+      "document_total": 277500.0,
+      "paid_total": 277500.0
+    }
+  ],
+  "customer_empty_balances": [
+    {
+      "customer_id": "14197212-32d3-4c1a-b1a6-0eb54971a9cc",
+      "product_id": "ee84e952-533d-4f8e-b585-16e33a8348e2",
+      "owed_qty": 0
+    },
+    {
+      "customer_id": "5941d4b0-b89d-458b-8c2d-2c2b9a089c1f",
+      "product_id": "ee84e952-533d-4f8e-b585-16e33a8348e2",
+      "owed_qty": 5
+    },
+    {
+      "customer_id": "40237209-ca4c-4977-8391-094471450244",
+      "product_id": "ee84e952-533d-4f8e-b585-16e33a8348e2",
+      "owed_qty": 2
+    }
+  ],
+  "results": [
+    {
+      "test": "baseline_profit",
+      "status": "PASS",
+      "time": "2026-10-27T04:22:24.717683+00:00"
+    },
+    {
+      "test": "create_trial_product",
+      "status": "PASS",
+      "time": "2026-10-27T04:22:32.328279+00:00"
+    },
+    {
+      "test": "create_trial_supplier",
+      "status": "PASS",
+      "time": "2026-10-27T04:22:40.389491+00:00"
+    },
+    {
+      "test": "create_customer_0",
+      "status": "PASS",
+      "time": "2026-10-27T04:22:47.878323+00:00"
+    },
+    {
+      "test": "create_customer_1",
+      "status": "PASS",
+      "time": "2026-10-27T04:22:55.353568+00:00"
+    },
+    {
+      "test": "create_customer_2",
+      "status": "PASS",
+      "time": "2026-10-27T04:23:02.799009+00:00"
+    },
+    {
+      "test": "purchase_100",
+      "status": "PASS",
+      "time": "2026-10-27T04:23:10.329561+00:00"
+    },
+    {
+      "test": "logistics_submit_receipt",
+      "status": "PASS",
+      "time": "2026-10-27T04:23:17.713575+00:00"
+    },
+    {
+      "test": "owner_acc_receipt",
+      "status": "PASS",
+      "time": "2026-10-27T04:23:25.692674+00:00"
+    },
+    {
+      "test": "stock_after_receipt",
+      "status": "PASS",
+      "time": "2026-10-27T04:23:33.247159+00:00"
+    },
+    {
+      "test": "double_acc_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Dokumen sudah diproses atau tidak ditemukan"
+    },
+    {
+      "test": "logistics_dispatch_60",
+      "status": "PASS",
+      "time": "2026-10-27T04:23:48.217802+00:00"
+    },
+    {
+      "test": "owner_acc_dispatch",
+      "status": "PASS",
+      "time": "2026-10-27T04:23:55.782039+00:00"
+    },
+    {
+      "test": "trip_start",
+      "status": "PASS",
+      "time": "2026-10-27T04:24:03.135756+00:00"
+    },
+    {
+      "test": "overload_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Jumlah melebihi muatan sopir"
+    },
+    {
+      "test": "invalid_customer_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Pelanggan tidak valid"
+    },
+    {
+      "test": "stop_0",
+      "status": "PASS",
+      "time": "2026-10-27T04:24:25.480830+00:00"
+    },
+    {
+      "test": "stop_1",
+      "status": "PASS",
+      "time": "2026-10-27T04:24:33.774657+00:00"
+    },
+    {
+      "test": "stop_2",
+      "status": "PASS",
+      "time": "2026-10-27T04:24:41.546422+00:00"
+    },
+    {
+      "test": "return_without_confirmation_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Semua pengiriman harus dikonfirmasi penerima sebelum pulang"
+    },
+    {
+      "test": "confirm_0",
+      "status": "PASS",
+      "time": "2026-10-27T04:24:56.402762+00:00"
+    },
+    {
+      "test": "confirm_1",
+      "status": "PASS",
+      "time": "2026-10-27T04:25:03.834678+00:00"
+    },
+    {
+      "test": "confirm_2",
+      "status": "PASS",
+      "time": "2026-10-27T04:25:11.679475+00:00"
+    },
+    {
+      "test": "wrong_return_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Jumlah pulang tidak cocok"
+    },
+    {
+      "test": "return_15_full_38_empty",
+      "status": "PASS",
+      "time": "2026-10-27T04:25:26.821185+00:00"
+    },
+    {
+      "test": "stock_before_invoices",
+      "status": "PASS",
+      "time": "2026-10-27T04:25:35.974457+00:00"
+    },
+    {
+      "test": "invoice_0",
+      "status": "PASS",
+      "time": "2026-10-27T04:25:43.542906+00:00"
+    },
+    {
+      "test": "invoice_1",
+      "status": "PASS",
+      "time": "2026-10-27T04:25:51.001650+00:00"
+    },
+    {
+      "test": "invoice_2",
+      "status": "PASS",
+      "time": "2026-10-27T04:25:58.428837+00:00"
+    },
+    {
+      "test": "stock_after_invoices",
+      "status": "PASS",
+      "time": "2026-10-27T04:26:05.803507+00:00"
+    },
+    {
+      "test": "duplicate_invoice_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Pengiriman sudah ditagihkan atau tidak ditemukan"
+    },
+    {
+      "test": "correction_after_invoice_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Pengiriman dikunci"
+    },
+    {
+      "test": "overpayment_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Pembayaran melebihi sisa tagihan"
+    },
+    {
+      "test": "pay_A_partial",
+      "status": "PASS",
+      "time": "2026-10-27T04:26:35.394864+00:00"
+    },
+    {
+      "test": "pay_A_final",
+      "status": "PASS",
+      "time": "2026-10-27T04:26:42.431826+00:00"
+    },
+    {
+      "test": "pay_B",
+      "status": "PASS",
+      "time": "2026-10-27T04:26:49.689093+00:00"
+    },
+    {
+      "test": "pay_C",
+      "status": "PASS",
+      "time": "2026-10-27T04:26:57.238616+00:00"
+    },
+    {
+      "test": "pay_supplier",
+      "status": "PASS",
+      "time": "2026-10-27T04:27:03.181709+00:00"
+    },
+    {
+      "test": "customer_refund_over_credit_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Refund melebihi saldo kredit"
+    },
+    {
+      "test": "supplier_refund_over_credit_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Refund melebihi kelebihan pembayaran"
+    },
+    {
+      "test": "operational_20000",
+      "status": "PASS",
+      "time": "2026-10-27T04:27:25.344336+00:00"
+    },
+    {
+      "test": "final_profit",
+      "status": "PASS",
+      "time": "2026-10-27T04:27:32.759908+00:00"
+    },
+    {
+      "test": "LOGISTIK_price_select_denied",
+      "status": "PASS"
+    },
+    {
+      "test": "SALES_SOPIR_price_select_denied",
+      "status": "PASS"
+    },
+    {
+      "test": "finance_stock_adjust_denied",
+      "status": "PASS",
+      "http": 400,
+      "message": "Khusus Owner"
+    },
+    {
+      "test": "driver_invoice_denied",
+      "status": "PASS",
+      "http": 400,
+      "message": "Hanya Owner membuat invoice"
+    },
+    {
+      "test": "trial_trade_balances",
+      "status": "PASS",
+      "time": "2026-10-27T04:28:11.455038+00:00"
+    },
+    {
+      "test": "customer_empty_balances",
+      "status": "PASS",
+      "time": "2026-10-27T04:28:18.939336+00:00"
+    },
+    {
+      "test": "wrong_password_rejected",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "test": "finance_cannot_edit_product",
+      "status": "PASS",
+      "detail": {
+        "http": 200
+      }
+    },
+    {
+      "test": "finance_cannot_submit_stock",
+      "status": "PASS",
+      "http": 400,
+      "message": "Hanya Logistik atau Owner yang dapat input pergerakan barang"
+    },
+    {
+      "test": "driver_reads_assigned_sj",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "negative_stock_request",
+      "status": "PASS",
+      "time": "2026-10-27T04:29:17.697600+00:00"
+    },
+    {
+      "test": "negative_stock_rejected",
+      "status": "PASS",
+      "http": 400,
+      "message": "Stok penuh atau kosong tidak cukup"
+    },
+    {
+      "test": "negative_stock_request_rejected",
+      "status": "PASS",
+      "time": "2026-10-27T04:29:32.499034+00:00"
+    },
+    {
+      "test": "inactive_member_flag_visible",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "inactive_existing_jwt_cannot_add_expense",
+      "status": "PASS",
+      "http": 400,
+      "message": "Hanya Owner atau Keuangan dapat mencatat biaya"
+    },
+    {
+      "test": "inactive_existing_jwt_cannot_read_balances",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "trial_finance_reactivated",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "final_stock_55_38",
+      "status": "PASS",
+      "detail": {
+        "product_id": "ee84e952-533d-4f8e-b585-16e33a8348e2",
+        "full_balance": 55,
+        "empty_balance": 38
+      }
+    }
+  ],
+  "signature_remote_rollback_test": {
+    "valid_single_stroke": "PASS",
+    "malformed_rejected": "PASS",
+    "committed": false
+  },
+  "pending": [
+    "Browser login and complete workflow as staff roles",
+    "Actual HP viewport/touch signature and printer/PDF",
+    "Historical HPP/freight/returns accounting and concurrency"
+  ],
+  "trip_invoice_return_retest": {
+    "method": "Remote SQL transaction, auth claim switched between real trial Owner/Finance IDs; rolled back, not a persistent API return",
+    "before_fix": "FAIL: Retur melebihi jumlah pengiriman atau kosong yang diterima",
+    "after_fix": "PASS",
+    "returned_full": 1,
+    "empty_reissued": 0,
+    "temporary_stock": {
+      "full": 56,
+      "empty": 38
+    },
+    "temporary_customer_A_empty_debt": 4,
+    "refund": 18500,
+    "refund_idempotent": true,
+    "excess_refund_rejected": true,
+    "final_original_fixture_stock": {
+      "full": 55,
+      "empty": 38
+    }
+  },
+  "isolated_regression_pass": 76,
+  "edge_function_mock_pass": 8
+}

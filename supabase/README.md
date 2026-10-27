@@ -8,4 +8,6 @@ Audit 27 Oktober 2026: lihat [laporan dan batas verifikasi](../docs/audit/2026-1
 
 Penerimaan pembelian harus menggunakan pengajuan pembelian terkait agar ACC memperbarui pembelian dan stok tepat satu kali. Jalur mutasi umum terpisah dari pembelian. Jangan menerima pembelian yang sama lagi melalui jalur lain.
 
-Login Owner aman sudah diuji. Live trial empat akun masih memerlukan pembuatan credential petugas dan pengujian. Edge Function gaspos-invite-member versi 5 menggunakan native fetch; sumber disimpan di functions/gaspos-invite-member/index.ts. Build dan uji lokal bukan pengganti pengujian tersebut. Jangan menyimpan service-role key atau password di frontend/repository.
+Login Owner aman sudah diuji. Empat akun trial sudah dibuat dan menyelesaikan skenario melalui API; hasil di [laporan live trial](../docs/audit/live-trial-20261027.md). Pengujian browser/HP petugas masih belum lengkap. Edge Function gaspos-invite-member versi 5 menggunakan native fetch; sumber disimpan di functions/gaspos-invite-member/index.ts. Build dan uji lokal bukan pengganti pengujian tersebut. Jangan menyimpan service-role key atau password di frontend/repository.
+
+Patch tambahan: audit_signature.sql memperbaiki validasi tanda tangan kanvas; audit_trip_invoice_returns.sql memperbaiki sumber pengiriman retur dan saldo kosong. Kedua patch sudah diterapkan serta diuji ulang; lihat laporan live trial untuk batas verifikasi.

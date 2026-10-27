@@ -11,7 +11,7 @@
 
 ## Audit terbaru
 
-Lihat [laporan audit 27 Oktober 2026](docs/audit/2026-10-27.md). Perbaikan RPC/RLS diuji pada salinan PostgreSQL terisolasi. **Login Owner dan dokumen cetak invoice sudah diperiksa langsung. Live trial empat akun/HP masih menunggu akun petugas dan pengujian lengkap; aplikasi belum dinyatakan 100% selesai.**
+Lihat [hasil live trial 27 Oktober 2026](docs/audit/live-trial-20261027.md) dan [audit tahap sebelumnya](docs/audit/2026-10-27.md). **Empat akun trial nyata berhasil login dan menyelesaikan alur melalui API dengan hak masing-masing.** Stok akhir produk trial 55 penuh/38 kosong, piutang/utang fixture lunas, laba bersih estimasi Rp47.500 setelah biaya Rp20.000. Browser/HP untuk ketiga peran petugas dan audit akuntansi historis belum lengkap; aplikasi belum dinyatakan 100% selesai. Data trial masih tercatat dan memengaruhi total laporan hingga dibersihkan.
 
 Verifikasi lokal: `npm ci`, `npm run test:audit`, `npm run test:members`, `npm run build`.
 
@@ -78,8 +78,8 @@ Laporan saat ini memakai pendekatan **rata-rata tertimbang pembelian yang disetu
 - Ringkasan saldo tabung kosong dan estimasi HPP/laba rugi.
 
 **Belum dinyatakan lulus sepenuhnya:**
-- Uji end-to-end dengan akun nyata untuk **Owner, Logistik, Sales/Sopir, dan Keuangan**.
-- Uji transaksi bersamaan, stok negatif, retur, koreksi, dan pencegahan invoice/pencatatan ganda pada skenario nyata.
+- Uji seluruh halaman browser/HP sebagai **Owner, Logistik, Sales/Sopir, dan Keuangan**; alur API dengan empat akun nyata sudah lulus pada data trial.
+- Uji transaksi bersamaan dan seluruh variasi retur/koreksi historis; stok negatif, ACC/invoice ganda dan koreksi sesudah invoice telah diuji pada data trial.
 - Verifikasi penilaian persediaan dan laba bersih final termasuk stok awal, biaya tambahan, serta retur.
 - Uji tanda tangan pelanggan pada berbagai HP/browser dan prosedur verifikasi pelanggan.
 

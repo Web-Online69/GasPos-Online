@@ -12,6 +12,20 @@
       "detail": "Operation accepted"
     }
   ],
+  "signature_baseline_reproductions": [
+    {
+      "name": "Single canvas stroke rejected by baseline",
+      "reproduced": true,
+      "accepted": false,
+      "error": "Tanda tangan penerima wajib diisi"
+    },
+    {
+      "name": "Malformed flat coordinates accepted by baseline",
+      "reproduced": true,
+      "accepted": true,
+      "error": ""
+    }
+  ],
   "results": [
     {
       "name": "Retest unregistered user",
@@ -61,6 +75,94 @@
       "name": "Unconfirmed return rejected",
       "status": "PASS",
       "detail": "Semua pengiriman harus dikonfirmasi penerima sebelum pulang"
+    },
+    {
+      "name": "Signature rejects Empty signature",
+      "status": "PASS",
+      "detail": "Tanda tangan penerima wajib diisi"
+    },
+    {
+      "name": "Signature rejects Wrong nesting",
+      "status": "PASS",
+      "detail": "Format titik tanda tangan tidak valid"
+    },
+    {
+      "name": "Signature rejects Non-array stroke",
+      "status": "PASS",
+      "detail": "Format goresan tanda tangan tidak valid"
+    },
+    {
+      "name": "Signature rejects Empty stroke",
+      "status": "PASS",
+      "detail": "Goresan tanda tangan kosong"
+    },
+    {
+      "name": "Signature rejects Scalar point",
+      "status": "PASS",
+      "detail": "Format titik tanda tangan tidak valid"
+    },
+    {
+      "name": "Signature rejects Wrong point dimension",
+      "status": "PASS",
+      "detail": "Titik tanda tangan harus berisi x dan y"
+    },
+    {
+      "name": "Signature rejects String coordinate",
+      "status": "PASS",
+      "detail": "Koordinat tanda tangan harus angka"
+    },
+    {
+      "name": "Signature rejects Null coordinate",
+      "status": "PASS",
+      "detail": "Koordinat tanda tangan harus angka"
+    },
+    {
+      "name": "Signature rejects Nonfinite coordinate",
+      "status": "PASS",
+      "detail": "Koordinat tanda tangan harus angka"
+    },
+    {
+      "name": "Signature rejects Negative coordinate",
+      "status": "PASS",
+      "detail": "Koordinat tanda tangan di luar area"
+    },
+    {
+      "name": "Signature rejects X outside canvas",
+      "status": "PASS",
+      "detail": "Koordinat tanda tangan di luar area"
+    },
+    {
+      "name": "Signature rejects Y outside canvas",
+      "status": "PASS",
+      "detail": "Koordinat tanda tangan di luar area"
+    },
+    {
+      "name": "Signature rejects Insufficient samples",
+      "status": "PASS",
+      "detail": "Tanda tangan minimal 3 titik"
+    },
+    {
+      "name": "Signature rejects Oversize signature",
+      "status": "PASS",
+      "detail": "Format tanda tangan tidak valid"
+    },
+    {
+      "name": "Signature rejects JSON null",
+      "status": "PASS",
+      "detail": "Format tanda tangan tidak valid"
+    },
+    {
+      "name": "Signature rejects SQL null",
+      "status": "PASS",
+      "detail": "Format tanda tangan tidak valid"
+    },
+    {
+      "name": "Signature accepts multiple strokes and canvas bounds",
+      "status": "PASS"
+    },
+    {
+      "name": "Single-stroke signatures accepted for all three stops",
+      "status": "PASS"
     },
     {
       "name": "Wrong return count rejected",
@@ -127,6 +229,158 @@
       "name": "Negative stock prevented",
       "status": "PASS",
       "detail": "Stok penuh atau kosong tidak cukup"
+    },
+    {
+      "name": "Baseline trip invoice return defect reproduced",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Delivery progress view preserves security_invoker",
+      "status": "PASS"
+    },
+    {
+      "name": "Trip delivery progress reflects verified 20 full / 15 empty",
+      "status": "PASS"
+    },
+    {
+      "name": "LOGISTIK cannot return trip invoice",
+      "status": "PASS",
+      "detail": "Khusus Owner"
+    },
+    {
+      "name": "SALES_SOPIR cannot return trip invoice",
+      "status": "PASS",
+      "detail": "Khusus Owner"
+    },
+    {
+      "name": "KEUANGAN cannot return trip invoice",
+      "status": "PASS",
+      "detail": "Khusus Owner"
+    },
+    {
+      "name": "INACTIVE cannot return trip invoice",
+      "status": "PASS",
+      "detail": "Khusus Owner"
+    },
+    {
+      "name": "OUTSIDER cannot return trip invoice",
+      "status": "PASS",
+      "detail": "Khusus Owner"
+    },
+    {
+      "name": "Trip over-return rejected",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Trip excessive empty reissue rejected",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Trip return request replay is idempotent",
+      "status": "PASS"
+    },
+    {
+      "name": "Trip return without empty: stock56/38, customer owes4",
+      "status": "PASS"
+    },
+    {
+      "name": "Trip return P&L consistent",
+      "status": "PASS",
+      "detail": {
+        "revenue": "814000.00",
+        "hpp": "748000.00",
+        "gross_profit": "66000.00",
+        "operating_expenses": "20000.00",
+        "net_profit": "46000.00",
+        "unpriced_sold_qty": 0,
+        "method": "Estimasi HPP rata-rata tertimbang keseluruhan: pembelian dikurangi retur pembelian plus nilai stok awal; penjualan dikurangi retur penjualan. Belum menggunakan HPP FIFO/per tanggal, biaya angkut persediaan, atau penyesuaian periode"
+      }
+    },
+    {
+      "name": "Refund above trip return credit rejected",
+      "status": "PASS",
+      "detail": "Refund melebihi saldo kredit"
+    },
+    {
+      "name": "Valid finance refund18500 clears trip return credit",
+      "status": "PASS"
+    },
+    {
+      "name": "Second refund exceeds remaining credit",
+      "status": "PASS",
+      "detail": "Refund melebihi saldo kredit"
+    },
+    {
+      "name": "Trip return with empty: stock56/37, customer still owes5",
+      "status": "PASS"
+    },
+    {
+      "name": "Old sale-return RPC delegates safely",
+      "status": "PASS"
+    },
+    {
+      "name": "Return rejects mismatched customer",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Return rejects mismatched full quantity",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Return rejects mismatched empty quantity",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Return rejects unreconciled trip",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Return rejects unconfirmed receiver",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Return rejects mismatched product",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Mixed trip+SALE provenance cannot double return",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Trip return prevents negative empty stock",
+      "status": "PASS",
+      "detail": "Stok kosong tidak cukup untuk dikembalikan"
+    },
+    {
+      "name": "Direct sale over-return still rejected",
+      "status": "PASS",
+      "detail": "Retur melebihi jumlah pengiriman atau kosong yang diterima"
+    },
+    {
+      "name": "Direct-sale return and legacy empty balance preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "Legacy return preserves signed customer empty credit",
+      "status": "PASS"
+    },
+    {
+      "name": "Grouped same-customer invoice return counted once across two stops",
+      "status": "PASS"
+    },
+    {
+      "name": "Rollback restores original stock55/38 and customer obligation5",
+      "status": "PASS"
     },
     {
       "name": "Driver sees assigned SJ through RLS",
