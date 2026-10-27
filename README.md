@@ -1,28 +1,99 @@
 # GASPOS Online
 
-Aplikasi pencatatan penjualan, pembelian, dan inventori tabung gas untuk Owner dan Logistik.
+**Sistem pencatatan pembelian, penjualan, inventori, pengiriman, dan keuangan tabung gas** berbasis web, dirancang mobile-first untuk operasional gudang dan pengantaran.
 
-## Infrastruktur tujuan
-- Repository: GunzLeite/GasPos-Online.
-- Database dan autentikasi: Supabase khusus GASPOS, terpisah dari BMS.
-- Hosting belum dikonfigurasi.
+- **Aplikasi:** https://web-online69.github.io/GasPos-Online/
+- **Repository:** https://github.com/Web-Online69/GasPos-Online
+- **Frontend:** Vite / JavaScript, satu halaman utama (SPA).
+- **Hosting:** GitHub Pages melalui GitHub Actions.
+- **Database dan autentikasi:** Supabase PostgreSQL / Supabase Auth, khusus GASPOS dan terpisah dari BMS.
+- **Biaya infrastruktur:** memanfaatkan layanan free tier; tetap mengikuti batas/ketentuan penyedia.
 
-## Status 24 Oktober 2026
-Koneksi GitHub GunzLeite berhasil, dengan akses tulis. Koneksi Supabase Gaspos Online berhasil; organisasi GuzLeiteWebApp terlihat tetapi belum ada proyek yang dapat diakses.
+## Hak akses — empat peran final
 
-Kode starter sebelumnya disalin dari bagjasindo/GasPos-Online commit 8b1cb1358916465378b42a01a1bad74dd683c511 ke legacy/cloudflare sebagai referensi migrasi. Kode ini belum memakai Supabase, bukan aplikasi produksi, dan tidak dijalankan otomatis. ID database Cloudflare lama sengaja dihapus dari salinan konfigurasi. Jangan gunakan data usaha asli.
+| Peran | Tugas dan menu |
+| --- | --- |
+| **OWNER** (Owner/Admin) | Akses pengelolaan tertinggi: master, pembelian, penjualan, ACC Logistik, perjalanan, harga, invoice, mutasi stok, pembayaran, biaya operasional, laporan, dan pengguna. |
+| **LOGISTIK** | Mengajukan barang fisik masuk/keluar, melihat produk/supplier/stok, mencetak Surat Jalan setelah ACC, membuat perjalanan kendaraan, serta merekonsiliasi tabung yang kembali. Tidak mengelola harga. |
+| **SALES_SOPIR** (Sales/Sopir) | Melihat perjalanan yang ditugaskan, memilih pelanggan per kunjungan, mencatat tabung penuh diserahkan dan kosong diterima, serta konfirmasi penerimaan. Tidak melihat harga, invoice, atau pembayaran. |
+| **KEUANGAN** | Melihat tagihan dan laporan, mencatat pembayaran/refund sesuai validasi server, serta biaya operasional. Tidak mengubah stok. |
 
-## Aturan bisnis
-- Owner mengelola master, harga, pembelian, penjualan, invoice, pembayaran dan laporan.
-- Logistik mencatat fisik tabung dan mencetak surat jalan tanpa harga. Data harga harus dibatasi di backend/database, bukan hanya disembunyikan di layar.
-- Isi dan kosong dicatat terpisah; penerimaan/pengeluaran sebagian harus didukung.
-- Posting stok harus atomik, idempoten, dan mencegah stok negatif pada transaksi bersamaan.
-- Transaksi selesai dikunci; koreksi stok memerlukan persetujuan Owner.
+Tidak direncanakan peran kelima. Owner membuat akun petugas menggunakan **ID login dan password manual**, tanpa pengiriman undangan email. Kata sandi dikelola Supabase Auth dan tidak ditampilkan kembali dalam daftar pengguna.
 
-## Pekerjaan berikutnya
-1. Buat atau hubungkan proyek Supabase pada organisasi GASPOS yang dikonfirmasi pengguna.
-2. Implementasikan Supabase Auth, peran Owner/Logistik dan RLS; migrasikan skema SQLite ke PostgreSQL dengan pemisahan data finansial.
-3. Migrasikan API dan UI, lalu lengkapi penerimaan parsial, harga pelanggan, SJ dan invoice.
-4. Uji pembatasan harga, transaksi bersamaan, saldo stok, penolakan dan cetak ulang sebelum deployment.
+**Penting:** akses tidak hanya dibatasi dari daftar menu, tetapi perlu ditegakkan melalui RLS dan fungsi database. Pengujian keamanan lintas peran tetap wajib dilakukan sebelum operasional penuh.
 
-BMS dan sumber GASPOS lama tidak diubah.
+## Alur kerja hulu ke hilir
+
+1. **Master data:** Owner mengelola jenis tabung, supplier, pelanggan, dan harga terkait.
+2. **Pembelian:** Owner mencatat transaksi pembelian dari supplier; tabung penuh dan kosong dipisahkan.
+3. **Penerimaan fisik:** Logistik mengajukan barang masuk/keluar; **ACC Owner** memposting mutasi stok gudang satu kali.
+4. **Surat Jalan (SJ):** Pengeluaran yang disetujui dapat dicetak; Logistik menetapkan Sopir dan nomor kendaraan berdasarkan SJ keluar yang sudah ACC.
+5. **Pengiriman:** Satu perjalanan dapat melayani banyak pelanggan. Sopir mencatat setiap kunjungan: pelanggan, jumlah tabung penuh dikirim, jumlah kosong diterima, dan catatan. Jumlah penuh tidak boleh melebihi muatan.
+6. **Bukti serah terima:** Konfirmasi mencakup nama penerima, waktu, dan gambar tanda tangan yang digores langsung pada layar (disimpan sebagai data koordinat; tanpa upload foto). Ini tetap perlu verifikasi praktik lapangan, bukan autentikasi identitas pelanggan secara independen.
+7. **Pulang gudang:** Logistik menghitung sisa penuh dan kosong. Perjalanan tidak dapat ditutup bila masih ada pengiriman belum dikonfirmasi atau angka fisik tidak cocok; stok kembali dicatat terpisah.
+8. **Invoice:** Owner membuat invoice dari pengiriman terkonfirmasi setelah perjalanan ditutup, termasuk opsi **invoice gabungan per pelanggan dalam satu perjalanan**. Pembuatan invoice dari perjalanan **tidak boleh memposting pengurangan stok lagi**.
+9. **Pembayaran:** Owner/Keuangan menangani pembayaran dan refund sesuai pemeriksaan status dokumen dan batas nominal.
+10. **Laporan:** Ringkasan pembelian, penjualan, piutang, utang, biaya operasional, HPP, laba kotor, dan laba bersih estimasi.
+
+## Menu utama saat ini
+
+- **Owner/Admin:** Beranda, Tabung Gas, Supplier, Pelanggan, Pembelian, Penjualan, Logistik & ACC, Perjalanan Sopir, Mutasi Stok, Pembayaran, Keuangan, Biaya Operasional, Harga Pelanggan, Pengguna.
+- **Logistik:** Beranda, Tabung Gas, Supplier, Barang Masuk/Keluar, Perjalanan Sopir, Mutasi Stok.
+- **Sales/Sopir:** Beranda, Pengiriman Pelanggan.
+- **Keuangan:** Beranda, Pembayaran, Keuangan, Biaya Operasional.
+
+## Aturan integritas data
+
+- Tabung **penuh** dan **kosong** dicatat terpisah.
+- Pergerakan gudang dan pergerakan kendaraan tidak boleh dihitung dua kali.
+- Pengajuan Logistik tidak langsung mengubah stok sebelum disetujui.
+- Transaksi pengiriman tidak boleh melampaui muatan kendaraan.
+- Koreksi pengiriman dibatasi ke Owner, disertai alasan dan rekam audit; konfirmasi penerima harus diulang setelah koreksi.
+- Saldo tabung kosong pelanggan mencakup kewajiban historis, pengembalian yang terkait, dan pengiriman yang telah selesai.
+- Invoice dibentuk dari hasil pengiriman yang terverifikasi, tanpa posting stok ulang.
+- Harga dan data biaya harus tetap terlindungi di sisi database, bukan sekadar disembunyikan pada UI.
+
+## HPP dan laba rugi
+
+Laporan saat ini memakai pendekatan **rata-rata tertimbang pembelian yang disetujui sepanjang data tersedia**. Terdapat fungsi laporan yang menampilkan penjualan, HPP, laba kotor, biaya operasional, dan laba bersih **estimasi**. Dasar stok awal bernilai juga telah mulai disediakan pada database.
+
+**Jangan perlakukan laporan ini sebagai laba bersih akuntansi final:** penanganan stok awal, retur pembelian/penjualan, biaya perolehan, urutan waktu penilaian persediaan, dan rekonsiliasi historis masih memerlukan penyempurnaan/pengujian. Jangan menggunakan seluruh nilai pembelian sebagai HPP periode berjalan.
+
+## Status implementasi dan pengujian (27 Oktober 2026)
+
+**Sudah terpasang di kode/database:**
+- Struktur empat peran dan menu sesuai peran.
+- Pembuatan akun petugas manual tanpa undangan.
+- Master produk/mitra, transaksi pembelian/penjualan, pembayaran, dan biaya operasional.
+- Pengajuan Logistik, ACC Owner, mutasi stok, cetak SJ.
+- Perjalanan Sopir dengan banyak pelanggan, penerimaan kembali, pembatasan muatan.
+- Pencatatan penerima dan tanda tangan, koreksi dengan audit trail.
+- Invoice per kunjungan / gabungan per pelanggan dalam satu perjalanan.
+- Ringkasan saldo tabung kosong dan estimasi HPP/laba rugi.
+
+**Belum dinyatakan lulus sepenuhnya:**
+- Uji end-to-end dengan akun nyata untuk **Owner, Logistik, Sales/Sopir, dan Keuangan**.
+- Uji transaksi bersamaan, stok negatif, retur, koreksi, dan pencegahan invoice/pencatatan ganda pada skenario nyata.
+- Verifikasi penilaian persediaan dan laba bersih final termasuk stok awal, biaya tambahan, serta retur.
+- Uji tanda tangan pelanggan pada berbagai HP/browser dan prosedur verifikasi pelanggan.
+
+Status build/deployment terbaru sebaiknya dilihat di tab **Actions** repository; build sukses saja tidak menggantikan uji operasional.
+
+## Menjalankan pengembangan
+
+Gunakan Node.js dan npm:
+
+```bash
+npm install
+npm run dev
+```
+
+Kredensial Supabase dikonfigurasikan sesuai variabel lingkungan frontend yang dipakai proyek. **Jangan pernah menyimpan service-role key, password, atau rahasia lain dalam repo/frontend.**
+
+## Catatan migrasi
+
+Folder `legacy/cloudflare` hanya referensi kode lama; bukan aplikasi yang dideploy. GASPOS menggunakan proyek/database sendiri. **Repositori dan database BMS tidak boleh diubah sebagai bagian dari pekerjaan GASPOS.**
+
+---
+
+Copyright Gunz Leite@2026.
