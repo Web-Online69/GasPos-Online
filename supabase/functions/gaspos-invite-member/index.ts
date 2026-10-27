@@ -96,6 +96,34 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
         }
         return send({ ok: true, username });
       }
+      if (body.action === 'edit') {
+        if (typeof body.user_id !== 'string' || !uuidPattern.test(body.user_id)) throw new SafeError('ID akun tidak valid');
+        const target = await member(body.user_id);
+        if (!target || !staffRoles.includes(target.role)) throw new SafeError('Akun Owner tidak dapat diedit melalui menu petugas', 403);
+        const role = body.role;
+        if (!staffRoles.includes(role)) throw new SafeError('Peran tidak valid');
+        const password = body.password;
+        if (password !== undefined && (typeof password !== 'string' || password.length < 8 || password.length > 72 || new TextEncoder().encode(password).length > 72)) throw new SafeError('Password baru harus 8–72 karakter, maksimal 72 byte');
+        if (role !== target.role) {
+          const changed = await backend('/rest/v1/gas_members?user_id=eq.' + encodeURIComponent(body.user_id) + '&role=in.(LOGISTIK,SALES_SOPIR,KEUANGAN)', {
+            method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ role }),
+          }, 'Gagal mengubah peran');
+          if (!Array.isArray(changed) || changed.length !== 1) throw new SafeError('Peran tidak berubah', 409);
+        }
+        if (password !== undefined) {
+          try {
+            await backend('/auth/v1/admin/users/' + body.user_id, { method: 'PUT', body: JSON.stringify({ password }) }, 'Gagal mengganti password');
+          } catch (error) {
+            if (role !== target.role) {
+              try { await backend('/rest/v1/gas_members?user_id=eq.' + encodeURIComponent(body.user_id), {
+                method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ role: target.role }),
+              }); } catch { throw new SafeError('Password gagal diganti. Peran perlu diperiksa ulang oleh Owner', 502); }
+            }
+            throw error;
+          }
+        }
+        return send({ ok: true });
+      }
       if (body.action === 'set_active') {
         if (typeof body.user_id !== 'string' || !uuidPattern.test(body.user_id) || typeof body.active !== 'boolean') throw new SafeError('ID akun atau status tidak valid');
         const target = await member(body.user_id);
