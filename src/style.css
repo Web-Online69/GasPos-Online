@@ -305,3 +305,15 @@
 .app-shell .trade-item .trade-line-cylinder input[readonly]{background:#203644;border:1px dashed #45616d;color:#a5b6c1}
 .app-shell .trade-history-title{font-size:13px;color:#d9e7ec;margin:20px 0 10px}
 @media(max-width:750px){.app-shell .trade-item:has(.trade-line-cylinder){grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 10px}.app-shell .trade-item:has(.trade-line-cylinder) .trade-line-cylinder{grid-column:1/-1}.app-shell .trade-item:has(.trade-line-cylinder) .trade-line-cylinder>span{display:block;color:#a8bfcd;font-size:10px;margin-bottom:5px}.app-shell .trade-item-head:has(span:nth-child(7)){display:none}}
+
+/* Logistics request / Owner approval workflow */
+.app-shell .logistics-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 15px;padding-top:14px}
+.app-shell .logistics-form>label{display:flex;flex-direction:column;gap:6px;color:#bad0d9;font-size:12px;font-weight:650;min-width:0}
+.app-shell .logistics-form input,.app-shell .logistics-form select,.app-shell .logistics-form textarea{min-width:0;width:100%;border-radius:8px;border:1px solid #3d5668;background:#0e2231;color:#e6f5fa;padding:10px 12px;font:inherit}
+.app-shell .logistics-form>.trade-actions,.app-shell .logistics-form>.trade-error{grid-column:1/-1}
+.app-shell #log-rows td{vertical-align:middle}
+.app-shell #log-rows button{display:inline-block;width:auto;min-width:49px;margin:2px;padding:7px 9px;border-radius:7px;font-size:11px;border:1px solid #4c6774}
+.app-shell #log-rows .trade-approve{background:#185c55;color:#e0fff5}
+.app-shell #log-rows .trade-cancel-btn{background:#593038;color:#ffe6e6}
+.app-shell .log-reason{display:block;margin-top:5px;color:#e6b3a9;max-width:200px}
+@media(max-width:620px){.app-shell .logistics-form{grid-template-columns:1fr}.app-shell #log-rows td,.app-shell #log-rows th{white-space:nowrap}}
