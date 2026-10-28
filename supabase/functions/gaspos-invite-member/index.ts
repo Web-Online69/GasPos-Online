@@ -124,6 +124,36 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
         }
         return send({ ok: true });
       }
+      if (body.action === 'delete') {
+        if (typeof body.user_id !== 'string' || !uuidPattern.test(body.user_id)) throw new SafeError('ID akun tidak valid');
+        if (body.user_id === caller.id) throw new SafeError('Akun yang sedang login tidak dapat dihapus', 403);
+        const target = await member(body.user_id);
+        if (!target || !staffRoles.includes(target.role)) throw new SafeError('Hanya akun petugas yang dapat dihapus', 403);
+        // Keep identity and audit trail for every user who has ever handled a transaction.
+        const references = [
+          ['gas_documents', 'created_by'], ['gas_documents', 'approved_by'],
+          ['gas_logistics_requests', 'created_by'], ['gas_logistics_requests', 'reviewed_by'],
+          ['gas_operating_expenses', 'created_by'], ['gas_empty_returns', 'created_by'],
+          ['gas_purchase_returns', 'created_by'], ['gas_supplier_refunds', 'created_by'],
+          ['gas_trip_stops', 'created_by'], ['gas_trip_stops', 'corrected_by'],
+          ['gas_trip_stop_audit', 'changed_by'], ['gas_trips', 'returned_by'],
+          ['gas_inventory_opening_costs', 'created_by'],
+        ];
+        for (const [table, column] of references) {
+          const rows = await backend('/rest/v1/' + table + '?select=' + column + '&' + column + '=eq.' + encodeURIComponent(body.user_id) + '&limit=1');
+          if (!Array.isArray(rows)) throw new SafeError('Pemeriksaan riwayat tidak tersedia', 502);
+          if (rows.length) throw new SafeError('Akun memiliki riwayat transaksi. Nonaktifkan saja agar audit tetap utuh', 409);
+        }
+        // Prevent new work while deleting. If Auth deletion fails, the user remains disabled.
+        await backend('/rest/v1/gas_members?user_id=eq.' + encodeURIComponent(body.user_id), {
+          method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ active: false }),
+        }, 'Gagal mengamankan akun');
+        await backend('/auth/v1/admin/users/' + body.user_id, { method: 'DELETE' }, 'Gagal menghapus akun di Auth');
+        await backend('/rest/v1/gas_members?user_id=eq.' + encodeURIComponent(body.user_id), {
+          method: 'DELETE', headers: { Prefer: 'return=minimal' },
+        }, 'Akun Auth terhapus, tetapi keanggotaan perlu dibersihkan');
+        return send({ ok: true });
+      }
       if (body.action === 'set_active') {
         if (typeof body.user_id !== 'string' || !uuidPattern.test(body.user_id) || typeof body.active !== 'boolean') throw new SafeError('ID akun atau status tidak valid');
         const target = await member(body.user_id);
