@@ -7,7 +7,7 @@ await db.exec(read('scripts/audit/fixtures/baseline-schema.sql'));
 await db.exec(read('scripts/audit/fixtures/baseline-policies.sql'));
 await db.exec(read('scripts/audit/fixtures/baseline-integrity.sql'));
 await db.exec('GRANT USAGE ON SCHEMA public,auth,gaspos_private TO authenticated; GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;');
-for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql','audit_finance_partner_names.sql','audit_payment_retry.sql'])await db.exec(read('supabase/'+p));
+for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql','audit_finance_partner_names.sql','audit_payment_retry.sql','audit_logistics_shared_read.sql'])await db.exec(read('supabase/'+p));
 const q=async(sql,p=[])=> (await db.query(sql,p)).rows;
 const scalar=async(sql,p=[])=>Object.values((await q(sql,p))[0])[0];
 const pass=(test,detail)=>results.push({test,status:'PASS',detail});
@@ -15,6 +15,7 @@ const denied=async(test,sql,p=[])=>{try{await q(sql,p);}catch(e){pass(test,e.mes
 const deniedInTransaction=async(test,sql,p=[])=>{await db.exec('SAVEPOINT expected_rejection');try{await q(sql,p);}catch(e){await db.exec('ROLLBACK TO SAVEPOINT expected_rejection');await db.exec('RELEASE SAVEPOINT expected_rejection');pass(test,e.message);return;}await db.exec('RELEASE SAVEPOINT expected_rejection');throw Error(test+' unexpectedly accepted');};
 const ids=Object.fromEntries(['OWNER','LOGISTIK','SALES_SOPIR','KEUANGAN'].map(role=>[role,crypto.randomUUID()]));
 for(const [role,id] of Object.entries(ids)){await q('insert into auth.users(id) values($1)',[id]);await q('insert into gas_members(user_id,role,active) values($1,$2,true)',[id,role]);}
+const reliefLogistics=crypto.randomUUID(),unassignedDriver=crypto.randomUUID();for(const [user,role] of [[reliefLogistics,'LOGISTIK'],[unassignedDriver,'SALES_SOPIR']]){await q('insert into auth.users(id) values($1)',[user]);await q('insert into gas_members(user_id,role,active) values($1,$2,true)',[user,role]);}
 const product=crypto.randomUUID(),supplier=crypto.randomUUID(),customers=[crypto.randomUUID(),crypto.randomUUID(),crypto.randomUUID()];
 await q("insert into gas_products(id,name) values($1,'SIMPLE FLOW TEST')",[product]);
 await q("insert into gas_partners(id,name,partner_type) values($1,'TEST supplier','SUPPLIER')",[supplier]);
@@ -37,6 +38,17 @@ assert.equal(await scalar("select gaspos_create_delivery_sj($1,60,$2,'trial 001'
 assert.deepEqual(await stock(),{full_balance:40,empty_balance:0});pass('Logistik membuat SJ + muatan + Sopir + kendaraan satu langkah; replay tidak mengurangi stok lagi');
 await denied('ID SJ sama dengan muatan berbeda ditolak',"select gaspos_create_delivery_sj($1,59,$2,'trial 001','test',$3)",[product,ids.SALES_SOPIR,sj]);
 const trip=await scalar('select id from gas_trips where request_id=$1',[sj]);
+await q("select set_config('request.jwt.claim.sub',$1,false)",[reliefLogistics]);
+assert.equal(Number(await scalar('select count(*) from gas_logistics_requests where id=$1',[sj])),1);
+assert.equal(Number(await scalar('select full_qty from gas_logistics_requests where id=$1',[sj])),60);
+assert.equal(Number(await scalar('select count(*) from gas_trips where id=$1',[trip])),1);pass('Petugas Logistik pengganti membaca SJ dan muatan untuk rekonsiliasi bersama');
+assert.equal(Number(await scalar('select count(*) from gas_financial_entries')),0);pass('Akses gudang bersama tidak membuka harga ke Logistik');
+await q("select set_config('request.jwt.claim.sub',$1,false)",[unassignedDriver]);
+assert.equal(Number(await scalar('select count(*) from gas_logistics_requests where id=$1',[sj])),0);
+assert.equal(Number(await scalar('select count(*) from gas_trips where id=$1',[trip])),0);pass('Sopir lain tetap tidak membaca SJ/perjalanan yang tidak ditugaskan');
+await as('KEUANGAN');assert.equal(Number(await scalar('select count(*) from gas_logistics_requests where id=$1',[sj])),0);pass('Keuangan tetap tidak memiliki akses dokumen gudang');
+await as('LOGISTIK');
+
 await as('KEUANGAN');await denied('Keuangan tidak membuat SJ',"select gaspos_create_delivery_sj($1,1,$2,'trial 001','test',$3)",[product,ids.SALES_SOPIR,crypto.randomUUID()]);
 await as('SALES_SOPIR');await denied('Sopir tidak mengonfirmasi pembelian',"select gaspos_confirm_purchase_arrival($1,$2,1,0,'test',$3)",[purchase,product,crypto.randomUUID()]);
 await denied('Sopir tidak mengirim di atas muatan',"select gaspos_record_stop($1,$2,61,0,'test')",[trip,customers[0]]);

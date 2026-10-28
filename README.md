@@ -111,3 +111,5 @@ Audit pekerjaan per akun (28 Oktober 2026): Beranda menampilkan antrian sesuai p
 Trial empat login nyata dan catatan kekurangan/perbaikan setiap peran: [laporan live 28 Oktober](docs/audit/live-four-role-20261028.md). Data trial diberi label terpisah dan belum dihapus. Form SJ menampilkan stok tersedia, Faktur Sopir dibatasi sisa muatan, dan hasil INV/pembayaran diberi konfirmasi.
 
 Perlindungan ulang Simpan pembayaran saat respons koneksi hilang: [audit pembayaran](docs/audit/payment-retry-20261028.md). Jalankan patch `supabase/audit_payment_retry.sql` sebelum frontend terbaru. Form pembayaran memakai `gaspos_record_payment_once`; muat ulang tab lama setelah pembaruan.
+
+Serah tugas gudang: patch `supabase/audit_logistics_shared_read.sql` memungkinkan semua petugas Logistik aktif membaca SJ/penerimaan gudang untuk rekonsiliasi bersama. Akses harga, keuangan, dan mutasi tetap mengikuti hak serta RPC resmi; Sopir tetap hanya melihat penugasannya sendiri.
