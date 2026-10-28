@@ -18,4 +18,5 @@ jobs:
       - run: npm run test:audit
       - run: npm run test:members
       - run: npm run test:flow
+      - run: npm run test:workflow-ui
       - run: npm run build

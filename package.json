@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test:audit": "FIX=1 node scripts/audit/database.mjs",
     "test:members": "node --test scripts/audit/member-*.test.mjs",
-    "test:flow": "node scripts/audit/simple-flow.mjs"
+    "test:flow": "node scripts/audit/simple-flow.mjs",
+    "test:workflow-ui": "node --test scripts/audit/workflow-review.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.76.0"

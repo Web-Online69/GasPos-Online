@@ -7,7 +7,7 @@ await db.exec(read('scripts/audit/fixtures/baseline-schema.sql'));
 await db.exec(read('scripts/audit/fixtures/baseline-policies.sql'));
 await db.exec(read('scripts/audit/fixtures/baseline-integrity.sql'));
 await db.exec('GRANT USAGE ON SCHEMA public,auth,gaspos_private TO authenticated; GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;');
-for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql'])await db.exec(read('supabase/'+p));
+for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql','audit_finance_partner_names.sql'])await db.exec(read('supabase/'+p));
 const q=async(sql,p=[])=> (await db.query(sql,p)).rows;
 const scalar=async(sql,p=[])=>Object.values((await q(sql,p))[0])[0];
 const pass=(test,detail)=>results.push({test,status:'PASS',detail});
@@ -70,4 +70,7 @@ await as('SALES_SOPIR');for(let i=0;i<2;i++){const stop=await scalar("select gas
 await as('OWNER');const groupedInvoice=await scalar('select gaspos_invoice_trip_customer($1,$2,18500,current_date,null)',[groupedTrip,customers[0]]);
 assert.equal(Number(await scalar('select quantity_full from gas_document_items where document_id=$1',[groupedInvoice])),2);assert.equal(await scalar('select status from gas_trips where id=$1',[groupedTrip]),'ON_ROUTE');pass('Owner konfirmasi faktur gabungan sebelum kendaraan pulang');await db.exec('ROLLBACK');await as('LOGISTIK');assert.deepEqual(await stock(),{full_balance:55,empty_balance:38});
 
+await as('KEUANGAN');const names=await q('select * from gaspos_finance_partner_names()');assert(names.some(x=>x.id===customers[0]));assert(names.every(x=>Object.keys(x).sort().join(',')==='id,name'));pass('Keuangan membaca nama mitra tagihan saja tanpa akses master');
+await as('LOGISTIK');await denied('Logistik tidak memakai RPC mitra keuangan','select * from gaspos_finance_partner_names()');
+await as('SALES_SOPIR');await denied('Sopir tidak memakai RPC mitra keuangan','select * from gaspos_finance_partner_names()');
 console.log(JSON.stringify({scope:'isolated PostgreSQL with authenticated role + production policies/RPCs',results},null,2));await db.close();
