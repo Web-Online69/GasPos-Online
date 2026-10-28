@@ -421,3 +421,37 @@
  .app-shell .users-table tbody tr:has(td[colspan]){display:block}
  .app-shell .users-table tbody tr td[colspan]::before{display:none}
 }
+
+
+/* Consistent, accessible data-entry controls across GASPOS forms. */
+.app-shell :is(.trade-dialog,.supplier-dialog,.customer-dialog,.product-modal,.user-editor) *,
+.app-shell :is(.logistics-form,.purchase-meta,.receive-fields,.trade-item) *{box-sizing:border-box}
+.app-shell :is(.trade-dialog,.supplier-dialog,.customer-dialog,.product-modal) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){
+ min-width:0;max-width:100%;font-family:inherit;font-size:13px;line-height:1.4;border-radius:8px;
+}
+.app-shell .trade-dialog form .gaspos-password-row{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:stretch!important;gap:8px!important;
+ width:100%;min-width:0;margin:0;
+}
+.app-shell .trade-dialog form .gaspos-password-row #edit-password{
+ display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:42px!important;
+ height:42px!important;margin:0!important;padding:9px 12px!important;flex:initial!important;
+}
+.app-shell .trade-dialog form .gaspos-password-row #edit-show{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:76px!important;max-width:76px!important;min-width:76px!important;height:42px!important;
+ min-height:42px!important;margin:0!important;padding:8px 12px!important;
+ background:#284657!important;border:1px solid #557184!important;color:#e9f5f8!important;
+ font-size:12px!important;line-height:1.2!important;white-space:nowrap!important;
+}
+.app-shell :is(.trade-dialog,.supplier-dialog,.customer-dialog,.product-modal) :is(input,select,textarea):focus-visible{
+ outline:2px solid #5db7b6;outline-offset:1px;
+}
+.app-shell .trade-dialog form :is(.trade-actions,.product-actions,.supplier-actions,.customer-actions) button{
+ width:auto!important;min-width:88px;max-width:100%;min-height:38px;white-space:normal;
+}
+.app-shell .trade-dialog form label{overflow-wrap:anywhere}
+@media(max-width:650px){
+ .app-shell .trade-dialog form .gaspos-password-row{grid-template-columns:minmax(0,1fr) 76px!important}
+ .app-shell .trade-dialog form .trade-actions button{min-width:0;flex:1}
+}
