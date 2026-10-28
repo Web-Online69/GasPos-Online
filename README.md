@@ -107,3 +107,5 @@ Folder aplikasi lama `legacy/cloudflare` sudah dihapus dari branch `main` (commi
 Copyright Gunz Leite@2026.
 
 Audit pekerjaan per akun (28 Oktober 2026): Beranda menampilkan antrian sesuai peran; Faktur Barang tanpa harga dapat dicetak dan bukti tanda tangan diperiksa; menu Keuangan menampilkan riwayat pembayaran serta nama mitra tagihan. Rincian hasil dan batas verifikasi: [audit per akun](docs/audit/role-work-review-20261028.md). Patch `supabase/audit_finance_partner_names.sql` menyediakan nama mitra bagi Owner/Keuangan tanpa membuka akses master kepada Keuangan. Jalankan juga `npm run test:workflow-ui`.
+
+Trial empat login nyata dan catatan kekurangan/perbaikan setiap peran: [laporan live 28 Oktober](docs/audit/live-four-role-20261028.md). Data trial diberi label terpisah dan belum dihapus. Form SJ menampilkan stok tersedia, Faktur Sopir dibatasi sisa muatan, dan hasil INV/pembayaran diberi konfirmasi.

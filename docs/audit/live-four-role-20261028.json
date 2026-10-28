@@ -1,0 +1,239 @@
+{
+  "tag": "GASPOS-TRIAL-20261028-9E0B8F",
+  "status": "PASS_API_E2E",
+  "checks": [
+    {
+      "role": "owner",
+      "test": "Login password nyata dan keanggotaan aktif",
+      "status": "PASS",
+      "detail": {
+        "username": "trial_owner_1027"
+      }
+    },
+    {
+      "role": "logistik",
+      "test": "Login password nyata dan keanggotaan aktif",
+      "status": "PASS",
+      "detail": {
+        "username": "trial_logistik_1028_17a2"
+      }
+    },
+    {
+      "role": "sales_sopir",
+      "test": "Login password nyata dan keanggotaan aktif",
+      "status": "PASS",
+      "detail": {
+        "username": "trial_sales_sopir_1027"
+      }
+    },
+    {
+      "role": "keuangan",
+      "test": "Login password nyata dan keanggotaan aktif",
+      "status": "PASS",
+      "detail": {
+        "username": "trial_keuangan_1028_10b2"
+      }
+    },
+    {
+      "role": "owner",
+      "test": "Pembelian 100 @17000; stok belum bertambah",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "logistik",
+      "test": "Terima 100 dan retry ACC tidak menggandakan stok",
+      "status": "PASS",
+      "detail": [
+        100,
+        0
+      ]
+    },
+    {
+      "role": "logistik",
+      "test": "SJ 60, Sopir dan kendaraan; retry tidak mengurangi stok lagi",
+      "status": "PASS",
+      "detail": [
+        40,
+        0
+      ]
+    },
+    {
+      "role": "sales_sopir",
+      "test": "Perjalanan penugasan terbaca melalui akun Sopir",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "sales_sopir",
+      "test": "Pengiriman di atas muatan ditolak",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "owner",
+      "test": "INV sebelum tanda tangan ditolak",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "logistik",
+      "test": "Perjalanan tanpa konfirmasi penerima tidak dapat ditutup",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "sales_sopir",
+      "test": "Tiga faktur barang 20/15/10; kosong15/15/8; tanda tangan uji tersimpan",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "logistik/sales_sopir",
+      "test": "Harga ledger tidak terbaca melalui RLS",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "sales_sopir",
+      "test": "Sopir tidak dapat membuat INV atau menentukan harga",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "owner",
+      "test": "INV 45 @18500 saat ON_ROUTE; tidak memutasi stok lagi",
+      "status": "PASS",
+      "detail": {
+        "stock": [
+          40,
+          0
+        ],
+        "revenue": 832500
+      }
+    },
+    {
+      "role": "owner",
+      "test": "INV ganda ditolak",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "keuangan",
+      "test": "Uang masuk melebihi tagihan ditolak",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "keuangan",
+      "test": "Pembayaran parsial/lunas, supplier1700000, biaya20000",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "keuangan",
+      "test": "Nama mitra tagihan dapat dibaca",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "keuangan",
+      "test": "Keuangan tidak dapat mengubah stok/penerimaan kendaraan",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "logistik",
+      "test": "Jumlah fisik kembali tidak cocok ditolak",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "logistik",
+      "test": "Kembali15 penuh/38 kosong; stok akhir55/38",
+      "status": "PASS",
+      "detail": [
+        55,
+        38
+      ]
+    },
+    {
+      "role": "keuangan",
+      "test": "Piutang dan utang trial nol",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "role": "owner",
+      "test": "Utang tabung kosong pelanggan A5/B0/C2",
+      "status": "PASS",
+      "detail": [
+        5,
+        0,
+        2
+      ]
+    },
+    {
+      "role": "owner/keuangan",
+      "test": "Selisih laporan tepat sesuai transaksi trial",
+      "status": "PASS",
+      "detail": {
+        "revenue": 832500.0,
+        "hpp": 765000.0,
+        "gross_profit": 67500.0,
+        "operating_expenses": 20000.0,
+        "net_profit": 47500.0
+      }
+    }
+  ],
+  "stock_before": [
+    0,
+    0
+  ],
+  "stock_after": [
+    55,
+    38
+  ],
+  "profit_delta": {
+    "revenue": 832500.0,
+    "hpp": 765000.0,
+    "gross_profit": 67500.0,
+    "operating_expenses": 20000.0,
+    "net_profit": 47500.0
+  },
+  "method": "Four real password logins; Supabase Auth JWT + public REST/RPC. No simulated claims.",
+  "accounts": {
+    "owner": "trial_owner_1027",
+    "logistik": "trial_logistik_1028_17a2",
+    "sales_sopir": "trial_sales_sopir_1027",
+    "keuangan": "trial_keuangan_1028_10b2"
+  },
+  "trial_entities": {
+    "product": "7e3a39f9-7a83-4bd4-8aa0-0248d3f99934",
+    "supplier": "7153d835-bf35-4c6d-9ec9-7d4ea675437c",
+    "customers": [
+      "9243e1a0-b70c-43f3-a73f-2f2bd058561e",
+      "fb55a806-c5a5-45a2-9de5-fe749070375f",
+      "c01677ba-9b86-4b72-8cc1-a11ccdc3c11e"
+    ],
+    "purchase": "063d87e2-b387-4626-8a0b-e59c8d4e36ec",
+    "sj": "9bdc9c12-6f4b-4358-8dd9-e67fd5095495",
+    "trip": "74435108-4551-4069-8bde-87f88f677e64",
+    "stops": [
+      "b4d6aef9-e2fc-495a-8209-e5b25b7e040e",
+      "7cae20a6-0258-4938-8615-d60daa9c0bfe",
+      "a6f2f5d9-4909-4ecb-8091-bd9b3da2c1a6"
+    ],
+    "invoices": [
+      "dd7f8956-d913-4e2e-9864-05d8fb065243",
+      "5d79f14f-0d14-453d-a5d6-146294d2d977",
+      "0cd0c719-c3db-4d98-8391-23f531549d4a"
+    ]
+  },
+  "browser": {
+    "OWNER": "PASS: login, pembelian/form vertikal, faktur, bukti tanda tangan, popup cetak tanpa harga, indikator keluar",
+    "LOGISTIK": "BLOCKED: browser authenticated as OWNER after secure account selection; API workflow passed",
+    "SALES_SOPIR": "BLOCKED: separate browser session not verified; API workflow passed",
+    "KEUANGAN": "BLOCKED: separate browser session not verified; API workflow passed"
+  }
+}
