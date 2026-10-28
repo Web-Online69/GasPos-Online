@@ -455,3 +455,71 @@
  .app-shell .trade-dialog form .gaspos-password-row{grid-template-columns:minmax(0,1fr) 76px!important}
  .app-shell .trade-dialog form .trade-actions button{min-width:0;flex:1}
 }
+
+/* One consistent vertical entry form on desktop and phones. History tables stay tabular. */
+.app-shell form,
+.app-shell form.logistics-form,
+.app-shell .trade-dialog form,
+.app-shell .supplier-dialog form,
+.app-shell .customer-dialog form,
+.app-shell .product-modal form{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ grid-template-columns:minmax(0,1fr)!important;gap:12px!important;
+ width:100%;min-width:0;max-width:100%;
+}
+.app-shell form label,
+.app-shell form .trade-line-field,
+.app-shell form .trade-mode-field,
+.app-shell form .trade-exchange{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ grid-column:1/-1!important;gap:6px!important;width:100%!important;max-width:100%;margin:0!important;
+}
+.app-shell form label>span{display:block!important}
+.app-shell form :is(.purchase-meta,.receive-fields,.trade-item,.gaspos-password-row,fieldset,.flow-fields){
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;
+ width:100%;min-width:0;max-width:100%;
+}
+.app-shell form :is(.trade-item,.receive-fields,.purchase-meta)>*{grid-column:1/-1!important;min-width:0}
+.app-shell form .trade-item-head{display:none!important}
+.app-shell form .trade-item{padding:16px!important;margin:0 0 12px!important}
+.app-shell form .trade-item .trade-line-field>span{display:block!important}
+.app-shell form .trade-item .trade-remove{
+ position:static!important;inset:auto!important;justify-self:stretch!important;align-self:stretch!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;
+ min-height:38px!important;margin:0!important;
+}
+.app-shell form :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){width:100%!important;max-width:100%!important;min-width:0!important}
+.app-shell form :is(.trade-actions,.product-actions,.supplier-actions,.customer-actions){
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ width:100%;gap:8px!important;grid-column:1/-1!important;margin-top:8px;
+}
+.app-shell form :is(.trade-actions,.product-actions,.supplier-actions,.customer-actions)>button{
+ width:100%!important;min-width:0!important;max-width:100%!important;flex:none!important;
+}
+.app-shell .trade-dialog form .gaspos-password-row{grid-template-columns:minmax(0,1fr)!important}
+.app-shell .trade-dialog form .gaspos-password-row #edit-show{width:100%!important;max-width:100%!important;min-width:0!important}
+.app-shell form .trade-exchange>span{order:0}
+.app-shell form .trade-exchange>input{order:1;align-self:flex-start}
+.app-shell .flow-advanced{margin:8px 0;padding:12px;border:1px solid #3c596b;border-radius:9px;min-width:0}
+.app-shell .flow-advanced>summary{cursor:pointer;color:#c7dfe8;font-size:12px;font-weight:650;line-height:1.5}
+.app-shell .flow-advanced[open]>summary{margin-bottom:14px}
+.app-shell form .flow-advanced>label{margin-top:12px!important}
+.app-shell .flow-panel>p{font-size:12px;line-height:1.6;color:#b3c9d4;margin:8px 0 16px}
+.app-shell .flow-panel h2{font-size:17px;margin:0}
+.app-shell form small{font-size:11px;font-weight:400;color:#a7c0ce;line-height:1.5}
+.app-shell .flow-status:not(:empty){padding:12px 14px;border:1px solid #398578;border-radius:9px;background:#153f39;color:#c8f7e9;line-height:1.5}
+.app-shell .trade-dialog canvas{display:block;max-width:100%;margin:12px 0}
+.app-shell .trade-dialog> .trade-actions{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+.app-shell .trade-dialog> .trade-actions>button{width:100%}
+
+/* Login uses the same downward entry order, including the password visibility control. */
+#form{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+#form>label{margin:12px 0 2px}
+#form .password-wrap{display:grid;grid-template-columns:minmax(0,1fr);height:auto;overflow:hidden}
+#form .password-wrap .field-icon{display:none}
+#form .password-wrap input{width:100%;min-width:0;height:50px;padding:10px 12px}
+#form .password-wrap .toggle-password{width:100%;height:auto;min-height:38px;margin:0;padding:8px 12px;border-left:0;border-top:1px solid #304b65;white-space:normal}
+.app-shell .flow-invoice-total{display:flex;flex-direction:column;gap:6px;padding:14px;border:1px solid #446471;border-radius:9px;background:#16343e}
+.app-shell .flow-invoice-total span{font-size:12px;color:#b5d0dc}
+.app-shell .flow-invoice-total output{font-size:21px;font-weight:750;color:#e7fcf5}
+.app-shell .flow-faktur-reference{display:block;margin-top:5px;font-size:10px;color:#a8c6d3;overflow-wrap:anywhere}

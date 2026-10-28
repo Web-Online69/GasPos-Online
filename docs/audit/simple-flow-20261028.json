@@ -1,0 +1,108 @@
+{
+  "scope": "isolated PostgreSQL with authenticated role + production policies/RPCs",
+  "results": [
+    {
+      "test": "Owner membuat pembelian",
+      "status": "PASS"
+    },
+    {
+      "test": "Logistik konfirmasi datang sekali tanpa ACC Owner; replay aman",
+      "status": "PASS"
+    },
+    {
+      "test": "Penerimaan kedua melebihi pesanan ditolak",
+      "status": "PASS",
+      "detail": "Pembelian sudah diterima atau tidak ditemukan"
+    },
+    {
+      "test": "Stok setelah datang 100/0",
+      "status": "PASS"
+    },
+    {
+      "test": "Logistik membuat SJ + muatan + Sopir + kendaraan satu langkah; replay tidak mengurangi stok lagi",
+      "status": "PASS"
+    },
+    {
+      "test": "ID SJ sama dengan muatan berbeda ditolak",
+      "status": "PASS",
+      "detail": "Nomor permintaan sudah digunakan"
+    },
+    {
+      "test": "Keuangan tidak membuat SJ",
+      "status": "PASS",
+      "detail": "Hanya Logistik atau Owner membuat Surat Jalan"
+    },
+    {
+      "test": "Sopir tidak mengonfirmasi pembelian",
+      "status": "PASS",
+      "detail": "Hanya Logistik atau Owner mengonfirmasi barang datang"
+    },
+    {
+      "test": "Sopir tidak mengirim di atas muatan",
+      "status": "PASS",
+      "detail": "Jumlah melebihi muatan sopir"
+    },
+    {
+      "test": "Sopir membuat 3 faktur barang; harga tidak terbaca",
+      "status": "PASS"
+    },
+    {
+      "test": "Sopir tidak menentukan tagihan",
+      "status": "PASS",
+      "detail": "Hanya Owner membuat invoice"
+    },
+    {
+      "test": "Owner konfirmasi faktur dan tetapkan harga sebelum kendaraan pulang; invoice tidak mutasi stok",
+      "status": "PASS"
+    },
+    {
+      "test": "Invoice ganda ditolak",
+      "status": "PASS",
+      "detail": "Pengiriman sudah ditagihkan atau tidak ditemukan"
+    },
+    {
+      "test": "Saldo kosong A5/B0/C2 tersedia saat faktur dikonfirmasi",
+      "status": "PASS"
+    },
+    {
+      "test": "Uang masuk melebihi tagihan ditolak",
+      "status": "PASS",
+      "detail": "Pembayaran melebihi sisa tagihan"
+    },
+    {
+      "test": "Keuangan konfirmasi uang masuk parsial dan lunas",
+      "status": "PASS"
+    },
+    {
+      "test": "Edit harga invoice langsung ditolak",
+      "status": "PASS",
+      "detail": "permission denied for table gas_financial_entries"
+    },
+    {
+      "test": "Pembayaran langsung melewati prosedur ditolak",
+      "status": "PASS",
+      "detail": "permission denied for table gas_payments"
+    },
+    {
+      "test": "Rekonsiliasi gudang terpisah tetap benar setelah invoice/pembayaran",
+      "status": "PASS"
+    },
+    {
+      "test": "Pendapatan dan HPP sesuai alur baru",
+      "status": "PASS",
+      "detail": {
+        "revenue": "832500.00",
+        "hpp": "765000.00",
+        "gross_profit": "67500.00",
+        "operating_expenses": "0",
+        "net_profit": "67500.00",
+        "unpriced_sold_qty": 0,
+        "method": "Estimasi HPP rata-rata tertimbang keseluruhan: pembelian dikurangi retur pembelian plus nilai stok awal; penjualan dikurangi retur penjualan. Belum menggunakan HPP FIFO/per tanggal, biaya angkut persediaan, atau penyesuaian periode"
+      }
+    },
+    {
+      "test": "Owner konfirmasi faktur gabungan sebelum kendaraan pulang",
+      "status": "PASS"
+    }
+  ]
+}

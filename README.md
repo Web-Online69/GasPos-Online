@@ -13,49 +13,51 @@
 
 Lihat [hasil live trial 27 Oktober 2026](docs/audit/live-trial-20261027.md) dan [audit tahap sebelumnya](docs/audit/2026-10-27.md). **Empat akun trial nyata berhasil login dan menyelesaikan alur melalui API dengan hak masing-masing.** Stok akhir produk trial 55 penuh/38 kosong, piutang/utang fixture lunas, laba bersih estimasi Rp47.500 setelah biaya Rp20.000. Browser/HP untuk ketiga peran petugas dan audit akuntansi historis belum lengkap; aplikasi belum dinyatakan 100% selesai. Data trial masih tercatat dan memengaruhi total laporan hingga dibersihkan.
 
-Verifikasi lokal: `npm ci`, `npm run test:audit`, `npm run test:members`, `npm run build`.
+Verifikasi lokal: `npm ci`, `npm run test:audit`, `npm run test:members`, `npm run test:flow`, `npm run build`.
 
 ## Hak akses — empat peran final
 
 | Peran | Tugas dan menu |
 | --- | --- |
-| **OWNER** (Owner/Admin) | Akses pengelolaan tertinggi: master, pembelian, penjualan, ACC Logistik, perjalanan, harga, invoice, mutasi stok, pembayaran, biaya operasional, laporan, dan pengguna. |
-| **LOGISTIK** | Mengajukan barang fisik masuk/keluar, melihat produk/supplier/stok, mencetak Surat Jalan setelah ACC, membuat perjalanan kendaraan, serta merekonsiliasi tabung yang kembali. Tidak mengelola harga. |
-| **SALES_SOPIR** (Sales/Sopir) | Melihat perjalanan yang ditugaskan, memilih pelanggan per kunjungan, mencatat tabung penuh diserahkan dan kosong diterima, serta konfirmasi penerimaan. Tidak melihat harga, invoice, atau pembayaran. |
+| **OWNER** (Owner/Admin) | Akses pengelolaan tertinggi: master, pembelian, penjualan, konfirmasi faktur Sopir, perjalanan, harga, invoice, mutasi stok, pembayaran, biaya operasional, laporan, dan pengguna. |
+| **LOGISTIK** | Mengonfirmasi pembelian datang, melihat produk/supplier/stok, membuat serta mencetak Surat Jalan dan menugaskan kendaraan/Sopir, serta merekonsiliasi tabung yang kembali. Tidak mengelola harga. |
+| **SALES_SOPIR** (Sales/Sopir) | Melihat perjalanan yang ditugaskan, membuat Faktur Penjualan per pelanggan tanpa harga, mencatat penuh diserahkan dan kosong diterima, serta konfirmasi penerimaan. Tidak melihat harga, invoice, atau pembayaran. |
 | **KEUANGAN** | Melihat tagihan dan laporan, mencatat pembayaran/refund sesuai validasi server, serta biaya operasional. Tidak mengubah stok. |
 
 Tidak direncanakan peran kelima. Owner membuat akun petugas menggunakan **ID login dan password manual**, tanpa pengiriman undangan email. Kata sandi dikelola Supabase Auth dan tidak ditampilkan kembali dalam daftar pengguna.
 
 **Penting:** akses tidak hanya dibatasi dari daftar menu, tetapi perlu ditegakkan melalui RLS dan fungsi database. Pengujian keamanan lintas peran tetap wajib dilakukan sebelum operasional penuh.
 
-## Alur kerja hulu ke hilir
+## Alur kerja hulu ke hilir — diperbarui 28 Oktober 2026
 
-1. **Master data:** Owner mengelola jenis tabung, supplier, pelanggan, dan harga terkait.
-2. **Pembelian:** Owner mencatat transaksi pembelian dari supplier; tabung penuh dan kosong dipisahkan.
-3. **Penerimaan fisik:** Logistik memilih **Pembelian terkait** pada Barang Masuk/Keluar; **ACC Owner** menyelesaikan penerimaan pembelian dan memposting mutasi stok sekali. Mutasi umum tidak menyelesaikan tagihan pembelian.
-4. **Surat Jalan (SJ):** Pengeluaran yang disetujui dapat dicetak; Logistik menetapkan Sopir dan nomor kendaraan berdasarkan SJ keluar yang sudah ACC.
-5. **Pengiriman:** Satu perjalanan dapat melayani banyak pelanggan. Sopir mencatat setiap kunjungan: pelanggan, jumlah tabung penuh dikirim, jumlah kosong diterima, dan catatan. Jumlah penuh tidak boleh melebihi muatan.
-6. **Bukti serah terima:** Konfirmasi mencakup nama penerima, waktu, dan gambar tanda tangan yang digores langsung pada layar (disimpan sebagai data koordinat; tanpa upload foto). Ini tetap perlu verifikasi praktik lapangan, bukan autentikasi identitas pelanggan secara independen.
-7. **Pulang gudang:** Logistik menghitung sisa penuh dan kosong. Perjalanan tidak dapat ditutup bila masih ada pengiriman belum dikonfirmasi atau angka fisik tidak cocok; stok kembali dicatat terpisah.
-8. **Invoice:** Owner membuat invoice dari pengiriman terkonfirmasi setelah perjalanan ditutup, termasuk opsi **invoice gabungan per pelanggan dalam satu perjalanan**. Pembuatan invoice dari perjalanan **tidak boleh memposting pengurangan stok lagi**.
-9. **Pembayaran:** Owner/Keuangan menangani pembayaran dan refund sesuai pemeriksaan status dokumen dan batas nominal.
-10. **Laporan:** Ringkasan pembelian, penjualan, piutang, utang, biaya operasional, HPP, laba kotor, dan laba bersih estimasi.
+1. **Owner membuat pembelian:** supplier, tabung, jumlah, dan harga beli. Data tambahan bersifat opsional.
+2. **Logistik mengonfirmasi barang datang:** pilih pembelian, cocokkan jumlah fisik, lalu Terima Pembelian. Stok bertambah sekali tanpa menunggu ACC Owner.
+3. **Logistik membuat Surat Jalan:** pilih tabung, muatan, Sopir dan kendaraan. SJ serta perjalanan dibuat sekaligus; stok keluar dari gudang sekali.
+4. **Sopir membuat Faktur Penjualan per pelanggan:** pelanggan, penuh dikirim, kosong diterima, catatan opsional; nama dan tanda tangan penerima dicatat pada satu formulir. Faktur ini tidak menampilkan harga.
+5. **Owner mengonfirmasi penjualan:** periksa faktur, isi harga jual, lihat total otomatis, lalu Konfirmasi & Buat INV. Dapat dilakukan saat perjalanan berlangsung atau setelah kembali. INV tidak mengurangi stok lagi.
+6. **Keuangan mengonfirmasi uang masuk:** pilih INV dan nominal yang benar-benar diterima. Pembayaran sebagian didukung; saldo piutang diperbarui. Pembayaran supplier tetap tersedia.
+
+**Kendaraan kembali:** Logistik tetap wajib mencocokkan sisa penuh dan kosong secara fisik sebelum menutup perjalanan. Rekonsiliasi tidak menjadi syarat tambahan penerbitan INV. Retur fisik invoice perjalanan tetap memerlukan pengiriman yang sudah direkonsiliasi.
+
+Semua formulir memakai **satu kolom vertikal di desktop dan HP**, label di atas isian, tombol di bawah. Tanggal, referensi, biaya tambahan dan pilihan jarang digunakan dikelompokkan dalam Data tambahan (opsional). Penjualan manual/SJ lama hanya tersedia dalam bagian pemulihan tertutup; data lama tidak dihapus.
+
+Lihat [catatan perubahan dan pengujian](docs/audit/simple-flow-20261028.md).
 
 ## Menu utama saat ini
 
-- **Owner/Admin:** Beranda, Tabung Gas, Supplier, Pelanggan, Pembelian, Penjualan, Logistik & ACC, Perjalanan Sopir, Mutasi Stok, Pembayaran, Keuangan, Biaya Operasional, Harga Pelanggan, Pengguna.
-- **Logistik:** Beranda, Tabung Gas, Supplier, Barang Masuk/Keluar, Perjalanan Sopir, Mutasi Stok.
-- **Sales/Sopir:** Beranda, Pengiriman Pelanggan.
+- **Owner/Admin:** Beranda, Tabung Gas, Supplier, Pelanggan, Pembelian, Penjualan, Gudang & Surat Jalan, Perjalanan Sopir, Mutasi Stok, Pembayaran, Keuangan, Biaya Operasional, Harga Pelanggan, Pengguna.
+- **Logistik:** Beranda, Tabung Gas, Supplier, Gudang & Surat Jalan, Perjalanan Sopir, Mutasi Stok.
+- **Sales/Sopir:** Beranda, Faktur Penjualan.
 - **Keuangan:** Beranda, Pembayaran, Keuangan, Biaya Operasional.
 
 ## Aturan integritas data
 
 - Tabung **penuh** dan **kosong** dicatat terpisah.
 - Pergerakan gudang dan pergerakan kendaraan tidak boleh dihitung dua kali.
-- Pengajuan Logistik tidak langsung mengubah stok sebelum disetujui.
+- Konfirmasi barang datang dan penerbitan SJ oleh Logistik langsung mencatat mutasi resmi satu kali.
 - Transaksi pengiriman tidak boleh melampaui muatan kendaraan.
 - Koreksi pengiriman dibatasi ke Owner, disertai alasan dan rekam audit; konfirmasi penerima harus diulang setelah koreksi.
-- Saldo tabung kosong pelanggan mencakup kewajiban historis, pengembalian yang terkait, dan pengiriman yang telah selesai.
+- Saldo tabung kosong pelanggan mencakup kewajiban historis, pengembalian yang terkait, dan pengiriman yang telah dikonfirmasi penerima.
 - Invoice dibentuk dari hasil pengiriman yang terverifikasi, tanpa posting stok ulang.
 - Harga dan data biaya harus tetap terlindungi di sisi database, bukan sekadar disembunyikan pada UI.
 
@@ -65,13 +67,13 @@ Laporan saat ini memakai pendekatan **rata-rata tertimbang pembelian yang disetu
 
 **Jangan perlakukan laporan ini sebagai laba bersih akuntansi final:** penanganan stok awal, retur pembelian/penjualan, biaya perolehan, urutan waktu penilaian persediaan, dan rekonsiliasi historis masih memerlukan penyempurnaan/pengujian. Jangan menggunakan seluruh nilai pembelian sebagai HPP periode berjalan.
 
-## Status implementasi dan pengujian (27 Oktober 2026)
+## Status implementasi dan pengujian (28 Oktober 2026)
 
 **Sudah terpasang di kode/database:**
 - Struktur empat peran dan menu sesuai peran.
 - Pembuatan akun petugas manual tanpa undangan.
 - Master produk/mitra, transaksi pembelian/penjualan, pembayaran, dan biaya operasional.
-- Pengajuan Logistik, ACC Owner, mutasi stok, cetak SJ.
+- Konfirmasi datang oleh Logistik, SJ dan perjalanan satu langkah, mutasi stok, cetak SJ.
 - Perjalanan Sopir dengan banyak pelanggan, penerimaan kembali, pembatasan muatan.
 - Pencatatan penerima dan tanda tangan, koreksi dengan audit trail.
 - Invoice per kunjungan / gabungan per pelanggan dalam satu perjalanan.

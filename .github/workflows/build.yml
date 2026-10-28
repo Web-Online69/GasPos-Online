@@ -17,4 +17,5 @@ jobs:
       - run: npm ci
       - run: npm run test:audit
       - run: npm run test:members
+      - run: npm run test:flow
       - run: npm run build

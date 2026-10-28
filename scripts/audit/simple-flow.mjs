@@ -1,0 +1,73 @@
+import {PGlite} from '@electric-sql/pglite';
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const root=new URL('../../',import.meta.url),read=p=>fs.readFileSync(new URL(p,root),'utf8');
+const db=new PGlite(),results=[];
+await db.exec(read('scripts/audit/fixtures/baseline-schema.sql'));
+await db.exec(read('scripts/audit/fixtures/baseline-policies.sql'));
+await db.exec(read('scripts/audit/fixtures/baseline-integrity.sql'));
+await db.exec('GRANT USAGE ON SCHEMA public,auth,gaspos_private TO authenticated; GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;');
+for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql'])await db.exec(read('supabase/'+p));
+const q=async(sql,p=[])=> (await db.query(sql,p)).rows;
+const scalar=async(sql,p=[])=>Object.values((await q(sql,p))[0])[0];
+const pass=(test,detail)=>results.push({test,status:'PASS',detail});
+const denied=async(test,sql,p=[])=>{try{await q(sql,p);}catch(e){pass(test,e.message);return;}throw Error(test+' unexpectedly accepted');};
+const ids=Object.fromEntries(['OWNER','LOGISTIK','SALES_SOPIR','KEUANGAN'].map(role=>[role,crypto.randomUUID()]));
+for(const [role,id] of Object.entries(ids)){await q('insert into auth.users(id) values($1)',[id]);await q('insert into gas_members(user_id,role,active) values($1,$2,true)',[id,role]);}
+const product=crypto.randomUUID(),supplier=crypto.randomUUID(),customers=[crypto.randomUUID(),crypto.randomUUID(),crypto.randomUUID()];
+await q("insert into gas_products(id,name) values($1,'SIMPLE FLOW TEST')",[product]);
+await q("insert into gas_partners(id,name,partner_type) values($1,'TEST supplier','SUPPLIER')",[supplier]);
+for(const [i,id] of customers.entries())await q("insert into gas_partners(id,name,partner_type) values($1,$2,'CUSTOMER')",[id,'TEST customer '+i]);
+for(const row of await q("select tablename from pg_tables where schemaname='public'"))await db.exec('alter table public.'+row.tablename+' enable row level security');
+await db.exec('SET ROLE authenticated');
+const as=async role=>q("select set_config('request.jwt.claim.sub',$1,false)",[ids[role]]);
+await as('OWNER');
+const purchase=await scalar("select gaspos_create_purchase($1,'test',$2,'',current_date,null,0,0)",[supplier,JSON.stringify([{product_id:product,quantity_full:100,quantity_empty:0,unit_price:17000,purchase_mode:'REFILL_NO_EXCHANGE'}])]);pass('Owner membuat pembelian');
+await as('LOGISTIK');
+const receipt=crypto.randomUUID();
+assert.equal(await scalar("select gaspos_confirm_purchase_arrival($1,$2,100,0,'test',$3)",[purchase,product,receipt]),purchase);
+assert.equal(await scalar("select gaspos_confirm_purchase_arrival($1,$2,100,0,'test',$3)",[purchase,product,receipt]),purchase);pass('Logistik konfirmasi datang sekali tanpa ACC Owner; replay aman');
+await denied('Penerimaan kedua melebihi pesanan ditolak',"select gaspos_confirm_purchase_arrival($1,$2,1,0,'test',$3)",[purchase,product,crypto.randomUUID()]);
+const stock=async()=> (await q('select full_balance,empty_balance from gaspos_logistics_balances() where product_id=$1',[product]))[0];
+assert.deepEqual(await stock(),{full_balance:100,empty_balance:0});pass('Stok setelah datang 100/0');
+const sj=crypto.randomUUID();
+assert.equal(await scalar("select gaspos_create_delivery_sj($1,60,$2,'trial 001','test',$3)",[product,ids.SALES_SOPIR,sj]),sj);
+assert.equal(await scalar("select gaspos_create_delivery_sj($1,60,$2,'trial 001','test',$3)",[product,ids.SALES_SOPIR,sj]),sj);
+assert.deepEqual(await stock(),{full_balance:40,empty_balance:0});pass('Logistik membuat SJ + muatan + Sopir + kendaraan satu langkah; replay tidak mengurangi stok lagi');
+await denied('ID SJ sama dengan muatan berbeda ditolak',"select gaspos_create_delivery_sj($1,59,$2,'trial 001','test',$3)",[product,ids.SALES_SOPIR,sj]);
+const trip=await scalar('select id from gas_trips where request_id=$1',[sj]);
+await as('KEUANGAN');await denied('Keuangan tidak membuat SJ',"select gaspos_create_delivery_sj($1,1,$2,'trial 001','test',$3)",[product,ids.SALES_SOPIR,crypto.randomUUID()]);
+await as('SALES_SOPIR');await denied('Sopir tidak mengonfirmasi pembelian',"select gaspos_confirm_purchase_arrival($1,$2,1,0,'test',$3)",[purchase,product,crypto.randomUUID()]);
+await denied('Sopir tidak mengirim di atas muatan',"select gaspos_record_stop($1,$2,61,0,'test')",[trip,customers[0]]);
+const stops=[];
+for(const [i,full,empty] of [[0,20,15],[1,15,15],[2,10,8]]){
+ const stop=await scalar("select gaspos_record_stop($1,$2,$3,$4,'Faktur barang tanpa harga')",[trip,customers[i],full,empty]);stops.push(stop);
+ await q('select gaspos_confirm_stop_signed($1,$2,$3)',[stop,'TEST receiver '+i,JSON.stringify([[[10,10],[20,20],[30,10]]])]);
+}
+assert.equal(Number(await scalar('select count(*) from gas_financial_entries')),0);pass('Sopir membuat 3 faktur barang; harga tidak terbaca');
+await denied('Sopir tidak menentukan tagihan','select gaspos_invoice_trip_stop($1,18500,current_date,null)',[stops[0]]);
+await as('OWNER');
+assert.equal(await scalar('select status from gas_trips where id=$1',[trip]),'ON_ROUTE');
+const invoices=[];for(const stop of stops)invoices.push(await scalar('select gaspos_invoice_trip_stop($1,18500,current_date,null)',[stop]));
+assert.deepEqual(await stock(),{full_balance:40,empty_balance:0});pass('Owner konfirmasi faktur dan tetapkan harga sebelum kendaraan pulang; invoice tidak mutasi stok');
+await denied('Invoice ganda ditolak','select gaspos_invoice_trip_stop($1,18500,current_date,null)',[stops[0]]);
+const debt=await q('select customer_id,owed_qty from gaspos_customer_empty_all_balances() where product_id=$1',[product]);
+assert.deepEqual(customers.map(id=>Number(debt.find(x=>x.customer_id===id).owed_qty)),[5,0,2]);pass('Saldo kosong A5/B0/C2 tersedia saat faktur dikonfirmasi');
+await as('KEUANGAN');
+await q('select gaspos_record_payment($1,100000)',[invoices[0]]);await q('select gaspos_record_payment($1,270000)',[invoices[0]]);
+await q('select gaspos_record_payment($1,277500)',[invoices[1]]);await q('select gaspos_record_payment($1,185000)',[invoices[2]]);
+await denied('Uang masuk melebihi tagihan ditolak','select gaspos_record_payment($1,1)',[invoices[0]]);pass('Keuangan konfirmasi uang masuk parsial dan lunas');
+const balance=await q('select document_total,paid_total from gaspos_trade_balances where id=any($1::uuid[])',[invoices]);assert.equal(balance.length,3);for(const row of balance)assert.equal(row.document_total,row.paid_total);
+await as('OWNER');await denied('Edit harga invoice langsung ditolak',"update gas_financial_entries set unit_price=1 where document_item_id in(select id from gas_document_items where document_id=$1)",[invoices[0]]);
+await denied('Pembayaran langsung melewati prosedur ditolak','insert into gas_payments(document_id,amount) values($1,999999)',[invoices[0]]);
+await as('LOGISTIK');await q('select gaspos_return_trip($1,15,38)',[trip]);assert.deepEqual(await stock(),{full_balance:55,empty_balance:38});pass('Rekonsiliasi gudang terpisah tetap benar setelah invoice/pembayaran');
+await as('OWNER');const report=(await q('select * from gaspos_profit_loss_summary()'))[0];assert.equal(Number(report.revenue),832500);assert.equal(Number(report.hpp),765000);pass('Pendapatan dan HPP sesuai alur baru',report);
+
+await db.exec('BEGIN');await as('LOGISTIK');
+const groupedSJ=await scalar("select gaspos_create_delivery_sj($1,2,$2,'group 01','test',$3)",[product,ids.SALES_SOPIR,crypto.randomUUID()]);
+const groupedTrip=await scalar('select id from gas_trips where request_id=$1',[groupedSJ]);
+await as('SALES_SOPIR');for(let i=0;i<2;i++){const stop=await scalar("select gaspos_record_stop($1,$2,1,0,'Faktur gabungan')",[groupedTrip,customers[0]]);await q("select gaspos_confirm_stop_signed($1,'TEST receiver',$2)",[stop,JSON.stringify([[[1,1],[2,2],[3,3]]])]);}
+await as('OWNER');const groupedInvoice=await scalar('select gaspos_invoice_trip_customer($1,$2,18500,current_date,null)',[groupedTrip,customers[0]]);
+assert.equal(Number(await scalar('select quantity_full from gas_document_items where document_id=$1',[groupedInvoice])),2);assert.equal(await scalar('select status from gas_trips where id=$1',[groupedTrip]),'ON_ROUTE');pass('Owner konfirmasi faktur gabungan sebelum kendaraan pulang');await db.exec('ROLLBACK');await as('LOGISTIK');assert.deepEqual(await stock(),{full_balance:55,empty_balance:38});
+
+console.log(JSON.stringify({scope:'isolated PostgreSQL with authenticated role + production policies/RPCs',results},null,2));await db.close();

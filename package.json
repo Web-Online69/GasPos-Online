@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:audit": "FIX=1 node scripts/audit/database.mjs",
-    "test:members": "node --test scripts/audit/member-function.test.mjs"
+    "test:members": "node --test scripts/audit/member-function.test.mjs",
+    "test:flow": "node scripts/audit/simple-flow.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.76.0"
