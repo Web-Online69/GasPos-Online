@@ -384,3 +384,40 @@
   .app-shell :is(.trade-actions-cell,#log-rows,#trip-list,#user-rows) button{min-height:36px}
   .app-shell :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog){max-width:calc(100vw - 24px)}
 }
+
+
+/* Pengguna — spacious desktop table and legible mobile cards. */
+.app-shell .users-table-wrap{width:100%;max-width:100%;overflow-x:auto}
+.app-shell .users-table{width:100%;min-width:630px;table-layout:fixed;border-collapse:collapse}
+.app-shell .users-table th,.app-shell .users-table td{vertical-align:middle;text-align:left;padding:14px 12px;font-size:12px;line-height:1.45}
+.app-shell .users-table th:nth-child(1){width:33%}
+.app-shell .users-table th:nth-child(2){width:19%}
+.app-shell .users-table th:nth-child(3){width:14%}
+.app-shell .users-table th:nth-child(4){width:34%}
+.app-shell .users-table .user-id{font-family:inherit;font-size:12px;font-weight:650;letter-spacing:0;overflow-wrap:anywhere;word-break:normal}
+.app-shell .user-status{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:650;white-space:nowrap}
+.app-shell .user-status.is-active{background:#1b4543;color:#b5f0e0}
+.app-shell .user-status.is-inactive{background:#42373b;color:#f0c5c8}
+.app-shell .user-actions{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:6px}
+.app-shell .user-actions button{width:auto!important;max-width:none!important;min-width:62px!important;min-height:36px!important;padding:8px 10px!important;font-size:11px!important;line-height:1.2!important;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;border-radius:8px!important}
+.app-shell .user-actions .user-toggle{min-width:92px!important}
+.app-shell .user-owner-label{font-size:11px;color:#b0c6d1;white-space:nowrap}
+@media(max-width:700px){
+ .app-shell .users-table-wrap{overflow:visible}
+ .app-shell .users-table{display:block;min-width:0;width:100%}
+ .app-shell .users-table thead{display:none}
+ .app-shell .users-table tbody{display:grid;grid-template-columns:1fr;gap:12px}
+ .app-shell .users-table tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;row-gap:10px;padding:16px;background:#162c3a;border:1px solid #385464;border-radius:12px}
+ .app-shell .users-table tbody td{display:block;min-width:0;padding:0!important;border:0!important;text-align:left}
+ .app-shell .users-table tbody td::before{content:attr(data-label);display:block;color:#9cb8c6;font-size:10px;font-weight:650;margin-bottom:4px}
+ .app-shell .users-table tbody td.user-id{grid-column:1/-1;font-size:13px;overflow-wrap:anywhere}
+ .app-shell .users-table tbody td.user-id::before{margin-bottom:6px}
+ .app-shell .users-table tbody td:nth-child(2){grid-column:1}
+ .app-shell .users-table tbody td:nth-child(3){grid-column:2}
+ .app-shell .users-table tbody td.user-actions-cell{grid-column:1/-1;border-top:1px solid #365261!important;padding-top:12px!important}
+ .app-shell .user-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .app-shell .user-actions button{width:100%!important;min-width:0!important;padding:9px 6px!important}
+ .app-shell .user-actions .user-toggle{min-width:0!important}
+ .app-shell .users-table tbody tr:has(td[colspan]){display:block}
+ .app-shell .users-table tbody tr td[colspan]::before{display:none}
+}
