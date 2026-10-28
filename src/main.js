@@ -269,4 +269,33 @@ async function logout(){el.onclick=null;await api.auth.signOut();currentRole=nul
 const shell=el.querySelector('.app-shell'),toggle=document.getElementById('menu-toggle');const closeMenu=()=>{shell.classList.remove('sidebar-open');toggle.setAttribute('aria-expanded','false')};toggle.onclick=()=>{const open=shell.classList.toggle('sidebar-open');toggle.setAttribute('aria-expanded',String(open))};document.getElementById('sidebar-backdrop').onclick=closeMenu;document.getElementById('logout-desktop').onclick=logout;el.onclick=e=>{const nav=e.target.closest('[data-view]');if(nav&&el.contains(nav)){navigate(nav.dataset.view);closeMenu()}};navigate('ringkasan')}
 async function enter(user){const{data,error}=await api.from('gas_members').select('role,active').eq('user_id',user.id).maybeSingle();if(error||!data?.active||!['OWNER','LOGISTIK','SALES_SOPIR','KEUANGAN'].includes(data.role)){await api.auth.signOut();login('Akun belum memiliki izin GASPOS. Hubungi administrator.');return}dashboard(data.role)}
 
+
+/* Guard against rapid duplicate actions and require an explicit warning on high-impact forms.
+   Database RPCs must still enforce idempotency and permissions independently. */
+const gasposActionTimes=new WeakMap();
+const gasposConfirmForms={
+ 'expense-form':'Simpan biaya operasional ini? Nilai akan masuk laporan keuangan.',
+ 'payment-form':'Catat pembayaran ini? Pastikan dokumen dan nominal sudah benar.',
+ 'trade-form':'Simpan dokumen transaksi ini? Periksa mitra, barang, dan jumlah.',
+ 'user-form':'Buat akun petugas ini? Pastikan ID dan hak akses benar.'
+};
+document.addEventListener('submit',event=>{
+ const form=event.target;
+ if(!(form instanceof HTMLFormElement)||!form.closest('.app-shell'))return;
+ const now=Date.now(),prior=gasposActionTimes.get(form)||0;
+ if(now-prior<1800){event.preventDefault();event.stopImmediatePropagation();return}
+ const message=gasposConfirmForms[form.id];
+ if(message&&!window.confirm(message)){event.preventDefault();event.stopImmediatePropagation();return}
+ gasposActionTimes.set(form,now);
+},true);
+document.addEventListener('click',event=>{
+ const button=event.target instanceof Element?event.target.closest('button'):null;
+ if(!button||!button.closest('.app-shell')||button.disabled)return;
+ // Buttons submitting forms are guarded on the form submit event.
+ if((button.type||'submit')==='submit'&&button.form)return;
+ const now=Date.now(),prior=gasposActionTimes.get(button)||0;
+ if(now-prior<1200){event.preventDefault();event.stopImmediatePropagation();return}
+ gasposActionTimes.set(button,now);
+},true);
+
 login(!api?'Koneksi Supabase belum dikonfigurasi.':'');if(api)api.auth.getUser().then(({data})=>{if(data.user)return enter(data.user)}).catch(()=>{});
