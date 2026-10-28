@@ -1,0 +1,7 @@
+# Perbaikan sesi pengelolaan petugas — 28 Oktober 2026
+
+Gejala: Simpan Perubahan pada Edit Petugas menghasilkan pesan generik non-2xx; login dengan password baru gagal karena perubahan belum tersimpan. Log Auth pada waktu kejadian memperlihatkan session_not_found pada GET /user, disusul invalid_credentials saat login. Tidak ada alasan untuk mengubah password secara diam-diam dari gambar yang dikirim.
+
+Perubahan: seluruh operasi pengelolaan akun memakai helper bersama. Helper mengambil sesi terkini; pada respons401 mencoba refreshSession dan mengulang sekali dengan token baru. Jika sesi hilang, hapus sesi lokal saja dan tampilkan login dengan penjelasan bahwa perubahan belum tersimpan. Sesi Owner pada perangkat lain dipertahankan. Pesan SafeError backend dibaca dari Response sehingga tidak ditutupi pesan SDK generik. Kesalahan jaringan/5xx tidak diulang otomatis karena hasil mutasi mungkin tidak pasti. Pemeriksaan active OWNER di server tidak diubah.
+
+Validasi: 8 pengujian baru (sesi sah, token baru, sesi terhapus,401 berulang, pesan validasi, server502,403 peran, sesi lokal kosong), ditambah 8 pengujian fungsi akun lama; total16 PASS. Build/syntax/diff PASS. Password pengguna tidak diambil dari screenshot, tidak di-reset oleh audit, dan tidak dimasukkan ke kode/laporan/log. Setelah deployment, Owner perlu masuk kembali dan mengulang penyimpanan password pilihannya melalui form aplikasi. Penggantian password aktual dari screenshot belum diklaim berhasil.
