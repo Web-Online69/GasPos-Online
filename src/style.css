@@ -317,3 +317,70 @@
 .app-shell #log-rows .trade-cancel-btn{background:#593038;color:#ffe6e6}
 .app-shell .log-reason{display:block;margin-top:5px;color:#e6b3a9;max-width:200px}
 @media(max-width:620px){.app-shell .logistics-form{grid-template-columns:1fr}.app-shell #log-rows td,.app-shell #log-rows th{white-space:nowrap}}
+
+
+/* Unified GASPOS control system — desktop and mobile, scoped to application only. */
+.app-shell{
+  --control-height:40px;
+  --control-border:#496474;
+  --control-bg:#102636;
+  --control-text:#ecf5f8;
+  --control-focus:#5db7b6;
+}
+.app-shell :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),select,textarea){
+  box-sizing:border-box;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  min-height:var(--control-height);
+  padding:9px 12px;
+  border:1px solid var(--control-border);
+  border-radius:8px;
+  background:var(--control-bg);
+  color:var(--control-text);
+  font-family:inherit;
+  font-size:13px;
+  line-height:1.45;
+  transition:border-color .15s ease,box-shadow .15s ease;
+}
+.app-shell :is(input,select,textarea)::placeholder{color:#91a9b7;opacity:1}
+.app-shell textarea{min-height:78px;resize:vertical}
+.app-shell :is(input,select,textarea):focus-visible{
+  outline:2px solid var(--control-focus);
+  outline-offset:1px;
+  border-color:var(--control-focus);
+}
+.app-shell :is(input,select,textarea):disabled{opacity:.58;cursor:not-allowed}
+.app-shell :is(input,textarea)[readonly]{background:#203746;color:#b8cbd2}
+.app-shell :is(label){overflow-wrap:break-word}
+.app-shell :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog) :is(input,select,textarea){width:100%;min-width:0}
+.app-shell :is(button:not(.menu-toggle):not(.app-side-link):not(.app-menu-tile):not(.logout-btn)){
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:36px;
+  padding:8px 12px;
+  border-radius:8px;
+  font-family:inherit;
+  font-size:12px;
+  font-weight:650;
+  line-height:1.25;
+  text-align:center;
+  cursor:pointer;
+  transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease;
+}
+.app-shell button:focus-visible{outline:2px solid var(--control-focus);outline-offset:2px}
+.app-shell button:disabled{cursor:not-allowed;opacity:.55}
+.app-shell :is(.trade-actions,.product-actions,.supplier-actions,.purchase-toolbar-actions){display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.app-shell :is(.trade-actions-cell,#log-rows,#trip-list,#user-rows) button{width:auto;min-height:34px;max-width:100%;white-space:normal}
+.app-shell :is(.trade-cancel-btn,.user-delete){border:1px solid #835761;background:#50323d;color:#ffe3e6}
+.app-shell :is(.trade-add,.trade-approve,.product-save){border:1px solid #478482;background:#175a59;color:#f0fffd}
+.app-shell :is(.trade-secondary,.trade-view,.user-edit,.user-toggle){border:1px solid #506c7e;background:#2b4555;color:#e7f3f8}
+@media(max-width:620px){
+  .app-shell{--control-height:42px}
+  .app-shell :is(.trade-toolbar,.purchase-toolbar-actions,.trade-actions){gap:8px}
+  .app-shell :is(.trade-actions-cell,#log-rows,#trip-list,#user-rows) button{min-height:36px}
+  .app-shell :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog){max-width:calc(100vw - 24px)}
+}
