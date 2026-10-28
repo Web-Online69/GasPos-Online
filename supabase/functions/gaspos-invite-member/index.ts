@@ -136,7 +136,7 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
           ['gas_operating_expenses', 'created_by'], ['gas_empty_returns', 'created_by'],
           ['gas_purchase_returns', 'created_by'], ['gas_supplier_refunds', 'created_by'],
           ['gas_trip_stops', 'created_by'], ['gas_trip_stops', 'corrected_by'],
-          ['gas_trip_stop_audit', 'changed_by'], ['gas_trips', 'returned_by'],
+          ['gas_trip_stop_audit', 'changed_by'], ['gas_trips', 'returned_by'], ['gas_trips', 'driver_user_id'],
           ['gas_inventory_opening_costs', 'created_by'],
         ];
         for (const [table, column] of references) {
