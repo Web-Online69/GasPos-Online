@@ -85,9 +85,19 @@ content.querySelector('#payment-refund').onclick=()=>{
 async function showUsers(){
  content.innerHTML='<div class="app-heading"><p>PENGATURAN</p><h1>Pengguna</h1><span>Buat ID login dan password petugas secara manual tanpa email undangan.</span></div><section class="app-data-panel"><div class="trade-toolbar"><h2>Pengguna GASPOS</h2><button type="button" class="trade-add" id="user-add">+ Buat Pengguna</button></div><div class="product-table-wrap"><table class="product-table"><thead><tr><th>ID Pengguna</th><th>Peran</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="user-rows"><tr><td colspan="4">Memuat...</td></tr></tbody></table></div></section><div id="user-editor"></div>';addBackButton();
  const rows=content.querySelector('#user-rows');let users=[];
- const render=()=>{rows.innerHTML=users.length?users.map(u=>'<tr><td class="user-id">'+htmlEscape(u.username||u.user_id.slice(0,8))+'</td><td>'+htmlEscape(u.role)+'</td><td>'+(u.active?'Aktif':'Nonaktif')+'</td><td>'+(u.role!=='OWNER'?'<button type="button" class="user-toggle" data-user-id="'+u.user_id+'">'+(u.active?'Nonaktifkan':'Aktifkan')+'</button> <button type="button" class="user-edit" data-edit-id="'+u.user_id+'">Edit</button>':'Owner')+'</td></tr>').join(''):'<tr><td colspan="4" class="product-empty">Belum ada pengguna.</td></tr>'};
+ const render=()=>{rows.innerHTML=users.length?users.map(u=>'<tr><td class="user-id">'+htmlEscape(u.username||u.user_id.slice(0,8))+'</td><td>'+htmlEscape(u.role)+'</td><td>'+(u.active?'Aktif':'Nonaktif')+'</td><td>'+(u.role!=='OWNER'?'<button type="button" class="user-toggle" data-user-id="'+u.user_id+'">'+(u.active?'Nonaktifkan':'Aktifkan')+'</button> <button type="button" class="user-edit" data-edit-id="'+u.user_id+'">Edit</button> <button type="button" class="user-delete" data-delete-id="'+u.user_id+'">Hapus</button>':'Owner')+'</td></tr>').join(''):'<tr><td colspan="4" class="product-empty">Belum ada pengguna.</td></tr>'};
  const load=async()=>{const {data,error}=await api.functions.invoke('gaspos-invite-member',{body:{action:'list'}});if(error||!Array.isArray(data?.users)){rows.innerHTML='<tr><td colspan="4" class="product-empty">'+htmlEscape(error?.message||data?.error||'Gagal memuat pengguna')+'</td></tr>';return}users=data.users;render()};await load();
  rows.onclick=async e=>{
+  const del=e.target.closest('[data-delete-id]');
+  if(del){
+    const u=users.find(v=>v.user_id===del.dataset.deleteId);if(!u||u.role==='OWNER')return;
+    if(!confirm('Hapus akun '+u.username+' secara permanen? Akun dengan riwayat transaksi tidak boleh dihapus.'))return;
+    if(!confirm('Konfirmasi terakhir: akun '+u.username+' akan dihapus dan tidak bisa login lagi.'))return;
+    del.disabled=true;
+    const {data,error}=await api.functions.invoke('gaspos-invite-member',{body:{action:'delete',user_id:u.user_id}});
+    if(error||!data?.ok){alert(data?.error||error?.message||'Gagal menghapus akun');del.disabled=false;return}
+    await load();return;
+  }
   const edit=e.target.closest('[data-edit-id]');
   if(edit){
    const u=users.find(v=>v.user_id===edit.dataset.editId);if(!u||u.role==='OWNER')return;
