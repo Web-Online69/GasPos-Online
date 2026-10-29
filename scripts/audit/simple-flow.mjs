@@ -7,7 +7,7 @@ await db.exec(read('scripts/audit/fixtures/baseline-schema.sql'));
 await db.exec(read('scripts/audit/fixtures/baseline-policies.sql'));
 await db.exec(read('scripts/audit/fixtures/baseline-integrity.sql'));
 await db.exec('GRANT USAGE ON SCHEMA public,auth,gaspos_private TO authenticated; GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;');
-for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql','audit_finance_partner_names.sql','audit_payment_retry.sql','audit_logistics_shared_read.sql'])await db.exec(read('supabase/'+p));
+for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql','audit_finance_partner_names.sql','audit_payment_retry.sql','audit_logistics_shared_read.sql','audit_form_retry.sql'])await db.exec(read('supabase/'+p));
 const q=async(sql,p=[])=> (await db.query(sql,p)).rows;
 const scalar=async(sql,p=[])=>Object.values((await q(sql,p))[0])[0];
 const pass=(test,detail)=>results.push({test,status:'PASS',detail});
@@ -52,9 +52,34 @@ await as('LOGISTIK');
 await as('KEUANGAN');await denied('Keuangan tidak membuat SJ',"select gaspos_create_delivery_sj($1,1,$2,'trial 001','test',$3)",[product,ids.SALES_SOPIR,crypto.randomUUID()]);
 await as('SALES_SOPIR');await denied('Sopir tidak mengonfirmasi pembelian',"select gaspos_confirm_purchase_arrival($1,$2,1,0,'test',$3)",[purchase,product,crypto.randomUUID()]);
 await denied('Sopir tidak mengirim di atas muatan',"select gaspos_record_stop($1,$2,61,0,'test')",[trip,customers[0]]);
+// Lost-response delivery retries must never reserve the customer's goods twice.
+await db.exec('BEGIN');
+await q("select gaspos_record_stop($1,$2,1,0,'retry baseline')",[trip,customers[0]]);await q("select gaspos_record_stop($1,$2,1,0,'retry baseline')",[trip,customers[0]]);
+assert.equal(Number(await scalar('select sum(full_qty) from gas_trip_stops where trip_id=$1',[trip])),2);pass('Baseline reproduces duplicate delivery on an old form retry');await db.exec('ROLLBACK');await as('SALES_SOPIR');
+await db.exec('BEGIN');const stopRequest=crypto.randomUUID();
+const onceStop=await scalar("select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,customers[0],stopRequest]);
+assert.equal(await scalar("select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,customers[0],stopRequest]),onceStop);
+assert.equal(Number(await scalar('select sum(full_qty) from gas_trip_stops where trip_id=$1',[trip])),1);pass('Driver retry returns same Faktur ID and reserves one quantity only');
+for(const [test,sql,args] of [
+ ['Delivery key rejects changed full quantity',"select gaspos_record_stop_once($1,$2,2,0,'retry test',$3)",[trip,customers[0],stopRequest]],
+ ['Delivery key rejects changed empty quantity',"select gaspos_record_stop_once($1,$2,1,1,'retry test',$3)",[trip,customers[0],stopRequest]],
+ ['Delivery key rejects changed customer',"select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,customers[1],stopRequest]],
+ ['Delivery key rejects changed notes',"select gaspos_record_stop_once($1,$2,1,0,'changed',$3)",[trip,customers[0],stopRequest]],
+ ['Delivery key is required',"select gaspos_record_stop_once($1,$2,1,0,'retry test',null)",[trip,customers[0]]],
+ ['Retry procedure still rejects excessive load',"select gaspos_record_stop_once($1,$2,60,0,'retry test',$3)",[trip,customers[0],crypto.randomUUID()]],
+ ['Retry procedure rejects invalid customer',"select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,supplier,crypto.randomUUID()]],
+])await deniedInTransaction(test,sql,args);
+await as('OWNER');await deniedInTransaction('Delivery replay rejects different submitting staff',"select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,customers[0],stopRequest]);
+for(const role of ['LOGISTIK','KEUANGAN']){await as(role);await deniedInTransaction(role+' cannot record a driver delivery',"select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,customers[0],crypto.randomUUID()]);}
+await q("select set_config('request.jwt.claim.sub',$1,false)",[unassignedDriver]);await deniedInTransaction('Unassigned driver cannot replay another driver request',"select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,customers[0],stopRequest]);
+await as('SALES_SOPIR');await q("select gaspos_confirm_stop_signed($1,'TEST retry receiver',$2)",[onceStop,JSON.stringify([[[1,1],[2,2],[3,3]]])]);
+await as('LOGISTIK');await q('select gaspos_return_trip($1,59,0)',[trip]);
+await as('SALES_SOPIR');assert.equal(await scalar("select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,customers[0],stopRequest]),onceStop);pass('Known delivery replay after closing acknowledges old result without new posting');
+await deniedInTransaction('New delivery after closing remains rejected',"select gaspos_record_stop_once($1,$2,1,0,'retry test',$3)",[trip,customers[0],crypto.randomUUID()]);
+await db.exec('ROLLBACK');await as('SALES_SOPIR');
 const stops=[];
 for(const [i,full,empty] of [[0,20,15],[1,15,15],[2,10,8]]){
- const stop=await scalar("select gaspos_record_stop($1,$2,$3,$4,'Faktur barang tanpa harga')",[trip,customers[i],full,empty]);stops.push(stop);
+ const stop=await scalar("select gaspos_record_stop_once($1,$2,$3,$4,'Faktur barang tanpa harga',$5)",[trip,customers[i],full,empty,crypto.randomUUID()]);stops.push(stop);
  await q('select gaspos_confirm_stop_signed($1,$2,$3)',[stop,'TEST receiver '+i,JSON.stringify([[[10,10],[20,20],[30,10]]])]);
 }
 assert.equal(Number(await scalar('select count(*) from gas_financial_entries')),0);pass('Sopir membuat 3 faktur barang; harga tidak terbaca');
@@ -86,14 +111,17 @@ await as('KEUANGAN');await q('select gaspos_record_payment_once($1,100000,$2)',[
 assert.equal(Number(await scalar('select paid_total from gaspos_trade_balances where id=$1',[invoices[0]])),200000);pass('A distinct intentional payment with the same amount remains allowed');
 await deniedInTransaction('Idempotent payment still rejects overpayment','select gaspos_record_payment_once($1,170001,$2)',[invoices[0],crypto.randomUUID()]);
 await db.exec('ROLLBACK');await as('KEUANGAN');
-await q('select gaspos_record_payment($1,100000)',[invoices[0]]);await q('select gaspos_record_payment($1,270000)',[invoices[0]]);
-await q('select gaspos_record_payment($1,277500)',[invoices[1]]);await q('select gaspos_record_payment($1,185000)',[invoices[2]]);
+await q('select gaspos_record_payment_once($1,100000,$2)',[invoices[0],crypto.randomUUID()]);await q('select gaspos_record_payment_once($1,270000,$2)',[invoices[0],crypto.randomUUID()]);
+await q('select gaspos_record_payment_once($1,277500,$2)',[invoices[1],crypto.randomUUID()]);await q('select gaspos_record_payment_once($1,185000,$2)',[invoices[2],crypto.randomUUID()]);
+await q('select gaspos_record_payment_once($1,1700000,$2)',[purchase,crypto.randomUUID()]);
+const fuelRequest=crypto.randomUUID(),fuel=await scalar("select gaspos_add_operating_expense_once(current_date,'BBM','E2E fuel',20000,$1)",[fuelRequest]);
+assert.equal(await scalar("select gaspos_add_operating_expense_once(current_date,'BBM','E2E fuel',20000,$1)",[fuelRequest]),fuel);pass('Keuangan membayar supplier dan biayaBBM20000 sekali walau retry');
 await denied('Uang masuk melebihi tagihan ditolak','select gaspos_record_payment($1,1)',[invoices[0]]);pass('Keuangan konfirmasi uang masuk parsial dan lunas');
 const balance=await q('select document_total,paid_total from gaspos_trade_balances where id=any($1::uuid[])',[invoices]);assert.equal(balance.length,3);for(const row of balance)assert.equal(row.document_total,row.paid_total);
 await as('OWNER');await denied('Edit harga invoice langsung ditolak',"update gas_financial_entries set unit_price=1 where document_item_id in(select id from gas_document_items where document_id=$1)",[invoices[0]]);
 await denied('Pembayaran langsung melewati prosedur ditolak','insert into gas_payments(document_id,amount) values($1,999999)',[invoices[0]]);
 await as('LOGISTIK');await q('select gaspos_return_trip($1,15,38)',[trip]);assert.deepEqual(await stock(),{full_balance:55,empty_balance:38});pass('Rekonsiliasi gudang terpisah tetap benar setelah invoice/pembayaran');
-await as('OWNER');const report=(await q('select * from gaspos_profit_loss_summary()'))[0];assert.equal(Number(report.revenue),832500);assert.equal(Number(report.hpp),765000);pass('Pendapatan dan HPP sesuai alur baru',report);
+await as('OWNER');const report=(await q('select * from gaspos_profit_loss_summary()'))[0];assert.equal(Number(report.revenue),832500);assert.equal(Number(report.hpp),765000);assert.equal(Number(report.gross_profit),67500);assert.equal(Number(report.operating_expenses),20000);assert.equal(Number(report.net_profit),47500);pass('Pendapatan/HPP/laba bersih sesuai alur hulu ke hilir',report);
 
 await db.exec('BEGIN');await as('LOGISTIK');
 const groupedSJ=await scalar("select gaspos_create_delivery_sj($1,2,$2,'group 01','test',$3)",[product,ids.SALES_SOPIR,crypto.randomUUID()]);
@@ -105,4 +133,49 @@ assert.equal(Number(await scalar('select quantity_full from gas_document_items w
 await as('KEUANGAN');const names=await q('select * from gaspos_finance_partner_names()');assert(names.some(x=>x.id===customers[0]));assert(names.every(x=>Object.keys(x).sort().join(',')==='id,name'));pass('Keuangan membaca nama mitra tagihan saja tanpa akses master');
 await as('LOGISTIK');await denied('Logistik tidak memakai RPC mitra keuangan','select * from gaspos_finance_partner_names()');
 await as('SALES_SOPIR');await denied('Sopir tidak memakai RPC mitra keuangan','select * from gaspos_finance_partner_names()');
+await as('KEUANGAN');const baseExpenseTotal=Number(await scalar('select coalesce(sum(amount),0) from gas_operating_expenses')),baseNetProfit=Number((await q('select * from gaspos_profit_loss_summary()'))[0].net_profit);await db.exec('BEGIN');
+await q("select gaspos_add_operating_expense(current_date,'BBM','retry baseline',20000)");await q("select gaspos_add_operating_expense(current_date,'BBM','retry baseline',20000)");
+assert.equal(Number(await scalar('select sum(amount) from gas_operating_expenses')),baseExpenseTotal+40000);pass('Baseline reproduces duplicate operating expense on an old form retry');await db.exec('ROLLBACK');await as('KEUANGAN');
+await db.exec('BEGIN');const expenseRequest=crypto.randomUUID();
+const expense=await scalar("select gaspos_add_operating_expense_once(current_date,'BBM','retry expense',20000,$1)",[expenseRequest]);
+assert.equal(await scalar("select gaspos_add_operating_expense_once(current_date,'BBM',' retry expense ',20000,$1)",[expenseRequest]),expense);
+assert.equal(Number(await scalar('select sum(amount) from gas_operating_expenses')),baseExpenseTotal+20000);pass('Expense retry records one cost, normalizes whitespace and returns same ID');
+const onceReport=(await q('select * from gaspos_profit_loss_summary()'))[0];assert.equal(Number(onceReport.operating_expenses),baseExpenseTotal+20000);assert.equal(Number(onceReport.net_profit),baseNetProfit-20000);pass('Expense retry reduces net profit by one cost only');
+for(const [test,sql,args] of [
+ ['Expense key rejects changed amount',"select gaspos_add_operating_expense_once(current_date,'BBM','retry expense',20001,$1)",[expenseRequest]],
+ ['Expense key rejects changed description',"select gaspos_add_operating_expense_once(current_date,'BBM','changed',20000,$1)",[expenseRequest]],
+ ['Expense key rejects changed category',"select gaspos_add_operating_expense_once(current_date,'MAKAN','retry expense',20000,$1)",[expenseRequest]],
+ ['Expense key rejects changed date',"select gaspos_add_operating_expense_once(current_date+1,'BBM','retry expense',20000,$1)",[expenseRequest]],
+ ['Expense key is required',"select gaspos_add_operating_expense_once(current_date,'BBM','retry expense',20000,null)",[]],
+ ['Expense rejects non-cent precision',"select gaspos_add_operating_expense_once(current_date,'BBM','retry expense',0.001,$1)",[crypto.randomUUID()]],
+ ['Expense still rejects nonpositive amount',"select gaspos_add_operating_expense_once(current_date,'BBM','retry expense',0,$1)",[crypto.randomUUID()]],
+])await deniedInTransaction(test,sql,args);
+await as('OWNER');await deniedInTransaction('Expense replay rejects different staff',"select gaspos_add_operating_expense_once(current_date,'BBM','retry expense',20000,$1)",[expenseRequest]);
+for(const role of ['LOGISTIK','SALES_SOPIR']){await as(role);await deniedInTransaction(role+' cannot add expenses',"select gaspos_add_operating_expense_once(current_date,'BBM','retry expense',20000,$1)",[crypto.randomUUID()]);}
+await as('KEUANGAN');await q("select gaspos_add_operating_expense_once(current_date,'BBM','retry expense',20000,$1)",[crypto.randomUUID()]);assert.equal(Number(await scalar('select sum(amount) from gas_operating_expenses')),baseExpenseTotal+40000);pass('Separate intentional expense remains allowed with a new request ID');
+await db.exec('ROLLBACK');await as('OWNER');assert.equal(Number((await q('select * from gaspos_profit_loss_summary()'))[0].operating_expenses),baseExpenseTotal);pass('Retry test fixtures rolled back; original scenario totals restored');
+const refundable=async()=>{
+ await as('KEUANGAN');const remaining=Number(await scalar('select document_total-paid_total from gaspos_trade_balances where id=$1',[purchase]));if(remaining>0)await q('select gaspos_record_payment_once($1,$2,$3)',[purchase,remaining,crypto.randomUUID()]);
+ await as('OWNER');const saleItem=await scalar('select id from gas_document_items where document_id=$1',[invoices[0]]),purchaseItem=await scalar('select id from gas_document_items where document_id=$1',[purchase]);
+ await q("select gaspos_return_sale_v2($1,1,0,'TEST refund credit',$2)",[saleItem,crypto.randomUUID()]);
+ await q("select gaspos_return_purchase($1,1,'TEST supplier refund credit',$2)",[purchaseItem,crypto.randomUUID()]);await as('KEUANGAN');
+};
+await db.exec('BEGIN');await refundable();
+const oldCustomerKey=crypto.randomUUID(),oldSupplierKey=crypto.randomUUID();
+const oldCustomerRefund=await scalar('select gaspos_customer_refund($1,18500,$2)',[invoices[0],oldCustomerKey]);
+assert.equal(await scalar('select gaspos_customer_refund($1,1,$2)',[purchase,oldCustomerKey]),oldCustomerRefund);
+const oldSupplierRefund=await scalar('select gaspos_record_supplier_refund($1,17000,$2)',[purchase,oldSupplierKey]);
+assert.equal(await scalar('select gaspos_record_supplier_refund($1,1,$2)',[invoices[0],oldSupplierKey]),oldSupplierRefund);pass('Baseline reproduces false success for a reused refund key with changed document/amount');
+await db.exec('ROLLBACK');await db.exec('RESET ROLE');await db.exec(read('supabase/audit_refund_replay.sql'));await db.exec('SET ROLE authenticated');await as('KEUANGAN');
+await db.exec('BEGIN');await refundable();
+for(const [rpc,document,credit,other] of [['gaspos_customer_refund',invoices[0],18500,purchase],['gaspos_record_supplier_refund',purchase,17000,invoices[0]]]){
+ const key=crypto.randomUUID(),refund=await scalar('select '+rpc+'($1,$2,$3)',[document,credit,key]);
+ assert.equal(await scalar('select '+rpc+'($1,$2,$3)',[document,credit,key]),refund);pass(rpc+' identical replay returns one original refund');
+ await deniedInTransaction(rpc+' rejects changed amount','select '+rpc+'($1,1,$2)',[document,key]);
+ await deniedInTransaction(rpc+' rejects changed document','select '+rpc+'($1,$2,$3)',[other,credit,key]);
+ await deniedInTransaction(rpc+' rejects refund beyond remaining credit','select '+rpc+'($1,1,$2)',[document,crypto.randomUUID()]);
+ for(const role of ['LOGISTIK','SALES_SOPIR']){await as(role);await deniedInTransaction(rpc+' rejects '+role,'select '+rpc+'($1,$2,$3)',[document,credit,key]);}await as('KEUANGAN');
+}
+await as('OWNER');assert.equal(Number(await scalar('select count(*) from gas_customer_refunds')),1);assert.equal(Number(await scalar('select count(*) from gas_supplier_refunds')),1);pass('Refund replay never inserts a second refund');
+await db.exec('ROLLBACK');await as('LOGISTIK');assert.deepEqual(await stock(),{full_balance:55,empty_balance:38});pass('Refund test fixtures rolled back and final stock remains55/38');
 console.log(JSON.stringify({scope:'isolated PostgreSQL with authenticated role + production policies/RPCs',results},null,2));await db.close();
