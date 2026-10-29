@@ -1,7 +1,7 @@
 import {restoreStartupSession} from './startup-session.js';
 import {loadWorkQueue,signatureSvg} from './workflow-review.js';
 import {createMemberRequest} from './member-requests.js';
-import {createClient} from '@supabase/supabase-js';import './style.css';
+import {createClient} from '@supabase/supabase-js';import './style.css';import './layout.css';
 const el=document.getElementById('app'),url=import.meta.env.VITE_SUPABASE_URL || 'https://lflnbaqpmkjjyxpznozg.supabase.co',key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "sb_publishable_El3vJYt5c12ZvgcHv6c_Ng_CyIlAuqU";
 const api=url&&key?createClient(url,key):null;
 const memberRequest=api?createMemberRequest(api,{onSessionExpired:message=>{el.onclick=null;currentRole=null;login(message)}}):null;
