@@ -15,6 +15,7 @@ const icons = {
   gas_customer_prices: ['#f2cf7c', '<path d="M3 3h8l10 10-8 8L3 11Z" fill="currentColor" fill-opacity=".3"/><circle cx="7.5" cy="7.5" r="1.5" fill="#192d3b"/><path d="m11 11 5 5m0-5-5 5" stroke="#a1e1d5"/>'],
   gas_members: ['#bea1f1', '<circle cx="9" cy="7" r="3" fill="currentColor" fill-opacity=".4"/><path d="M2 21v-3a7 7 0 0 1 14 0v3Z" fill="currentColor" fill-opacity=".24"/><circle cx="18" cy="8" r="2.5" fill="#7cc9df" stroke="#7cc9df"/><path d="M18 14a5 5 0 0 1 4 5v2" stroke="#7cc9df"/>'],
   master_data: ['#86baf6', '<rect x="3" y="3" width="7" height="7" rx="2" fill="currentColor" fill-opacity=".45"/><rect x="14" y="3" width="7" height="7" rx="2" fill="#dfa1cc" stroke="#dfa1cc"/><rect x="3" y="14" width="7" height="7" rx="2" fill="#83d5c4" stroke="#83d5c4"/><rect x="14" y="14" width="7" height="7" rx="2" fill="#edc57b" stroke="#edc57b"/>'],
+  reports: ['#87c8f3', '<path d="M5 2h10l4 4v16H5Z" fill="currentColor" fill-opacity=".22"/><path d="M14 2v5h5M8 17v-4m4 4v-7m4 7v-3" stroke="#edd18c"/>'],
   transactions: ['#86d6c8', '<path d="M3 7h17m-4-4 4 4-4 4"/><path d="M21 17H4m4-4-4 4 4 4" stroke="#edbc83"/>']
 };
 export function menuIcon(id) {

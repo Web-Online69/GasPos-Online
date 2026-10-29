@@ -11,3 +11,5 @@ Validasi lokal: `npm run test:flow`, `npm run test:audit`, `npm run test:members
 Perbaikan retry pengiriman/biaya/refund: `supabase/audit_form_retry.sql` dan `supabase/audit_refund_replay.sql` (sudah diterapkan ke GASPOS). Laporan laba rugi masih estimasi rata-rata tertimbang seluruh data. Trial browser INV/pembayaran final dan verifikasi HP fisik belum selesai; aplikasi belum dinyatakan100%.
 
 Tata letak desktop/HP: [perubahan dan batas verifikasi](docs/audit/ui-layout-20261029.md).
+
+Filter riwayat per menu dan **Laporan Transaksi** yang bisa dicetak: [panduan, hak akses dan batas perhitungan](docs/audit/history-filters-reports-20261029.md).

@@ -193,3 +193,21 @@
 @media (max-width: 420px) {
   .app-shell .app-menu-icon { width: 44px; height: 44px; }
 }
+
+/* History and report filters follow the same downward form order. */
+.app-shell [hidden] { display: none !important; }
+.app-shell .history-filters { margin: 18px 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #142633; }
+.app-shell .history-filters > summary { cursor: pointer; color: #b9e6e3; font-weight: 650; }
+.app-shell .history-filters[open] > summary { margin-bottom: 16px; }
+.app-shell .history-filter-form { max-width: 620px !important; margin: 16px 0; }
+.app-shell .filter-result { color: #b3d8df; font-size: 13px; margin: 12px 0; }
+.app-shell .report-type { max-width: 620px; margin: 0 0 20px; }
+.app-shell .report-type select { margin-top: 8px; }
+.app-shell .report-table { min-width: 760px; width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 18px; }
+.app-shell .report-table :is(th,td) { padding: 12px; text-align: left; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.app-shell .report-table th { color: #c2d8e3; background: #142633; }
+.app-shell .report-totals { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 12px; margin: 16px 0; }
+.app-shell .report-totals > div { padding: 16px; border: 1px solid var(--line); border-radius: 10px; background: #142f3b; }
+.app-shell .report-totals small,.app-shell .report-totals strong { display: block; overflow-wrap: anywhere; }
+.app-shell .report-totals small { color: var(--muted); }
+.app-shell .report-totals strong { margin-top: 6px; font-size: 18px; }
