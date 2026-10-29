@@ -25,6 +25,10 @@ Migrasi `20261029010157_history_filters_complete_stock.sql` menghapus batas500 d
 
 ## Validasi
 
-199 pemeriksaan otomatis PASS: alur86, database76, akun16, antarmuka/filter/laporan21. Pengujian baru mencakup batas hari WIB, filter gabungan, pagination1201 baris dengan batas server lebih kecil, kegagalan parsial, sumber data/cetak empat peran, akses terlarang sebelum query, pembayaran masuk/keluar, total cetak dan escaping HTML, serta fungsi mutasi501 baris dengan penolakan peran yang salah. Build lokal PASS. Verifikasi deployment/browser dicatat setelah publikasi.
+200 pemeriksaan otomatis PASS: alur86, database76, akun16, antarmuka/filter/laporan22. Pengujian baru mencakup batas hari WIB, filter gabungan, pagination1201 baris dengan batas server lebih kecil, kegagalan parsial, sumber data/cetak empat peran, akses terlarang sebelum query, pembayaran masuk/keluar, total cetak dan escaping HTML, serta fungsi mutasi501 baris dengan penolakan peran yang salah. Build lokal PASS. Verifikasi deployment/browser dicatat setelah publikasi.
 
 Perintah CLI migrasi sempat ditolak automatic approval review karena telemetry eksternal. File migrasi telah terbentuk; penerapan dilakukan melalui konektor Supabase tanpa melanjutkan pengiriman telemetry. Advisor keamanan yang sudah ada tidak dinyatakan bersih oleh perubahan ini.
+
+## Dashboard ringkas dan nomor panjang
+
+Pekerjaan Saya ditampilkan sebagai satu tombol jumlah tugas. Klik membuka halaman Daftar Kerja; tugas nol disembunyikan, kegagalan pemuatan tetap diberi tanda bukan dianggap nol. Jumlah tugas bukan jumlah transaksi unik karena satu transaksi bisa memiliki beberapa tindak lanjut. Filter riwayat dilipat secara awal agar tidak memenuhi layar. Referensi panjang diringkas pada tabel; klik untuk membaca nomor lengkap. Nilai yang disimpan, pencarian, pilihan form, dan dokumen cetak tetap memakai data utuh.
