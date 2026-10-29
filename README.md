@@ -115,3 +115,5 @@ Perlindungan ulang Simpan pembayaran saat respons koneksi hilang: [audit pembaya
 Serah tugas gudang: patch `supabase/audit_logistics_shared_read.sql` memungkinkan semua petugas Logistik aktif membaca SJ/penerimaan gudang untuk rekonsiliasi bersama. Akses harga, keuangan, dan mutasi tetap mengikuti hak serta RPC resmi; Sopir tetap hanya melihat penugasannya sendiri.
 
 Hasil [trial browser empat peran](docs/audit/browser-role-trial-20261028.md) (28–29 Oktober2026) mencatat trial Logistik/Sopir yang sudah dijalankan serta tahap INV yang masih memerlukan konfirmasi pengguna. Hasil browser dibedakan dari trial API.
+
+Verifikasi browser29 Oktober2026: akun Keuangan berhasil membuka laporan HPP/laba rugi sampai angka terisi dan perhitungan laba kotor/bersih cocok. Laporan keseluruhan data mencakup trial dan masih estimasi. Rincian pada [trial browser](docs/audit/browser-role-trial-20261028.md).

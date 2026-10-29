@@ -16,7 +16,9 @@ Trial dilakukan pada website publik GASPOS menggunakan login peran nyata. Dokume
 | OWNER | Login; antrean menunjukkan1 faktur siap INV; bukti nama/waktu/tanda tangan diperiksa | PASS |
 | OWNER | Form konfirmasi satu kolom menghitung1 x Rp18.500 = Rp18.500 | PASS |
 | OWNER | Klik final Konfirmasi & Buat INV | BLOCKED: automatic approval review menolak aksi sebagai penerbitan catatan keuangan permanen; membutuhkan handoff pengguna |
-| KEUANGAN | Trial layar setelah penerbitan INV ini | BLOCKED: tahap INV belum diselesaikan |
+| KEUANGAN | Login; menu sesuai peran; laporan HPP/laba rugi terbuka; pendapatan, HPP, laba kotor, biaya dan laba bersih terisi | PASS untuk pemeriksaan laporan |
+| KEUANGAN | Hitungan laba kotor = pendapatan−HPP, laba bersih = laba kotor−biaya; bagian laporan tanpa kolom edit | PASS |
+| KEUANGAN | Pencatatan pembayaran INV trial layar | Belum dilakukan; INV trial belum diterbitkan |
 | LOGISTIK | Terima kembali1 penuh/1 kosong dan tutup perjalanan | Belum dilakukan; perjalanan masih ON_ROUTE |
 
 Bukti terstruktur: [browser-role-trial-20261028.json](browser-role-trial-20261028.json). Tanda tangan adalah data sintetis khusus trial, bukan klaim penerimaan barang nyata.
@@ -43,3 +45,9 @@ INV belum diterbitkan, pembayaran browser belum dicatat, dan kendaraan belum dit
 ## Perbedaan dengan trial API
 
 Trial API empat akun100 datang/60 muatan/45 terjual sebelumnya sudah PASS dan dilaporkan pada live-four-role-20261028.md. Hasil itu tidak disamakan dengan penyelesaian trial klik browser ini. Seluruh pengujian HP fisik dan semua halaman seluruh akun juga belum dinyatakan selesai. GASPOS belum dinyatakan100% selesai.
+
+## Pemeriksaan Keuangan — 29 Oktober2026
+
+Akun Keuangan berhasil login melalui formulir aman. Beranda hanya menampilkan pekerjaan terkait keuangan; kelompok master kosong dan KPI master yang tidak relevan sudah tidak muncul. Menu Keuangan dibuka sampai bagian Laba Rugi & HPP lengkap. Pemeriksaan aritmetika menggunakan nilai yang benar-benar dirender di browser lulus untuk laba kotor dan laba bersih. Tidak ada field edit pada bagian laba rugi. Angka merupakan keseluruhan data termasuk trial dengan metode rata-rata tertimbang, masih estimasi dan belum mendukung laporan per tanggal/FIFO. Angka total usaha tidak disalin ke repositori publik; pengguna dapat melihatnya di laporan aplikasi.
+
+Form INV Owner yang sebelumnya disiapkan dibatalkan untuk pergantian akun, tanpa penerbitan invoice. Pemeriksaan Keuangan ini tidak mencatat pembayaran baru. Status blokir penerbitan INV oleh automatic approval review tetap dicatat terpisah dari PASS pembacaan laporan.

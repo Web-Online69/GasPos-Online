@@ -32,7 +32,18 @@
       "receipt_review": "PASS: receiver name/time and signature visible",
       "pricing_form": "PASS: full1 x18500 =18500; fields vertical",
       "invoice_issuance": "BLOCKED_AUTO_REVIEW: click Konfirmasi & Buat INV rejected as permanent financial record; no invoice posted",
-      "prepared_action": "User must perform final confirmation in the prepared browser form"
+      "prepared_action": "Invoice form prepared and reviewed; later cancelled without issuing when user requested Finance report review"
+    },
+    "KEUANGAN": {
+      "login": "PASS: KEUANGAN visible after secure browser login",
+      "menus": "PASS: only payments, finance report, operating expenses; no empty master headings or stock/price editing",
+      "profit_loss": "PASS: Laba Rugi & HPP section fully loaded",
+      "report_fields": "PASS: revenue, HPP, gross profit, operating expenses, net profit visible",
+      "gross_arithmetic": "PASS: displayed revenue minus displayed HPP equals displayed gross profit",
+      "net_arithmetic": "PASS: displayed gross profit minus displayed expenses equals displayed net profit",
+      "report_readonly": "PASS: no editable fields in profit/loss section",
+      "period": "Whole-data weighted-average estimate; includes trial records; not a date-filtered or FIFO report",
+      "payment_posting": "Not performed in this browser review; pending trial INV remains unissued"
     }
   },
   "passwords_recorded": false,
@@ -57,14 +68,15 @@
     "vehicle_full_remaining": 1,
     "vehicle_empty_collected": 1,
     "invoice": "not issued",
-    "finance": "not yet tested through browser",
+    "finance": "PASS read-only report; payments not posted",
     "trip": "ON_ROUTE"
   },
   "pending": [
-    "User confirms prepared INV18500",
-    "Owner print INV verification",
-    "Finance browser login/negative tests and user confirms payment",
+    "User confirms trial INV if continuing transaction scenario",
+    "Owner print new INV verification",
+    "User confirms trial payment if continuing transaction scenario",
     "Logistics physical return1full/1empty and close trip",
     "Physical/mobile-device verification"
-  ]
+  ],
+  "requested_next": "Finance login and profit/loss report, read-only"
 }
