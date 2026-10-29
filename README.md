@@ -1,1 +1,11 @@
+# GASPOS Online
 
+Aplikasi operasional tabung gas dengan empat peran: Owner, Logistik, Sales/Sopir, Keuangan.
+
+Alur: Owner membeli/menetapkan harga → Logistik menerima fisik → Logistik membuat SJ dan muatan → Sopir mencatat Faktur Barang/tanda tangan per pelanggan → Owner menerbitkan INV → Keuangan mencatat uang masuk. Logistik mencocokkan tabung kembali sebelum menutup perjalanan. Formulir disusun satu kolom.
+
+[Aplikasi](https://web-online69.github.io/GasPos-Online/) · [Audit terbaru dan batas verifikasi](docs/audit/final-end-to-end-20261029.md)
+
+Validasi lokal: `npm run test:flow`, `npm run test:audit`, `npm run test:members`, `npm run test:workflow-ui`, `npm run build`.
+
+Perbaikan retry pengiriman/biaya/refund: `supabase/audit_form_retry.sql` dan `supabase/audit_refund_replay.sql` (sudah diterapkan ke GASPOS). Laporan laba rugi masih estimasi rata-rata tertimbang seluruh data. Trial browser INV/pembayaran final dan verifikasi HP fisik belum selesai; aplikasi belum dinyatakan100%.

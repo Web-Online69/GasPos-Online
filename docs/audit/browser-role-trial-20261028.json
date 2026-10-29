@@ -13,7 +13,8 @@
         "vehicle": "UI TRIAL 1028",
         "status": "PASS: success status and history row 2/0 visible"
       },
-      "print_sj": "PASS: vehicle/driver/full2/empty0, no price"
+      "print_sj": "PASS: vehicle/driver/full2/empty0, no price",
+      "return_reconciliation": "PASS: wrong2full/1empty rejected; correct1/1 accepted; RETURNED; different logistics operator verified"
     },
     "SALES_SOPIR": {
       "login": "PASS: role SALES_SOPIR visible",
@@ -63,19 +64,18 @@
   ],
   "continued_on": "2026-10-29",
   "current_state": {
-    "warehouse_full": 53,
-    "warehouse_empty": 38,
-    "vehicle_full_remaining": 1,
-    "vehicle_empty_collected": 1,
+    "warehouse_full": 54,
+    "warehouse_empty": 39,
+    "vehicle_full_remaining": 0,
+    "vehicle_empty_collected": 0,
     "invoice": "not issued",
     "finance": "PASS read-only report; payments not posted",
-    "trip": "ON_ROUTE"
+    "trip": "RETURNED"
   },
   "pending": [
     "User confirms trial INV if continuing transaction scenario",
     "Owner print new INV verification",
     "User confirms trial payment if continuing transaction scenario",
-    "Logistics physical return1full/1empty and close trip",
     "Physical/mobile-device verification"
   ],
   "requested_next": "Finance login and profit/loss report, read-only"

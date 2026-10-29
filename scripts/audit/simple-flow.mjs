@@ -117,7 +117,7 @@ await q('select gaspos_record_payment_once($1,1700000,$2)',[purchase,crypto.rand
 const fuelRequest=crypto.randomUUID(),fuel=await scalar("select gaspos_add_operating_expense_once(current_date,'BBM','E2E fuel',20000,$1)",[fuelRequest]);
 assert.equal(await scalar("select gaspos_add_operating_expense_once(current_date,'BBM','E2E fuel',20000,$1)",[fuelRequest]),fuel);pass('Keuangan membayar supplier dan biayaBBM20000 sekali walau retry');
 await denied('Uang masuk melebihi tagihan ditolak','select gaspos_record_payment($1,1)',[invoices[0]]);pass('Keuangan konfirmasi uang masuk parsial dan lunas');
-const balance=await q('select document_total,paid_total from gaspos_trade_balances where id=any($1::uuid[])',[invoices]);assert.equal(balance.length,3);for(const row of balance)assert.equal(row.document_total,row.paid_total);
+const balance=await q('select document_total,paid_total from gaspos_trade_balances where id=any($1::uuid[])',[[...invoices,purchase]]);assert.equal(balance.length,4);for(const row of balance)assert.equal(row.document_total,row.paid_total);pass('Seluruh piutang pelanggan dan utang supplier fixture bernilai nol');
 await as('OWNER');await denied('Edit harga invoice langsung ditolak',"update gas_financial_entries set unit_price=1 where document_item_id in(select id from gas_document_items where document_id=$1)",[invoices[0]]);
 await denied('Pembayaran langsung melewati prosedur ditolak','insert into gas_payments(document_id,amount) values($1,999999)',[invoices[0]]);
 await as('LOGISTIK');await q('select gaspos_return_trip($1,15,38)',[trip]);assert.deepEqual(await stock(),{full_balance:55,empty_balance:38});pass('Rekonsiliasi gudang terpisah tetap benar setelah invoice/pembayaran');

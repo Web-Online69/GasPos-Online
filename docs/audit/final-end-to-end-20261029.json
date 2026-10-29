@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-29",
+  "source_commit": "80fa486fb8a4cb2f02b123c952bebc4d646edf20",
+  "tests": {
+    "flow": 86,
+    "database": 76,
+    "members": 16,
+    "workflow_ui": 9,
+    "total": 187,
+    "status": "PASS"
+  },
+  "build": "PASS",
+  "deployment": {
+    "CI": 40794547750,
+    "Pages": 40794547735,
+    "status": "PASS",
+    "js_asset": "index-CrJGZeih.js"
+  },
+  "fixes": [
+    "Delivery retry idempotency with canonical payload and role checks",
+    "Operating expense retry idempotency with canonical payload and role checks",
+    "Customer/supplier refund replay rejects changed document or amount"
+  ],
+  "isolated_local_scenario": {
+    "purchase_full": 100,
+    "buy_price": 17000,
+    "loaded_full": 60,
+    "delivered_full": 45,
+    "collected_empty": 38,
+    "returned_full": 15,
+    "warehouse_full": 55,
+    "warehouse_empty": 38,
+    "revenue": 832500,
+    "HPP": 765000,
+    "gross_profit": 67500,
+    "operating_cost": 20000,
+    "net_profit": 47500,
+    "receivable": 0,
+    "payable": 0,
+    "customer_empty_due": [
+      5,
+      0,
+      2
+    ]
+  },
+  "live_browser_trial": {
+    "trip": "RETURNED",
+    "return_full": 1,
+    "return_empty": 1,
+    "different_logistics_operator": true,
+    "warehouse_full": 54,
+    "warehouse_empty": 39,
+    "invoice": "BLOCKED_AUTO_REVIEW",
+    "payment": "BLOCKED_PENDING_INVOICE"
+  },
+  "server_fixture": "PASS with authenticated trial-role claims; all new fixtures rolled back; no new server invoice issued",
+  "remaining": [
+    "User executes final browser invoice and payment; then print/payment retest",
+    "Physical phone and exhaustive all-page audit not verified"
+  ],
+  "passwords_recorded": false
+}

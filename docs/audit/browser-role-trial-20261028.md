@@ -19,7 +19,7 @@ Trial dilakukan pada website publik GASPOS menggunakan login peran nyata. Dokume
 | KEUANGAN | Login; menu sesuai peran; laporan HPP/laba rugi terbuka; pendapatan, HPP, laba kotor, biaya dan laba bersih terisi | PASS untuk pemeriksaan laporan |
 | KEUANGAN | Hitungan laba kotor = pendapatan−HPP, laba bersih = laba kotor−biaya; bagian laporan tanpa kolom edit | PASS |
 | KEUANGAN | Pencatatan pembayaran INV trial layar | Belum dilakukan; INV trial belum diterbitkan |
-| LOGISTIK | Terima kembali1 penuh/1 kosong dan tutup perjalanan | Belum dilakukan; perjalanan masih ON_ROUTE |
+| LOGISTIK | Terima kembali1 penuh/1 kosong dan tutup perjalanan | PASS: selisih2/1 ditolak; pengembalian1/1 diterima; RETURNED oleh petugas Logistik berbeda; saldo54 penuh/39 kosong |
 
 Bukti terstruktur: [browser-role-trial-20261028.json](browser-role-trial-20261028.json). Tanda tangan adalah data sintetis khusus trial, bukan klaim penerimaan barang nyata.
 
