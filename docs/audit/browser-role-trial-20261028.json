@@ -1,0 +1,70 @@
+{
+  "tag": "GASPOS-UI-TRIAL-20261028",
+  "roles": {
+    "LOGISTIK": {
+      "login": "PASS",
+      "menus": "PASS: no price/finance menu",
+      "stock_before": {
+        "full": 55,
+        "empty": 38
+      },
+      "sj_submitted": {
+        "full": 2,
+        "vehicle": "UI TRIAL 1028",
+        "status": "PASS: success status and history row 2/0 visible"
+      },
+      "print_sj": "PASS: vehicle/driver/full2/empty0, no price"
+    },
+    "SALES_SOPIR": {
+      "login": "PASS: role SALES_SOPIR visible",
+      "menus": "PASS: only Beranda/Faktur Penjualan; no finance/price menu",
+      "assigned_ui_trip": "PASS: UI TRIAL 1028, full2 ON_ROUTE",
+      "overload": "PASS: full3 from load2 blocked by browser native validation; no stop saved",
+      "delivery": "PASS: full1/empty1, FK-4C20A204",
+      "empty_signature": "PASS: Tanda tangan belum terisi; no confirmation posted",
+      "signed_receipt": "PASS: synthetic TEST receiver signature submitted via UI",
+      "print_goods": "PASS: full1/empty1 and receiver signature, no prices/amount",
+      "navigation_retest": "PASS on deployed d382b7b: empty groups/master KPIs removed; trip driver shown as Saya"
+    },
+    "OWNER": {
+      "login": "PASS: OWNER visible",
+      "queue": "PASS: one signed Faktur pending INV",
+      "receipt_review": "PASS: receiver name/time and signature visible",
+      "pricing_form": "PASS: full1 x18500 =18500; fields vertical",
+      "invoice_issuance": "BLOCKED_AUTO_REVIEW: click Konfirmasi & Buat INV rejected as permanent financial record; no invoice posted",
+      "prepared_action": "User must perform final confirmation in the prepared browser form"
+    }
+  },
+  "passwords_recorded": false,
+  "bugs": [
+    {
+      "area": "Logistics handover",
+      "baseline": "visible3 of6 requests; another logistics staff request hidden",
+      "fix": "shared SELECT for active OWNER/LOGISTIK only",
+      "retest": "PASS database: visible6 of6; finance entries0"
+    },
+    {
+      "area": "Driver navigation",
+      "baseline": "empty Master Data/Transaksi headings and irrelevant supplier count0",
+      "fix": "remove empty groups and master-count KPIs from Driver/Finance; driver name displayed as Saya",
+      "retest": "pending deployment"
+    }
+  ],
+  "continued_on": "2026-10-29",
+  "current_state": {
+    "warehouse_full": 53,
+    "warehouse_empty": 38,
+    "vehicle_full_remaining": 1,
+    "vehicle_empty_collected": 1,
+    "invoice": "not issued",
+    "finance": "not yet tested through browser",
+    "trip": "ON_ROUTE"
+  },
+  "pending": [
+    "User confirms prepared INV18500",
+    "Owner print INV verification",
+    "Finance browser login/negative tests and user confirms payment",
+    "Logistics physical return1full/1empty and close trip",
+    "Physical/mobile-device verification"
+  ]
+}

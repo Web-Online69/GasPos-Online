@@ -113,3 +113,5 @@ Trial empat login nyata dan catatan kekurangan/perbaikan setiap peran: [laporan 
 Perlindungan ulang Simpan pembayaran saat respons koneksi hilang: [audit pembayaran](docs/audit/payment-retry-20261028.md). Jalankan patch `supabase/audit_payment_retry.sql` sebelum frontend terbaru. Form pembayaran memakai `gaspos_record_payment_once`; muat ulang tab lama setelah pembaruan.
 
 Serah tugas gudang: patch `supabase/audit_logistics_shared_read.sql` memungkinkan semua petugas Logistik aktif membaca SJ/penerimaan gudang untuk rekonsiliasi bersama. Akses harga, keuangan, dan mutasi tetap mengikuti hak serta RPC resmi; Sopir tetap hanya melihat penugasannya sendiri.
+
+Hasil [trial browser empat peran](docs/audit/browser-role-trial-20261028.md) (28–29 Oktober2026) mencatat trial Logistik/Sopir yang sudah dijalankan serta tahap INV yang masih memerlukan konfirmasi pengguna. Hasil browser dibedakan dari trial API.
