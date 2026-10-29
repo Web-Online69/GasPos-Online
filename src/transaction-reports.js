@@ -61,7 +61,7 @@ export async function showTransactionReports(root,api,role) {
    host.querySelector('#report-totals').innerHTML=reportTotals(visible,report.columns).map(t=>'<div><small>'+esc(t.label)+'</small><strong>'+esc(t.money?money(t.value):t.value)+'</strong></div>').join('');
    host.querySelector('#report-rows').innerHTML=visible.length?visible.map(r=>'<tr>'+report.columns.map(c=>'<td>'+esc(c.format?c.format(r[c.key]):r[c.key]??'—')+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="'+report.columns.length+'">Tidak ada data sesuai filter.</td></tr>';
   };
-  form.onsubmit=e=>e.preventDefault();form.oninput=apply;form.onchange=apply;form.onreset=()=>queueMicrotask(apply);print.onclick=()=>{const w=window.open('','_blank');if(!w){alert('Izinkan pop-up untuk membuka laporan cetak.');return;}w.document.write(reportPrintHtml({...report,rows:visible,filters:description,role}));w.document.close();w.focus();};apply();
+  form.onsubmit=e=>e.preventDefault();form.oninput=apply;form.onchange=apply;form.onreset=()=>setTimeout(apply,0);print.onclick=()=>{const w=window.open('','_blank');if(!w){alert('Izinkan pop-up untuk membuka laporan cetak.');return;}w.document.write(reportPrintHtml({...report,rows:visible,filters:description,role}));w.document.close();w.focus();};apply();
  }catch(error){if(ticket===version&&host.isConnected)host.textContent='Laporan gagal dimuat. '+error.message;}}
  select.onchange=load;await load();
 }

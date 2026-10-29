@@ -53,7 +53,7 @@ export function watchHistoryFilters(root) {
    for(const f of fields){const select=form.elements.namedItem('col'+f.index),old=select.value;const opts=[...new Set(rows.map(r=>r['col'+f.index]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'id'));select.replaceChildren(new Option('Semua',''),...opts.map(v=>new Option(v,v)));select.value=opts.includes(old)?old:'';}
    apply();
   };
-  form.onsubmit=e=>e.preventDefault();form.oninput=apply;form.onchange=apply;form.onreset=()=>queueMicrotask(apply);controls.set(table,refresh);refresh();
+  form.onsubmit=e=>e.preventDefault();form.oninput=apply;form.onchange=apply;form.onreset=()=>setTimeout(apply,0);controls.set(table,refresh);refresh();
  }
  const scan=()=>root.querySelectorAll('table').forEach(setup);
  const observer=new MutationObserver(changes=>{const tables=new Set();for(const m of changes){const body=m.target.closest?.('tbody');if(body&&[...m.addedNodes,...m.removedNodes].some(n=>n.nodeName==='TR'))tables.add(body.closest('table'));else if([...m.addedNodes].some(n=>n.nodeType===1&&(n.matches('table')||n.querySelector('table'))))scan();}tables.forEach(t=>t?.isConnected&&setup(t));});

@@ -32,3 +32,7 @@ Perintah CLI migrasi sempat ditolak automatic approval review karena telemetry e
 ## Dashboard ringkas dan nomor panjang
 
 Pekerjaan Saya ditampilkan sebagai satu tombol jumlah tugas. Klik membuka halaman Daftar Kerja; tugas nol disembunyikan, kegagalan pemuatan tetap diberi tanda bukan dianggap nol. Jumlah tugas bukan jumlah transaksi unik karena satu transaksi bisa memiliki beberapa tindak lanjut. Filter riwayat dilipat secara awal agar tidak memenuhi layar. Referensi panjang diringkas pada tabel; klik untuk membaca nomor lengkap. Nilai yang disimpan, pencarian, pilihan form, dan dokumen cetak tetap memakai data utuh.
+
+## Verifikasi browser publik
+
+Akun Logistik: ringkasan Pekerjaan Saya0 membuka halaman Daftar Kerja dengan pesan tidak ada pekerjaan tertunda. Laporan Gudang/SJ menyediakan hanya empat jenis laporan fisik tanpa nilai uang. Pencarian SJ trial dan rentang28 Oktober menghasilkan1 dari6 baris, penuh2/kosong0; pratinjau cetak memuat tepat baris, filter dan total yang sama serta referensi utuh. Rentang tanggal terbalik menonaktifkan cetak. Riwayat Mutasi memuat10 baris; pencarian nomor LOG lengkap yang tampil singkat ditambah29 Oktober menyisakan1 baris; klik nomor membuka referensi lengkap. Uji Reset menemukan pembaruan tabel berjalan sebelum reset bawaan browser; diperbaiki dengan menjalankan filter setelah reset bawaan. Verifikasi perangkat HP fisik dan UI semua peran tetap belum dilakukan.
