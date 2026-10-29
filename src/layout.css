@@ -173,3 +173,8 @@
 @media (prefers-reduced-motion: reduce) {
   .app-shell *, .app-shell *::before, .app-shell *::after { scroll-behavior: auto !important; transition: none !important; }
 }
+.app-shell .app-data-panel > h2 { margin: 0 0 18px; font-size: 18px; line-height: 1.4; }
+.app-shell .product-table .product-action,
+.app-shell :is(.supplier-edit, .customer-edit, .trade-table .trade-approve),
+.app-shell .user-actions button { min-height: 44px !important; }
+.app-shell .trade-dialog form .gaspos-password-row :is(#edit-password, #edit-show) { min-height: 46px !important; height: 46px !important; }
