@@ -178,3 +178,18 @@
 .app-shell :is(.supplier-edit, .customer-edit, .trade-table .trade-approve),
 .app-shell .user-actions button { min-height: 44px !important; }
 .app-shell .trade-dialog form .gaspos-password-row :is(#edit-password, #edit-show) { min-height: 46px !important; height: 46px !important; }
+
+/* Local multicolour illustrations replace font-dependent menu glyphs. */
+.app-shell .app-menu-icon {
+  width: 48px; height: 48px; margin-bottom: 14px;
+  background: #102530; border: 1px solid #375361; border-radius: 13px;
+}
+.app-shell .menu-illustration { display: block; flex: none; width: 28px; height: 28px; }
+.app-shell .app-side-link > span {
+  display: grid; place-items: center; flex: none; width: 30px; height: 30px;
+  border-radius: 8px; background: #102530;
+}
+.app-shell .app-side-link .menu-illustration { width: 22px; height: 22px; }
+@media (max-width: 420px) {
+  .app-shell .app-menu-icon { width: 44px; height: 44px; }
+}
