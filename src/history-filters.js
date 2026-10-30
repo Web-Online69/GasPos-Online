@@ -22,7 +22,7 @@ export async function readAll(query,{batchSize=500,maxRows=100000}={}) {
  try {
   for(;;){const result=await query.range(data.length,data.length+batchSize-1);if(result.error)return {data:null,error:result.error};
    if(!result.data?.length)return {data,error:null};
-   data.push(...result.data);if(data.length>maxRows)return {data:null,error:{message:'Data terlalu banyak. Persempit rentang tanggal untuk laporan.'}};
+   data.push(...result.data.map(row=>row&&row.display_no&&row.document_no?{...row,legacy_document_no:row.legacy_document_no||row.document_no,document_no:row.display_no}:row));if(data.length>maxRows)return {data:null,error:{message:'Data terlalu banyak. Persempit rentang tanggal untuk laporan.'}};
   }
  } catch(error){return {data:null,error:{message:error.message||'Gagal memuat seluruh riwayat.'}};}
 }
@@ -52,7 +52,7 @@ export function watchHistoryFilters(root) {
    // Totals describe the visible expense rows, not the unfiltered list.
    if(table.tBodies[0].id==='expense-rows'){const sum=rows.filter(r=>!r.element.hidden).reduce((n,r)=>n+Number(r.element.dataset.amount||0),0);const label=root.querySelector('#expense-sum');if(label)label.textContent='Total hasil filter: Rp '+sum.toLocaleString('id-ID');}
   };
-  refresh=()=>{rows=[...table.tBodies[0].rows].filter(r=>!r.cells[0]?.hasAttribute('colspan')).map(element=>{const cells=[...element.cells].map(cellText);const search=element.cloneNode(true);search.querySelectorAll('details.compact-reference').forEach(el=>el.replaceWith(document.createTextNode(el.dataset.full)));search.querySelectorAll('button,details').forEach(el=>el.remove());return {element,date:dateIndex<0?'':cells[dateIndex],search:search.textContent,...Object.fromEntries(fields.map(f=>['col'+f.index,cells[f.index]]))};});
+  refresh=()=>{rows=[...table.tBodies[0].rows].filter(r=>!r.cells[0]?.hasAttribute('colspan')).map(element=>{const cells=[...element.cells].map(cellText);const search=element.cloneNode(true);search.querySelectorAll('details.compact-reference').forEach(el=>el.replaceWith(document.createTextNode(el.dataset.full)));search.querySelectorAll('button,details').forEach(el=>el.remove());return {element,date:dateIndex<0?'':cells[dateIndex],search:search.textContent+' '+(element.dataset.legacyReference||''),...Object.fromEntries(fields.map(f=>['col'+f.index,cells[f.index]]))};});
    for(const f of fields){const select=form.elements.namedItem('col'+f.index),old=select.value;const opts=[...new Set(rows.map(r=>r['col'+f.index]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'id'));select.replaceChildren(new Option('Semua',''),...opts.map(v=>new Option(v,v)));select.value=opts.includes(old)?old:'';}
    apply();
   };

@@ -7,7 +7,7 @@ await db.exec(read('scripts/audit/fixtures/baseline-schema.sql'));
 await db.exec(read('scripts/audit/fixtures/baseline-policies.sql'));
 await db.exec(read('scripts/audit/fixtures/baseline-integrity.sql'));
 await db.exec('GRANT USAGE ON SCHEMA public,auth,gaspos_private TO authenticated; GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;');
-for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql','audit_finance_partner_names.sql','audit_payment_retry.sql','audit_logistics_shared_read.sql','audit_form_retry.sql'])await db.exec(read('supabase/'+p));
+for(const p of ['audit_access_and_receipts.sql','audit_finance.sql','audit_signature.sql','audit_trip_invoice_returns.sql','audit_ledger_rpc_only.sql','simple_role_workflow.sql','audit_finance_partner_names.sql','audit_payment_retry.sql','audit_logistics_shared_read.sql','audit_form_retry.sql','audit_short_document_numbers.sql'])await db.exec(read('supabase/'+p));
 const q=async(sql,p=[])=> (await db.query(sql,p)).rows;
 const scalar=async(sql,p=[])=>Object.values((await q(sql,p))[0])[0];
 const pass=(test,detail)=>results.push({test,status:'PASS',detail});

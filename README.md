@@ -15,3 +15,5 @@ Tata letak desktop/HP: [perubahan dan batas verifikasi](docs/audit/ui-layout-202
 Filter riwayat per menu dan **Laporan Transaksi** yang bisa dicetak: [panduan, hak akses dan batas perhitungan](docs/audit/history-filters-reports-20261029.md).
 
 Pencatatan angka mengikuti Indonesia (`1.000.000`; desimal memakai koma pada kolom yang mendukung): [detail dan validasi](docs/audit/indonesian-number-format-20261030.md).
+
+Nomor dokumen singkat dan berurutan (`INV 00001`, `BEL 00001`, `SJ 00001`, `FK 00001`): [rincian dan integritas data](docs/audit/short-document-numbers-20261030.md).
