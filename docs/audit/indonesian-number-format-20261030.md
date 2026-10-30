@@ -7,3 +7,5 @@ Pemisahan tampilan dan nilai mencegah 1.000.000 terbaca sebagai1 atau NaN. Form 
 Input memakai papan ketik numeric/decimal pada HP dan pengelompokan saat mengetik. Tabel kuantitas, laporan, total laporan dan cetaknya menggunakan format Indonesia. Tidak ada perubahan skema database atau transaksi produksi.
 
 Validasi baru: pengelompokan jutaan, desimal, negatif, masukan ambigu/format internasional yang salah, batas muatan/nominal, step bilangan bulat/desimal, pengisian editor dari nilai API, serta pengecualian ID/tanggal. Pengujian alur antarmuka otomatis28 PASS dan build lokal PASS sebelum publikasi; verifikasi browser serta deployment dilakukan sesudahnya. Uji HP fisik belum dilakukan.
+
+Uji browser publik melalui Owner: ketik1000000 menjadi1.000.000 dan valid pada kolom nominal. Input1.000,50 ditolak pada kolom rupiah bulat. Muatan1.000.000 tampil benar tetapi ditolak dengan batas stok54; input54 kembali valid. Tidak ada simpan biaya, SJ atau transaksi baru selama uji format. Kuantitas pada cetak INV, SJ dan Faktur Barang juga memakai pemisah ribuan Indonesia.
