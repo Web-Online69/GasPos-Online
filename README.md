@@ -13,3 +13,5 @@ Perbaikan retry pengiriman/biaya/refund: `supabase/audit_form_retry.sql` dan `su
 Tata letak desktop/HP: [perubahan dan batas verifikasi](docs/audit/ui-layout-20261029.md).
 
 Filter riwayat per menu dan **Laporan Transaksi** yang bisa dicetak: [panduan, hak akses dan batas perhitungan](docs/audit/history-filters-reports-20261029.md).
+
+Pencatatan angka mengikuti Indonesia (`1.000.000`; desimal memakai koma pada kolom yang mendukung): [detail dan validasi](docs/audit/indonesian-number-format-20261030.md).

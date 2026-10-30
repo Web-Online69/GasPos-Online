@@ -227,3 +227,6 @@
 .app-shell .compact-reference > summary { color: #a6d9e6; cursor: pointer; overflow-wrap: anywhere; font-size: inherit; }
 .app-shell .compact-reference .full-reference { display: block; max-width: 260px; margin: 6px 0; padding: 8px; border: 1px solid #466373; border-radius: 7px; background: #102530; overflow-wrap: anywhere; white-space: normal; }
 @media(max-width:420px){.app-shell #app-content .work-summary .work-summary-button{grid-template-columns:1fr;gap:6px}.app-shell .work-summary-button > strong{grid-column:1;grid-row:auto;font-size:20px}}
+
+/* Indonesian number entry: grouping dots and decimal comma, including on phones. */
+.app-shell input.number-id { font-variant-numeric: tabular-nums; text-align: right; font-weight: 500; }

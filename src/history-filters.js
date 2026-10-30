@@ -1,3 +1,4 @@
+import {formatNumberId} from './indonesian-numbers.js';
 import {compactTableReferences} from './compact-ui.js';
 export const escapeText = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function dateKey(value) {
@@ -25,12 +26,14 @@ export async function readAll(query,{batchSize=500,maxRows=100000}={}) {
   }
  } catch(error){return {data:null,error:{message:error.message||'Gagal memuat seluruh riwayat.'}};}
 }
+const numberCells=new WeakSet();
+function formatQuantityCells(table){if(table.hasAttribute('data-no-history-filters')||!table.tHead)return;const indices=[...table.tHead.rows[0].cells].flatMap((c,i)=>/penuh|kosong|jumlah|muatan|terutang|kembali|sisa|selisih/i.test(c.textContent)?[i]:[]);for(const body of table.tBodies)for(const row of body.rows)for(const index of indices){const cell=row.cells[index];if(!cell||numberCells.has(cell)||cell.children.length)continue;numberCells.add(cell);const m=cell.textContent.trim().match(/^([+-]?)(\d+(?:\.\d+)?)(\s+(?:penuh|kosong|tabung))?$/);if(m)cell.textContent=(m[1]==='+'?'+':'')+formatNumberId(Number(m[1]+m[2]))+(m[3]||'');}}
 const dateHeader=/tanggal|berangkat|jatuh tempo/i;
 const selectHeader=/pelanggan|supplier|suplayer|mitra|tabung|produk|jenis|status|peran|sopir|kendaraan/i;
 function cellText(cell){if(!cell)return '';const clone=cell.cloneNode(true);clone.querySelectorAll('details.compact-reference').forEach(el=>el.replaceWith(document.createTextNode(el.dataset.full)));clone.querySelectorAll('button,details,small').forEach(el=>el.remove());return clone.textContent.trim();}
 export function watchHistoryFilters(root) {
  const controls=new WeakMap();
- function setup(table){compactTableReferences(table);
+ function setup(table){compactTableReferences(table);formatQuantityCells(table);
   if(table.hasAttribute('data-no-history-filters')||!table.tHead||!table.tBodies.length)return;
   // Master lists already provide a search box. No artificial date filter for undated data.
   if(['product-list','supplier-rows','customer-rows'].includes(table.tBodies[0].id))return;
