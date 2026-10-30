@@ -256,3 +256,4 @@
 #cylinder-signature{display:block;width:100%;max-width:320px;height:160px;background:#fff;border:1px solid #8297a5;border-radius:8px;touch-action:none}
 .logistics-form[hidden],.flow-panel[hidden]{display:none!important}
 .warehouse-new-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.transaction-outputs{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0 16px}.transaction-outputs [role=status]{font-size:12px;flex-basis:100%}.transaction-outputs button{min-height:40px}.transaction-outputs+table{margin-top:8px}@media(max-width:520px){.transaction-outputs{display:grid;grid-template-columns:1fr;width:100%}.transaction-outputs button{width:100%}}

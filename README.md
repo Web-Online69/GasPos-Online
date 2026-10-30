@@ -21,3 +21,5 @@ Nomor dokumen singkat dan berurutan (`INV 00001`, `BEL 00001`, `SJ 00001`, `FK 0
 Pengguna dapat memiliki beberapa tugas (Logistik/Keuangan/Sopir) dengan satu tugas aktif: [panduan dan pengujian](docs/audit/multi-job-users-20261030.md).
 
 Transaksi gudang kini dipisah menjadi Penerimaan Pembelian, Surat Jalan Keluar dan Penerimaan Kembali Sopir. Pinjaman serta pengembalian tabung pelanggan dicatat terpisah, termasuk pengembalian tanpa penjualan baru. SJ tetap menyimpan muatan awal. [Alur, pengujian dan batas fitur](docs/audit/cylinder-custody-20261030.md).
+
+Cetak transaksi tersedia sebagai A4/PDF, Excel `.xlsx` dan format termal 58/80 mm. Printer Bluetooth dipilih melalui layanan cetak HP/komputer yang sudah dipasangkan. [Panduan dan batas perangkat](docs/audit/transaction-output-20261030.md).
