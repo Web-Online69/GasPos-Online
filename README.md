@@ -23,3 +23,5 @@ Pengguna dapat memiliki beberapa tugas (Logistik/Keuangan/Sopir) dengan satu tug
 Transaksi gudang kini dipisah menjadi Penerimaan Pembelian, Surat Jalan Keluar dan Penerimaan Kembali Sopir. Pinjaman serta pengembalian tabung pelanggan dicatat terpisah, termasuk pengembalian tanpa penjualan baru. SJ tetap menyimpan muatan awal. [Alur, pengujian dan batas fitur](docs/audit/cylinder-custody-20261030.md).
 
 Cetak transaksi tersedia sebagai A4/PDF, Excel `.xlsx` dan format termal 58/80 mm. Printer Bluetooth dipilih melalui layanan cetak HP/komputer yang sudah dipasangkan. [Panduan dan batas perangkat](docs/audit/transaction-output-20261030.md).
+
+Format INV mengikuti contoh PDF pengguna: identitas agen, tabel merah, terbilang, pinjaman, rekening dan tanda tangan. Owner mengelola identitas melalui **Identitas Invoice**; data rekening dan aset tanda tangan disimpan privat di database. [Detail format dan pengujian](docs/audit/invoice-reference-20261030.md).
