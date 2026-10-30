@@ -17,3 +17,5 @@ Filter riwayat per menu dan **Laporan Transaksi** yang bisa dicetak: [panduan, h
 Pencatatan angka mengikuti Indonesia (`1.000.000`; desimal memakai koma pada kolom yang mendukung): [detail dan validasi](docs/audit/indonesian-number-format-20261030.md).
 
 Nomor dokumen singkat dan berurutan (`INV 00001`, `BEL 00001`, `SJ 00001`, `FK 00001`): [rincian dan integritas data](docs/audit/short-document-numbers-20261030.md).
+
+Pengguna dapat memiliki beberapa tugas (Logistik/Keuangan/Sopir) dengan satu tugas aktif: [panduan dan pengujian](docs/audit/multi-job-users-20261030.md).

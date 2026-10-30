@@ -230,3 +230,14 @@
 
 /* Indonesian number entry: grouping dots and decimal comma, including on phones. */
 .app-shell input.number-id { font-variant-numeric: tabular-nums; text-align: right; font-weight: 500; }
+
+/* Multiple jobs retain the existing role-specific workspace. */
+.app-shell .active-job-label { margin: 0; display: grid; gap: 3px; max-width: 240px; font-size: 11px; }
+.app-shell .active-job-label select { min-height: 40px; padding: 6px 10px; font-size: 13px; }
+.app-shell .active-job-label [role=status]:empty { display: none; }
+.app-shell form .job-role-choices { border: 1px solid var(--line); padding: 16px; border-radius: 10px; }
+.app-shell .job-role-choices legend { padding: 0 6px; color: #c9e2e8; font-size: 13px; }
+.app-shell form .job-role-choices .job-role-choice { display: grid !important; grid-template-columns: 24px minmax(0,1fr); align-items: center !important; gap: 10px !important; padding: 10px; border-radius: 8px; background: #132936; }
+.app-shell .job-role-choice input[type=checkbox] { width: 20px; height: 20px; accent-color: #53c8bc; }
+.app-topbar:has(.active-job-label) { flex-wrap: wrap; }
+@media(max-width:650px){.app-shell .active-job-label{flex-basis:100%;max-width:100%;padding-bottom:4px}.app-shell .active-job-label select{width:100%}}

@@ -5,7 +5,7 @@ type HandlerOptions = {
   serviceRoleKey: string;
   fetchImpl?: typeof fetch;
 };
-type Member = { user_id: string; role: string; active: boolean };
+type Member = { user_id: string; role: string; assigned_roles?: string[]; active: boolean };
 type AuthUser = { id: string; email?: string; user_metadata?: { username?: string } };
 const cors = {
   'Access-Control-Allow-Origin': '*',
@@ -18,6 +18,14 @@ const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{1
 class SafeError extends Error {
   status: number;
   constructor(message: string, status = 400) { super(message); this.status = status; }
+}
+function staffAssignment(body: {role?: unknown; assigned_roles?: unknown}) {
+  const supplied = body.assigned_roles === undefined ? [body.role] : body.assigned_roles;
+  if (!Array.isArray(supplied) || supplied.length < 1 || supplied.length > 3 || supplied.some(role => !staffRoles.includes(role))) throw new SafeError('Pilih minimal satu tugas petugas yang valid');
+  const roles = [...new Set(supplied)] as string[];
+  const role = typeof body.role === 'string' ? body.role : roles[0];
+  if (!staffRoles.includes(role) || !roles.includes(role)) throw new SafeError('Tugas aktif tidak termasuk penugasan');
+  return {role, assigned_roles: roles};
 }
 export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: HandlerOptions) {
   const base = url?.replace(/\/$/, '');
@@ -32,7 +40,7 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
     return text ? JSON.parse(text) : null;
   }
   async function member(userId: string): Promise<Member | null> {
-    const rows = await backend('/rest/v1/gas_members?select=user_id,role,active&user_id=eq.' + encodeURIComponent(userId));
+    const rows = await backend('/rest/v1/gas_members?select=user_id,role,assigned_roles,active&user_id=eq.' + encodeURIComponent(userId));
     if (!Array.isArray(rows)) throw new SafeError('Data akun tidak tersedia', 502);
     return rows.length === 1 ? rows[0] : null;
   }
@@ -55,7 +63,7 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
       if (body.action === 'list') {
         const members: Member[] = [];
         for (let offset = 0; offset < 100000; offset += 1000) {
-          const rows = await backend('/rest/v1/gas_members?select=user_id,role,active&order=role,user_id&limit=1000&offset=' + offset);
+          const rows = await backend('/rest/v1/gas_members?select=user_id,role,assigned_roles,active&order=role,user_id&limit=1000&offset=' + offset);
           if (!Array.isArray(rows)) throw new SafeError('Data akun tidak tersedia', 502);
           members.push(...rows);
           if (rows.length < 1000) break;
@@ -72,7 +80,7 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
         const byId = new Map(users.map(user => [user.id, user]));
         return send({ users: members.map(row => {
           const user = byId.get(row.user_id);
-          return { user_id: row.user_id, role: row.role, active: row.active,
+          return { user_id: row.user_id, role: row.role, assigned_roles: row.assigned_roles || [row.role], active: row.active,
             username: user?.user_metadata?.username || user?.email || row.user_id.slice(0, 8) };
         }) });
       }
@@ -81,14 +89,14 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
         const password = typeof body.password === 'string' ? body.password : '';
         if (!/^[a-z][a-z0-9_.-]{2,29}$/.test(username) || username === 'owner') throw new SafeError('ID pengguna tidak valid atau dicadangkan');
         if (password.length < 8 || password.length > 72 || new TextEncoder().encode(password).length > 72) throw new SafeError('Password harus 8–72 karakter dan maksimal 72 byte');
-        if (!staffRoles.includes(body.role)) throw new SafeError('Peran tidak valid');
+        const assignment = staffAssignment(body);
         const created = await backend('/auth/v1/admin/users', { method: 'POST', body: JSON.stringify({
           email: username + '@users.gaspos.local', password, email_confirm: true, user_metadata: { username },
         }) }, 'Akun tidak dapat dibuat. ID mungkin sudah digunakan atau password tidak memenuhi ketentuan');
         const uid = created?.id;
         if (typeof uid !== 'string' || !uuidPattern.test(uid)) throw new SafeError('Layanan akun tidak mengembalikan ID valid', 502);
         try {
-          await backend('/rest/v1/gas_members', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ user_id: uid, role: body.role, active: true }) }, 'Gagal menyimpan hak akses akun');
+          await backend('/rest/v1/gas_members', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ user_id: uid, ...assignment, active: true }) }, 'Gagal menyimpan hak akses akun');
         } catch {
           try { await backend('/auth/v1/admin/users/' + uid, { method: 'DELETE' }); }
           catch { throw new SafeError('Gagal menyimpan hak akses; akun tanpa keanggotaan perlu dibersihkan administrator', 502); }
@@ -100,13 +108,13 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
         if (typeof body.user_id !== 'string' || !uuidPattern.test(body.user_id)) throw new SafeError('ID akun tidak valid');
         const target = await member(body.user_id);
         if (!target || !staffRoles.includes(target.role)) throw new SafeError('Akun Owner tidak dapat diedit melalui menu petugas', 403);
-        const role = body.role;
-        if (!staffRoles.includes(role)) throw new SafeError('Peran tidak valid');
+        const assignment = staffAssignment(body), role = assignment.role;
+        const membershipChanged = role !== target.role || [...assignment.assigned_roles].sort().join() !== [...(target.assigned_roles || [target.role])].sort().join();
         const password = body.password;
         if (password !== undefined && (typeof password !== 'string' || password.length < 8 || password.length > 72 || new TextEncoder().encode(password).length > 72)) throw new SafeError('Password baru harus 8–72 karakter, maksimal 72 byte');
-        if (role !== target.role) {
+        if (membershipChanged) {
           const changed = await backend('/rest/v1/gas_members?user_id=eq.' + encodeURIComponent(body.user_id) + '&role=in.(LOGISTIK,SALES_SOPIR,KEUANGAN)', {
-            method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ role }),
+            method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify(assignment),
           }, 'Gagal mengubah peran');
           if (!Array.isArray(changed) || changed.length !== 1) throw new SafeError('Peran tidak berubah', 409);
         }
@@ -114,9 +122,9 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
           try {
             await backend('/auth/v1/admin/users/' + body.user_id, { method: 'PUT', body: JSON.stringify({ password }) }, 'Gagal mengganti password');
           } catch (error) {
-            if (role !== target.role) {
+            if (membershipChanged) {
               try { await backend('/rest/v1/gas_members?user_id=eq.' + encodeURIComponent(body.user_id), {
-                method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ role: target.role }),
+                method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ role: target.role, assigned_roles: target.assigned_roles || [target.role] }),
               }); } catch { throw new SafeError('Password gagal diganti. Peran perlu diperiksa ulang oleh Owner', 502); }
             }
             throw error;

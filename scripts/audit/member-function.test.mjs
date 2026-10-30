@@ -47,7 +47,7 @@ test('manual create confirms email, accepts staff only and never returns passwor
         return json({ id: staffId, encrypted_password: 'must-not-leak' });
       }
       assert.equal(path, '/rest/v1/gas_members');
-      assert.deepEqual(JSON.parse(init.body), { user_id: staffId, role, active: true });
+      assert.deepEqual(JSON.parse(init.body), { user_id: staffId, role, assigned_roles: [role], active: true });
       return new Response(null, { status: 201 });
     });
     const response = await request({ action: 'create', username: 'Trial01', password: 'mock-password', role });
@@ -104,7 +104,7 @@ test('list paginates Auth and returns only safe membership identity fields', asy
   });
   const response = await request({ action: 'list' });
   assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { users: [{ user_id: staffId, role: 'SALES_SOPIR', active: true, username: 'staff01' }] });
+  assert.deepEqual(await response.json(), { users: [{ user_id: staffId, role: 'SALES_SOPIR', assigned_roles: ['SALES_SOPIR'], active: true, username: 'staff01' }] });
 });
 test('invalid JSON and network exceptions are safe failures', async () => {
   const { handler, request } = setup(() => { throw new Error('mock-password ' + secret); });
@@ -113,4 +113,15 @@ test('invalid JSON and network exceptions are safe failures', async () => {
   const response = await request({ action: 'list' });
   assert.equal(response.status, 502);
   assert.doesNotMatch(await response.text(), /mock-password|mock-server-key/);
+});
+
+test('Owner can create multiple staff jobs while Owner and unknown jobs are rejected',async()=>{
+ const {request}=setup((path,init)=>{if(path==='/auth/v1/admin/users')return json({id:staffId});assert.deepEqual(JSON.parse(init.body),{user_id:staffId,role:'LOGISTIK',assigned_roles:['LOGISTIK','KEUANGAN'],active:true});return new Response(null,{status:201});});
+ assert.equal((await request({action:'create',username:'multi01',password:'mock-password',role:'LOGISTIK',assigned_roles:['LOGISTIK','KEUANGAN']})).status,200);
+ for(const assigned_roles of [[],['OWNER'],['LOGISTIK','ADMIN'],['KEUANGAN']]){const {request,calls}=setup();assert.equal((await request({action:'create',username:'multi01',password:'mock-password',role:'LOGISTIK',assigned_roles})).status,400);assert.equal(calls.length,2);}
+});
+test('Failed password change rolls back both assigned jobs and active job',async()=>{
+ const old={user_id:staffId,role:'LOGISTIK',assigned_roles:['LOGISTIK','SALES_SOPIR'],active:true};const patches=[];
+ const {request}=setup((path,init)=>{if(!init.method)return json([old]);if(init.method==='PATCH'){patches.push(JSON.parse(init.body));return json([old]);}return json({error:'private mock-password'},500);});
+ const response=await request({action:'edit',user_id:staffId,role:'KEUANGAN',assigned_roles:['LOGISTIK','KEUANGAN'],password:'mock-password'});assert.equal(response.status,502);assert.deepEqual(patches,[{role:'KEUANGAN',assigned_roles:['LOGISTIK','KEUANGAN']},{role:'LOGISTIK',assigned_roles:['LOGISTIK','SALES_SOPIR']}]);assert.ok(!(await response.text()).includes('mock-password'));
 });
