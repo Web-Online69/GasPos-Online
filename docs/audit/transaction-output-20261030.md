@@ -13,7 +13,7 @@ Tanggal: 30 Oktober 2026, WIB.
 
 ## Cakupan dan integritas
 
-Pembelian (termasuk status draft yang dinyatakan jelas), INV penjualan yang disetujui, SJ, faktur barang Sopir, perjalanan/penerimaan kembali, pinjaman/pengembalian pelanggan, kewajiban/pengembalian supplier, pembayaran, biaya, mutasi/saldo stok, retur yang terlihat dalam riwayat, rincian keuangan dan ringkasan laba rugi. Riwayat/laporan tetap mengikuti hak akses empat peran. Harga tidak ditambahkan ke keluaran Logistik atau Sopir.
+Pembelian (termasuk status draft yang dinyatakan jelas), INV penjualan yang disetujui, SJ, faktur barang Sopir, perjalanan/penerimaan kembali, pinjaman/pengembalian pelanggan, kewajiban/pengembalian supplier, pembayaran, biaya, mutasi/saldo stok, retur penjualan/pembelian, refund pelanggan/supplier dan pengembalian kosong lama melalui jenis laporan Owner, rincian keuangan dan ringkasan laba rugi. Riwayat/laporan tetap mengikuti hak akses empat peran. Harga tidak ditambahkan ke keluaran Logistik atau Sopir.
 
 Ringkasan HPP/laba rugi mempertahankan metode, periode seluruh data dan status Belum valid; ekspor tidak mengubah estimasi menjadi angka laba final. Filter rincian transaksi tidak mengubah ringkasan seluruh periode.
 
@@ -23,7 +23,10 @@ File Excel adalah ZIP Open XML asli, bukan HTML/CSV dengan ekstensi Excel. Nomor
 
 - PASS lokal: ZIP/CRC dan semua XML valid; angka 1.000.000 menjadi nilai numerik 1000000, angka negatif dan desimal tetap, identifier nol awal tetap teks, teks formula tidak menjadi formula, filter lembar sesuai baris.
 - PASS lokal: HTML cetak menghindari injeksi isi tersimpan; kertas A4/58/80 dibedakan; pengujian regresi workflow dan build.
-- Verifikasi web publik dan CI dilakukan setelah deployment.
+- PASS web publik: unduhan Excel riwayat SJ sesudah pencarian hanya memuat satu baris SJ 00002, 60 penuh/0 kosong numerik, tanpa kolom aksi. Dibaca kembali melalui pembaca XLSX independen.
+- PASS web publik: cetak rincian SJ menampilkan nomor, Sopir, kendaraan, muatan dan pilihan A4/PDF/58/80 mm; mode 80 mm terukur 302 piksel CSS dan setiap kolom menjadi label vertikal.
+- Laporan Transaksi juga menyediakan cetak/ekspor satu baris, termasuk retur dan refund. Laporan ledger lama tersebut tetap Owner-only karena RLS lama; tidak menambahkan akses harga kepada petugas gudang/Sopir.
+- Build dan deployment implementasi awal `51ddd65ef04901e29105e373735022ea1a1605e7` berhasil. Pemeriksaan akhir dilanjutkan setelah penyempurnaan laporan retur/refund.
 - Belum diverifikasi: cetak fisik pada printer Bluetooth milik pengguna, dialog printer/driver Android/iOS/Windows tertentu, dan membuka hasil di Microsoft Excel desktop.
 
 Rujukan batas API browser: https://developer.mozilla.org/en-US/docs/Web/API/Window/print dan https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API . Web Bluetooth mencakup BLE dan dukungannya terbatas; jalur cetak aplikasi menggunakan layanan cetak perangkat agar tidak menganggap semua printer memakai profil BLE yang sama.
