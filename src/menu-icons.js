@@ -19,6 +19,7 @@ const icons = {
   transactions: ['#86d6c8', '<path d="M3 7h17m-4-4 4 4-4 4"/><path d="M21 17H4m4-4-4 4 4 4" stroke="#edbc83"/>']
 };
 export function menuIcon(id) {
-  const [color, drawing] = icons[id] || icons.master_data;
+  const aliases={warehouse_receipts:'purchases',warehouse_dispatch:'trips',trip_returns:'logistics',cylinder_returns:'gas_stock_movements'};
+  const [color, drawing] = icons[aliases[id]||id] || icons.master_data;
   return '<svg class="menu-illustration" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:'+color+'" aria-hidden="true" focusable="false">'+drawing+'</svg>';
 }

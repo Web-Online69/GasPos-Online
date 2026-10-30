@@ -19,3 +19,5 @@ Pencatatan angka mengikuti Indonesia (`1.000.000`; desimal memakai koma pada kol
 Nomor dokumen singkat dan berurutan (`INV 00001`, `BEL 00001`, `SJ 00001`, `FK 00001`): [rincian dan integritas data](docs/audit/short-document-numbers-20261030.md).
 
 Pengguna dapat memiliki beberapa tugas (Logistik/Keuangan/Sopir) dengan satu tugas aktif: [panduan dan pengujian](docs/audit/multi-job-users-20261030.md).
+
+Transaksi gudang kini dipisah menjadi Penerimaan Pembelian, Surat Jalan Keluar dan Penerimaan Kembali Sopir. Pinjaman serta pengembalian tabung pelanggan dicatat terpisah, termasuk pengembalian tanpa penjualan baru. SJ tetap menyimpan muatan awal. [Alur, pengujian dan batas fitur](docs/audit/cylinder-custody-20261030.md).
