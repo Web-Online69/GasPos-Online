@@ -29,6 +29,12 @@ Nomor TKM memakai penghitung dokumen yang sama, bukan UUID panjang. Pengembalian
 - PASS: RLS baru aktif, browser hanya SELECT, anon tidak boleh mengeksekusi RPC, fungsi agregasi privat tidak bisa dipanggil langsung.
 - PASS: build lokal, regresi workflow UI, anggota, alur transaksi dan audit database.
 - Database GASPOS: migrasi berhasil diterapkan. Tabel pengembalian baru kosong; data produksi tidak dipakai sebagai trial transaksi baru.
-- Pemeriksaan browser publik/build GitHub/Pages dicatat setelah deployment diverifikasi.
+- PASS: GitHub Check GASPOS build dan GitHub Pages untuk commit implementasi `e9888b04057fd73411db4cba6e8e804f95b90403`.
+- PASS: browser publik dengan sesi Owner — halaman Penerimaan Pembelian/SJ terpisah, tombol transaksi baru, pembatalan tanpa simpan, saldo pinjaman dimuat, batas 6 ditolak saat saldo 5, tanda tangan kosong ditolak.
+- PASS: halaman penerimaan kembali menampilkan SJ awal 60, terkirim 45, sisa penuh 15, kosong 38 dari perjalanan uji lama. Tidak mengedit atau mengulang penerimaan.
+- PASS: laporan penerimaan kembali difilter 28 Oktober 2026 menjadi satu baris, total 15 penuh/38 kosong. Halaman cetak menampilkan baris, tanggal dan total yang sama.
+- PASS: fingerprint dokumen, item, mutasi stok, perjalanan, pengiriman dan pembayaran produksi tetap sama sebelum/sesudah migrasi. Tabel pengembalian baru masih kosong; uji simpan berhasil dilakukan di PostgreSQL terisolasi, bukan membuat data bisnis produksi.
+- Regresi lokal: 36 tes workflow UI, 18 tes akun, 86 pemeriksaan alur dan 76 pemeriksaan audit database; build berhasil. Pengujian lama memuat reproduksi FAIL baseline yang dilanjutkan pengujian ulang PASS; itu bukan kegagalan hasil perbaikan.
+- Bukti antarmuka: tangkapan layar Transaksi Gudang terpisah disampaikan kepada pengguna. Verifikasi browser sesi Owner tidak menggantikan trial seluruh peran atau pengujian HP fisik.
 
 Batas: pengumpulan Sopir memakai perjalanan aktif dengan jenis tabung sesuai SJ; penugasan perjalanan khusus penjemputan tanpa muatan awal belum dibuat. Verifikasi HP fisik dan seluruh akun lewat browser belum dinyatakan selesai. Temuan advisor lama (view gaspos_trade_balances dan leaked-password protection) tetap perlu tindak lanjut; endpoint SECURITY DEFINER yang baru memang disengaja, dilindungi pemeriksaan peran/penugasan dan hak EXECUTE.
