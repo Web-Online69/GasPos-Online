@@ -241,3 +241,14 @@
 .app-shell .job-role-choice input[type=checkbox] { width: 20px; height: 20px; accent-color: #53c8bc; }
 .app-topbar:has(.active-job-label) { flex-wrap: wrap; }
 @media(max-width:650px){.app-shell .active-job-label{flex-basis:100%;max-width:100%;padding-bottom:4px}.app-shell .active-job-label select{width:100%}}
+
+/* Stock balance totals remain distinct from filtered net movements. */
+.app-shell .stock-total-summary { margin: 16px 0 20px; }
+.app-shell .stock-total-caption { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
+.app-shell .stock-total-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.app-shell .stock-total-grid > div { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #142f3b; }
+.app-shell .stock-total-grid :is(span,strong,small) { display: block; }
+.app-shell .stock-total-grid span { color: #bfd8e1; font-size: 12px; }
+.app-shell .stock-total-grid strong { margin: 6px 0; font-size: 24px; line-height: 1.3; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; color: #a4eadc; }
+.app-shell .stock-total-grid small { color: var(--muted); font-size: 11px; }
+@media(max-width:520px){.app-shell .stock-total-grid{grid-template-columns:1fr;gap:8px}.app-shell .stock-total-grid > div{padding:12px 14px}.app-shell .stock-total-grid strong{font-size:22px}}

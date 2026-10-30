@@ -1,3 +1,4 @@
+import {stockTotalsHtml} from './stock-totals.js';
 import {formatNumberId} from './indonesian-numbers.js';
 import {compactTableReferences} from './compact-ui.js';
 export const escapeText = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -46,11 +47,20 @@ export function watchHistoryFilters(root) {
   const form=document.createElement('form');form.className='history-filter-form';form.innerHTML='<label>Cari data<input type="search" name="search" placeholder="Nomor dokumen, nama, catatan…"></label>'+(dateIndex>=0?'<label>Dari '+escapeText(headers[dateIndex].toLowerCase())+'<input type="date" name="from"></label><label>Sampai '+escapeText(headers[dateIndex].toLowerCase())+'<input type="date" name="to"></label>':'')+fields.map(f=>'<label>'+escapeText(f.label)+'<select name="col'+f.index+'"><option value="">Semua</option></select></label>').join('')+'<button type="reset" class="trade-secondary">Reset Filter</button><p class="filter-result" role="status" aria-live="polite"></p>';
   box.append(form);table.parentElement.before(box);
   const status=form.querySelector('.filter-result');let rows=[];
-  const apply=()=>{const data=new FormData(form),from=data.get('from')||'',to=data.get('to')||'';if(from&&to&&from>to){status.textContent='Tanggal awal tidak boleh melewati tanggal akhir.';rows.forEach(r=>{r.element.hidden=true});return;}
+  const updateTotals=()=>{
+   const id=table.tBodies[0].id,visible=rows.filter(r=>!r.element.hidden);
+   if(id==='expense-rows'){const sum=visible.reduce((n,r)=>n+Number(r.element.dataset.amount||0),0);const label=root.querySelector('#expense-sum');if(label)label.textContent='Total hasil filter: Rp '+sum.toLocaleString('id-ID');}
+   if(id==='stock-list'||id==='stock-history-list'){const host=root.querySelector(id==='stock-list'?'#stock-balance-total':'#stock-movement-total');if(!host)return;
+    const message=table.tBodies[0].querySelector('td[colspan]')?.textContent||'';
+    if(table.dataset.loadFailed||/gagal|tidak dapat|error/i.test(message)){host.textContent='Total tidak tersedia.';return;}
+    if(/memuat/i.test(message)){host.textContent='Memuat total…';return;}
+    try{host.innerHTML=stockTotalsHtml(visible.map(r=>({full:r.element.dataset.stockFull,empty:r.element.dataset.stockEmpty})),id==='stock-history-list');}catch{host.textContent='Total tidak tersedia: data jumlah tidak valid.';}
+   }
+  };
+  const apply=()=>{const data=new FormData(form),from=data.get('from')||'',to=data.get('to')||'';if(from&&to&&from>to){status.textContent='Tanggal awal tidak boleh melewati tanggal akhir.';rows.forEach(r=>{r.element.hidden=true});summary.textContent='Filter & Cari Riwayat (0/'+rows.length+')';updateTotals();return;}
    let visible=0;for(const row of rows){const values=Object.fromEntries(fields.map(f=>['col'+f.index,data.get('col'+f.index)||'']));const show=matchesFilter(row,{search:data.get('search'),from,to,values});row.element.hidden=!show;if(show)visible++;}
    summary.textContent='Filter & Cari Riwayat ('+visible+'/'+rows.length+')';status.textContent=visible+' dari '+rows.length+' catatan'+(rows.length&&visible===0?' — tidak ada data sesuai filter.':'.');
-   // Totals describe the visible expense rows, not the unfiltered list.
-   if(table.tBodies[0].id==='expense-rows'){const sum=rows.filter(r=>!r.element.hidden).reduce((n,r)=>n+Number(r.element.dataset.amount||0),0);const label=root.querySelector('#expense-sum');if(label)label.textContent='Total hasil filter: Rp '+sum.toLocaleString('id-ID');}
+   updateTotals();
   };
   refresh=()=>{rows=[...table.tBodies[0].rows].filter(r=>!r.cells[0]?.hasAttribute('colspan')).map(element=>{const cells=[...element.cells].map(cellText);const search=element.cloneNode(true);search.querySelectorAll('details.compact-reference').forEach(el=>el.replaceWith(document.createTextNode(el.dataset.full)));search.querySelectorAll('button,details').forEach(el=>el.remove());return {element,date:dateIndex<0?'':cells[dateIndex],search:search.textContent+' '+(element.dataset.legacyReference||''),...Object.fromEntries(fields.map(f=>['col'+f.index,cells[f.index]]))};});
    for(const f of fields){const select=form.elements.namedItem('col'+f.index),old=select.value;const opts=[...new Set(rows.map(r=>r['col'+f.index]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'id'));select.replaceChildren(new Option('Semua',''),...opts.map(v=>new Option(v,v)));select.value=opts.includes(old)?old:'';}
