@@ -257,3 +257,63 @@
 .logistics-form[hidden],.flow-panel[hidden]{display:none!important}
 .warehouse-new-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .transaction-outputs{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0 16px}.transaction-outputs [role=status]{font-size:12px;flex-basis:100%}.transaction-outputs button{min-height:40px}.transaction-outputs+table{margin-top:8px}@media(max-width:520px){.transaction-outputs{display:grid;grid-template-columns:1fr;width:100%}.transaction-outputs button{width:100%}}
+
+/* Responsive screen refinement: compact sign-in and consistent workspace spacing. */
+#app > main {
+  min-height: 100svh;
+  padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+#app > main .wrap { width: min(100%, 420px); min-width: 0; }
+#app > main header { margin: 0 0 20px; }
+#app > main header .brand-logo { width: 88px; height: 88px; margin-bottom: 14px; border-radius: 18px; }
+#app > main header h1 { font-size: clamp(24px, 5vw, 30px); line-height: 1.2; }
+#app > main header p { max-width: 300px; margin: 8px auto 0; font-size: 13px; line-height: 1.5; }
+#app > main .card { padding: 24px; border-radius: 16px; background: #182d3f; border-color: #3b566b; }
+#app > main h2 { font-size: 22px; margin-bottom: 8px; }
+#app > main .note { font-size: 13px; margin-bottom: 16px; }
+#app > main #form { gap: 8px; }
+#app > main #form > label { margin: 8px 0 0; font-size: 13px; }
+#app > main .input-wrap { min-height: 48px; border-radius: 9px; }
+#app > main .input-wrap input { font-size: 16px; }
+#app > main .field-icon { display: none; }
+#app > main #email { padding: 12px; }
+#app > main #form .password-wrap input { height: 48px; }
+#app > main #form .toggle-password { min-height: 44px; font-size: 13px; }
+#app > main .submit { min-height: 48px; margin-top: 16px; font-size: 14px; border-radius: 9px; }
+#app > main #msg { margin: 4px 0 0; overflow-wrap: anywhere; }
+#app > main #msg:empty { display: none; }
+#app > main footer { margin: 18px 0 0; font-size: 12px; }
+#app > main :is(button, input, a):focus-visible { outline: 3px solid #85ded6; outline-offset: 3px; }
+.app-shell :is(.app-heading, .app-panel-head, .trade-toolbar, .app-menu-tile, .app-kpi) { overflow-wrap: anywhere; }
+.app-shell .app-heading h1 { font-size: clamp(21px, 2vw, 27px); }
+.app-shell .app-heading > span { font-size: 13px; }
+.app-shell :is(.app-content, .app-data-panel, .flow-panel, .history-filters) > * { min-width: 0; }
+.app-shell :is(.trade-overlay, .product-modal-overlay, .supplier-overlay, .customer-overlay) { overflow-y: auto; overscroll-behavior: contain; }
+.app-shell :is(.trade-dialog, .product-modal, .supplier-dialog, .customer-dialog) { overflow-y: auto; overscroll-behavior: contain; }
+.app-shell .app-sidebar { max-height: 100dvh; overflow-y: auto; padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+@media (min-width: 1000px) {
+  .app-content { padding-top: 28px; }
+  .app-menu-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .app-topbar { flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
+  .app-content { padding: 20px 14px max(28px, env(safe-area-inset-bottom)); }
+  .app-data-panel { padding: 16px; border-radius: 12px; }
+  .app-shell :is(.app-panel-head, .trade-toolbar, .product-toolbar, .supplier-toolbar, .customer-toolbar) { gap: 10px; margin-bottom: 16px; }
+  .app-shell :is(.trade-toolbar, .product-toolbar, .supplier-toolbar, .customer-toolbar) > button { width: 100%; }
+  .app-shell .purchase-toolbar-actions { width: 100%; flex-wrap: wrap; }
+  .app-shell .purchase-toolbar-actions > button { flex: 1 1 100%; }
+  .app-shell .report-totals { grid-template-columns: 1fr; }
+  .app-shell :is(.trade-dialog, .product-modal, .supplier-dialog, .customer-dialog) { padding: 20px 16px; }
+  .app-menu-tile { min-height: 120px; padding: 14px; }
+}
+@media (max-width: 360px), (max-height: 650px) {
+  #app > main { padding-top: 16px; padding-bottom: 16px; }
+  #app > main header .brand-logo { width: 64px; height: 64px; margin-bottom: 10px; }
+  #app > main header { margin-bottom: 14px; }
+  #app > main .card { padding: 20px 18px; }
+  #app > main footer { margin-top: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #app > main *, #app > main *::before, #app > main *::after { transition: none !important; }
+}
