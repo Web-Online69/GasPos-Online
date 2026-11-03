@@ -25,3 +25,5 @@ Transaksi gudang kini dipisah menjadi Penerimaan Pembelian, Surat Jalan Keluar d
 Cetak transaksi tersedia sebagai A4/PDF, Excel `.xlsx` dan format termal 58/80 mm. Printer Bluetooth dipilih melalui layanan cetak HP/komputer yang sudah dipasangkan. [Panduan dan batas perangkat](docs/audit/transaction-output-20261030.md).
 
 Format INV mengikuti contoh PDF pengguna: identitas agen, tabel merah, terbilang, pinjaman, rekening dan tanda tangan. Owner mengelola identitas melalui **Identitas Invoice**; data rekening dan aset tanda tangan disimpan privat di database. [Detail format dan pengujian](docs/audit/invoice-reference-20261030.md).
+
+Menu samping dikelompokkan dalam Master Data, Pembelian & Penjualan, Gudang / Logistik, Sales / Sopir, Keuangan, Laporan, dan Pengaturan. Kelompok dapat dibuka/tutup, hanya muncul jika akun memiliki menu di dalamnya, dan tidak menambah hak akses. Transaksi Gudang tetap tersedia melalui halaman gudang; menu samping langsung menampilkan proses penerimaan, Surat Jalan, dan penerimaan kembali tanpa pintasan yang berulang.

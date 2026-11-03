@@ -317,3 +317,15 @@
 @media (prefers-reduced-motion: reduce) {
   #app > main *, #app > main *::before, #app > main *::after { transition: none !important; }
 }
+
+/* Collapsible role-specific navigation keeps the phone drawer short. */
+.app-shell details.app-nav-group { margin: 6px 0; padding: 0; border: 1px solid #304958; border-radius: 10px; overflow: hidden; }
+.app-shell summary.app-nav-group-title { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 12px; margin: 0; color: #d7e9ee; font-size: 13px; cursor: pointer; list-style: none; }
+.app-shell summary.app-nav-group-title::-webkit-details-marker { display: none; }
+.app-shell summary.app-nav-group-title::after { content: '⌄'; color: #87cfc9; font-size: 18px; }
+.app-shell details[open] > summary.app-nav-group-title::after { transform: rotate(180deg); }
+.app-shell .nav-group-count { margin-left: auto; padding: 1px 7px; border-radius: 6px; background: #243e4c; color: #aac9d6; font-size: 11px; }
+.app-shell .app-nav-children { padding: 0 5px 6px; border-top: 1px solid #304958; }
+.app-shell .app-nav-child { padding: 10px 12px !important; white-space: normal; text-align: left; line-height: 1.45; }
+.app-shell .app-side-link > .nav-item-label { display: block; width: auto; height: auto; flex: 1; min-width: 0; background: none; border-radius: 0; overflow-wrap: anywhere; }
+.app-shell .app-side-link[aria-current=page] { background: #214b53; color: #c8fff4; }
