@@ -487,3 +487,10 @@
  .app-shell #app-content :is(#log-rows,#trip-list)>tr>td,
  .app-shell #trip-detail table>tbody>tr>td { max-width:100%; }
 }
+
+.app-shell .sj-load-row { min-width:0;margin:0 0 12px;padding:14px;border:1px solid var(--line);border-radius:10px; }
+.app-shell .sj-load-row legend { padding:0 6px;color:#bce6e2;font-size:13px; }
+.app-shell .sj-load-row label { margin:10px 0 6px; }
+.app-shell .sj-load-row button { width:100%;margin-top:10px; }
+.app-shell .multi-trip-select { display:grid;gap:6px;margin:0 0 18px;font-size:13px; }
+.app-shell .multi-trip-select select { width:100%; }
