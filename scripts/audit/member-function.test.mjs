@@ -125,3 +125,11 @@ test('Failed password change rolls back both assigned jobs and active job',async
  const {request}=setup((path,init)=>{if(!init.method)return json([old]);if(init.method==='PATCH'){patches.push(JSON.parse(init.body));return json([old]);}return json({error:'private mock-password'},500);});
  const response=await request({action:'edit',user_id:staffId,role:'KEUANGAN',assigned_roles:['LOGISTIK','KEUANGAN'],password:'mock-password'});assert.equal(response.status,502);assert.deepEqual(patches,[{role:'KEUANGAN',assigned_roles:['LOGISTIK','KEUANGAN']},{role:'LOGISTIK',assigned_roles:['LOGISTIK','SALES_SOPIR']}]);assert.ok(!(await response.text()).includes('mock-password'));
 });
+
+test('Email login from account form is normalized and creates multiple jobs without invitation', async () => {
+ const {request}=setup((path,init)=>{const payload=JSON.parse(init.body);if(path==='/auth/v1/admin/users'){assert.equal(payload.email,'bayu@gaspos.com');assert.equal(payload.user_metadata.username,'bayu@gaspos.com');assert.equal(payload.email_confirm,true);return json({id:staffId});}assert.deepEqual(payload.assigned_roles,['LOGISTIK','SALES_SOPIR']);return new Response(null,{status:201});});
+ const response=await request({action:'create',username:' Bayu@gaspos.com ',password:'mock-password',role:'LOGISTIK',assigned_roles:['LOGISTIK','SALES_SOPIR']});assert.equal(response.status,200);assert.deepEqual(await response.json(),{ok:true,username:'bayu@gaspos.com'});
+});
+test('Invalid addresses and reserved Owner IDs fail before account creation', async () => {
+ for(const username of ['owner','OWNER@gaspos.com','owner@users.gaspos.local','bayu@@gaspos.com','bayu@-gaspos.com','bayu@localhost','bayu..test@gaspos.com','bayu test@gaspos.com','ab']){const {request,calls}=setup();const response=await request({action:'create',username,password:'mock-password',role:'LOGISTIK'});assert.equal(response.status,400,username);assert.equal(calls.length,2);}
+});

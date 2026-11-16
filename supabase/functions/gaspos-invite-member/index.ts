@@ -27,6 +27,17 @@ function staffAssignment(body: {role?: unknown; assigned_roles?: unknown}) {
   if (!staffRoles.includes(role) || !roles.includes(role)) throw new SafeError('Tugas aktif tidak termasuk penugasan');
   return {role, assigned_roles: roles};
 }
+export function normalizeAccountLogin(value: unknown) {
+  const username = typeof value === 'string' ? value.trim().toLowerCase() : '';
+  if (['owner', 'owner@gaspos.com', 'owner@users.gaspos.local'].includes(username)) throw new SafeError('ID Owner dicadangkan. Gunakan ID petugas lain');
+  if (username.includes('@')) {
+    const parts = username.split('@'), local = parts[0], domain = parts[1] || '';
+    if (parts.length !== 2 || username.length > 254 || local.length > 64 || !/^[a-z0-9][a-z0-9._%+-]*$/.test(local) || local.endsWith('.') || local.includes('..') || !domain.includes('.') || domain.split('.').some(label => !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label))) throw new SafeError('Email tidak valid. Contoh: bayu@gaspos.com');
+    return { username, email: username };
+  }
+  if (!/^[a-z][a-z0-9_.-]{2,29}$/.test(username)) throw new SafeError('ID harus 3–30 karakter: diawali huruf, lalu huruf, angka, titik, garis bawah atau tanda hubung. Bisa juga memakai email');
+  return { username, email: username + '@users.gaspos.local' };
+}
 export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: HandlerOptions) {
   const base = url?.replace(/\/$/, '');
   const send = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: cors });
@@ -85,13 +96,12 @@ export function createHandler({ url, serviceRoleKey, fetchImpl = fetch }: Handle
         }) });
       }
       if (body.action === 'create') {
-        const username = typeof body.username === 'string' ? body.username.trim().toLowerCase() : '';
+        const { username, email } = normalizeAccountLogin(body.username);
         const password = typeof body.password === 'string' ? body.password : '';
-        if (!/^[a-z][a-z0-9_.-]{2,29}$/.test(username) || username === 'owner') throw new SafeError('ID pengguna tidak valid atau dicadangkan');
         if (password.length < 8 || password.length > 72 || new TextEncoder().encode(password).length > 72) throw new SafeError('Password harus 8–72 karakter dan maksimal 72 byte');
         const assignment = staffAssignment(body);
         const created = await backend('/auth/v1/admin/users', { method: 'POST', body: JSON.stringify({
-          email: username + '@users.gaspos.local', password, email_confirm: true, user_metadata: { username },
+          email, password, email_confirm: true, user_metadata: { username },
         }) }, 'Akun tidak dapat dibuat. ID mungkin sudah digunakan atau password tidak memenuhi ketentuan');
         const uid = created?.id;
         if (typeof uid !== 'string' || !uuidPattern.test(uid)) throw new SafeError('Layanan akun tidak mengembalikan ID valid', 502);
