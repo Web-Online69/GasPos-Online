@@ -10,10 +10,10 @@ export async function loadWorkQueue(api, role) {
  const trips=async()=>{const result=await readAll(api.from('gas_trips').select('id,request_id,status,gas_logistics_requests(sj_group_id)').eq('status','ON_ROUTE').order('id'));return result.error?null:new Set((result.data||[]).filter(t=>t.status==='ON_ROUTE').map(t=>t.gas_logistics_requests?.sj_group_id||t.request_id)).size;};
  const signatures=()=>count('gas_trip_stops',[['eq','receiver_confirmed',false]]);
  const tasks=[];
- if(['OWNER','LOGISTIK'].includes(role))tasks.push({label:'Pembelian menunggu barang',view:'warehouse_receipts',run:async()=>{const r=await api.rpc('gaspos_pending_purchase_lines');return r.error?null:new Set((r.data||[]).map(x=>x.document_id)).size}});
+ if(role==='LOGISTIK')tasks.push({label:'Pembelian menunggu barang',view:'warehouse_receipts',run:async()=>{const r=await api.rpc('gaspos_pending_purchase_lines');return r.error?null:new Set((r.data||[]).map(x=>x.document_id)).size}});
  if(role==='OWNER')tasks.push({label:'Faktur Sopir belum dibuat INV',view:'trips',run:()=>count('gas_trip_stops',[['eq','receiver_confirmed',true],['is','invoice_document_id',null]])});
- if(['OWNER','LOGISTIK','SALES_SOPIR'].includes(role))tasks.push({label:role==='SALES_SOPIR'?'Perjalanan saya belum selesai':'Perjalanan menunggu kembali',view:role==='SALES_SOPIR'?'trips':'trip_returns',run:trips});
- if(['OWNER','SALES_SOPIR'].includes(role))tasks.push({label:'Faktur belum ditandatangani',view:'trips',run:signatures});
+ if(['LOGISTIK','SALES_SOPIR'].includes(role))tasks.push({label:role==='SALES_SOPIR'?'Perjalanan saya belum selesai':'Perjalanan menunggu kembali',view:role==='SALES_SOPIR'?'trips':'trip_returns',run:trips});
+ if(['LOGISTIK','SALES_SOPIR'].includes(role))tasks.push({label:'Faktur belum ditandatangani',view:'trips',run:signatures});
  if(['OWNER','KEUANGAN'].includes(role)){
   const r=await api.from('gaspos_trade_balances').select('document_type,document_total,paid_total').eq('status','APPROVED');
   for(const [type,label] of [['SALE','INV menunggu uang masuk'],['PURCHASE','Pembelian belum lunas']])tasks.push({label,view:'gas_payments',run:async()=>r.error?null:(r.data||[]).filter(x=>x.document_type===type&&Number(x.document_total)>Number(x.paid_total)).length});
