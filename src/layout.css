@@ -342,3 +342,10 @@
 .app-shell .cylinder-totals > span { padding: 5px 9px; border-radius: 7px; background: #203e49; }
 .app-shell .cylinder-totals > small { flex-basis: 100%; color: var(--muted); font-size: 11px; }
 @media(max-width: 420px) { .app-shell .cylinder-balance-table :is(th,td) { padding: 8px 6px; font-size: 12px; } }
+
+.app-shell .cylinder-overview-table { width:100%;min-width:0!important;table-layout:fixed; }
+.app-shell .cylinder-overview-table :is(th,td) { padding:9px 6px;font-size:12px;overflow-wrap:anywhere; }
+.app-shell .cylinder-overview-table :is(th,td):first-child { width:34%;text-align:left; }
+.app-shell .cylinder-overview-table :is(th,td):not(:first-child) { text-align:right;font-variant-numeric:tabular-nums; }
+.app-shell .cylinder-overview-table tfoot { background:#203e49;font-weight:700; }
+@media(max-width:380px){.app-shell .cylinder-overview-table :is(th,td){padding:8px 3px;font-size:11px;}}

@@ -4,7 +4,7 @@ export function navigationGroups(menus, role) {
   const definitions = [
     ['master', 'Master Data', ['gas_products', 'gas_partners', 'customers', 'gas_customer_prices']],
     ['trade', 'Pembelian & Penjualan', ['purchases', 'sales']],
-    ['warehouse', 'Gudang / Logistik', ['warehouse_receipts', 'warehouse_dispatch', 'trip_returns', ...warehouseReturns, 'gas_stock_movements']],
+    ['warehouse', 'Gudang / Logistik', ['cylinder_overview', 'warehouse_receipts', 'warehouse_dispatch', 'trip_returns', ...warehouseReturns, 'gas_stock_movements']],
     ['driver', 'Sales / Sopir', ['trips', ...(role === 'SALES_SOPIR' ? ['cylinder_returns'] : [])]],
     ['finance', 'Keuangan', ['gas_payments', 'operational', 'gas_financial_entries']],
     ['reports', 'Laporan', ['reports']],
