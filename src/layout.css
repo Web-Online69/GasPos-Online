@@ -409,7 +409,7 @@
  .app-shell :is(.trade-toolbar,.product-toolbar,.supplier-toolbar,.customer-toolbar,.app-panel-head) { align-items:flex-start;gap:10px;margin-bottom:14px; }
  .app-shell :is(.trade-toolbar,.product-toolbar,.supplier-toolbar,.customer-toolbar,.app-panel-head)>* { max-width:100%;min-width:0; }
  .app-shell :is(.product-table-wrap,.supplier-table-wrap,.customer-table-wrap,.users-table-wrap) { width:100%;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch; }
- .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table):not(.cylinder-balance-table):not(.cylinder-overview-table):not(:has(>tbody#trip-list)):not(#trip-detail table) { width:100%;min-width:600px!important;table-layout:auto; }
+ .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table):not(:where(.cylinder-balance-table,.cylinder-overview-table,:has(>tbody#trip-list),:has(>tbody#log-rows),#trip-detail table)) { width:100%;min-width:600px!important;table-layout:auto; }
  .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table) :is(th,td) { word-break:normal;overflow-wrap:break-word;line-height:1.5; }
  .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table) th { white-space:nowrap; }
  .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table) td button { min-width:76px;white-space:normal;word-break:normal;overflow-wrap:normal; }
@@ -459,4 +459,31 @@
  .app-shell #log-rows>tr>td button { width:100%!important;min-width:0!important;max-width:100%;min-height:44px;padding:10px 12px!important;white-space:normal!important;word-break:normal!important; }
  .app-shell #log-rows>tr>td[colspan] { grid-column:1/-1; }
  .app-shell #log-rows>tr>td[colspan]::before { content:none; }
+}
+
+/* Shared record cards. All phone cards stay inside their panel. */
+@media screen and (max-width:650px) {
+ .app-shell #app-content table:is(.mobile-records,:has(>tbody#log-rows),:has(>tbody#trip-list)),
+ .app-shell #trip-detail table { display:block;width:100%!important;min-width:0!important;max-width:100%!important; }
+ .app-shell #app-content :is(#log-rows,#trip-list),
+ .app-shell #app-content table.mobile-records>tbody { width:100%;min-width:0;max-width:100%; }
+ .app-shell #app-content :is(#log-rows,#trip-list)>tr,
+ .app-shell #trip-detail table>tbody>tr,
+ .app-shell #app-content table.mobile-records>tbody>tr { width:100%;min-width:0;max-width:100%;box-sizing:border-box; }
+ .app-shell .product-table-wrap:has(>table.mobile-records),
+ .app-shell .supplier-table-wrap:has(>table.mobile-records),
+ .app-shell .customer-table-wrap:has(>table.mobile-records) { overflow:visible;min-width:0;max-width:100%; }
+ .app-shell #app-content table.mobile-records>thead { position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%); }
+ .app-shell #app-content table.mobile-records>tbody { display:grid;gap:10px; }
+ .app-shell #app-content table.mobile-records>tbody>tr { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;padding:12px;border:1px solid #3b5869;border-radius:10px;background:#142936; }
+ .app-shell #app-content table.mobile-records>tbody>tr>td { display:flex!important;flex-direction:column;align-items:stretch;gap:3px;width:auto!important;min-width:0!important;max-width:100%;padding:0!important;border:0;text-align:left!important;white-space:normal!important;word-break:normal!important;overflow-wrap:break-word!important;font-size:13px;line-height:1.5; }
+ .app-shell #app-content table.mobile-records>tbody>tr>td::before { content:attr(data-mobile-label);font-size:11px;color:#9ab9c8;font-weight:600; }
+ .app-shell #app-content table.mobile-records>tbody>tr>td.mobile-wide,
+ .app-shell #app-content table.mobile-records>tbody>tr>td[colspan] { grid-column:1/-1; }
+ .app-shell #app-content table.mobile-records>tbody>tr>td[colspan]::before { content:none; }
+ .app-shell #app-content table.mobile-records td button { width:100%!important;min-width:0!important;max-width:100%!important;min-height:44px!important;white-space:normal!important;word-break:normal!important; }
+ .app-shell #app-content table.mobile-records td.mobile-actions { border-top:1px solid #344d5b;padding-top:10px!important;gap:8px; }
+ .app-shell #app-content table.mobile-records tfoot { display:table;width:100%;margin-top:10px; }
+ .app-shell #app-content :is(#log-rows,#trip-list)>tr>td,
+ .app-shell #trip-detail table>tbody>tr>td { max-width:100%; }
 }

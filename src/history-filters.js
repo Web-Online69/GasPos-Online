@@ -32,9 +32,24 @@ function formatQuantityCells(table){if(table.hasAttribute('data-no-history-filte
 const dateHeader=/tanggal|berangkat|jatuh tempo/i;
 const selectHeader=/pelanggan|supplier|suplayer|mitra|tabung|produk|jenis|status|peran|sopir|kendaraan/i;
 function cellText(cell){if(!cell)return '';const clone=cell.cloneNode(true);clone.querySelectorAll('details.compact-reference').forEach(el=>el.replaceWith(document.createTextNode(el.dataset.full)));clone.querySelectorAll('button,details,small').forEach(el=>el.remove());return clone.textContent.trim();}
+
+// Label shared record tables once per refresh; preserve the original table for desktop/export.
+export function prepareMobileRecords(table) {
+ if(!table.tHead||!table.tBodies.length||table.matches('.cylinder-balance-table,.cylinder-overview-table,.users-table')||table.querySelector('#trip-list,#log-rows')||table.closest('#trip-detail'))return;
+ if(!table.matches('.product-table,.supplier-table,.customer-table,.trade-table,.report-table'))return;
+ table.classList.add('mobile-records');
+ const headers=[...table.tHead.rows[0].cells].map(cell=>cell.textContent.trim());
+ for(const body of table.tBodies)for(const row of body.rows)for(const [index,cell] of [...row.cells].entries()){
+  if(cell.hasAttribute('colspan'))continue;
+  const label=headers[index]||'Keterangan';cell.dataset.mobileLabel=label;
+  cell.classList.toggle('mobile-wide',/tanggal|berangkat|dokumen|pelanggan|supplier|suplayer|mitra|produk|tabung|catatan|alamat|keterangan|penerima|aksi|nama/i.test(label));
+  cell.classList.toggle('mobile-actions',/aksi/i.test(label));
+ }
+}
+
 export function watchHistoryFilters(root) {
  const controls=new WeakMap();
- function setup(table){compactTableReferences(table);formatQuantityCells(table);
+ function setup(table){prepareMobileRecords(table);compactTableReferences(table);formatQuantityCells(table);
   if(table.hasAttribute('data-no-history-filters')||!table.tHead||!table.tBodies.length)return;
   // Master lists already provide a search box. No artificial date filter for undated data.
   if(['product-list','supplier-rows','customer-rows'].includes(table.tBodies[0].id))return;
