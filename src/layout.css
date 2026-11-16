@@ -431,3 +431,32 @@
  .app-shell .cylinder-overview-table :is(td,th):not(:first-child),
  .app-shell .cylinder-balance-table :is(td,th):last-child { white-space:nowrap; }
 }
+
+/* Warehouse history must never squeeze nine columns onto a phone. */
+@media screen and (max-width:650px) {
+ .app-shell .product-table-wrap:has(#log-rows) { overflow:visible; }
+ .app-shell table.product-table:has(>tbody#log-rows) { display:block;width:100%!important;min-width:0!important;table-layout:auto!important; }
+ .app-shell table.product-table:has(>tbody#log-rows)>thead { position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%); }
+ .app-shell #log-rows { display:grid;gap:12px; }
+ .app-shell #log-rows>tr { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:14px;border:1px solid #3b5869;border-radius:12px;background:#142936; }
+ .app-shell #log-rows>tr>td { display:flex!important;flex-direction:column;align-items:flex-start;gap:4px;min-width:0!important;max-width:100%;width:auto!important;padding:0!important;border:0;white-space:normal!important;word-break:normal!important;overflow-wrap:break-word!important;font-size:13px;line-height:1.5; }
+ .app-shell #log-rows>tr>td::before { font-size:11px;font-weight:600;color:#9ab9c8; }
+ .app-shell #log-rows>tr>td:nth-child(1),
+ .app-shell #log-rows>tr>td:nth-child(4),
+ .app-shell #log-rows>tr>td:nth-child(5),
+ .app-shell #log-rows>tr>td:nth-child(8),
+ .app-shell #log-rows>tr>td:nth-child(9) { grid-column:1/-1; }
+ .app-shell #log-rows>tr>td:nth-child(1)::before { content:'Tanggal'; }
+ .app-shell #log-rows>tr>td:nth-child(2)::before { content:'Dokumen'; }
+ .app-shell #log-rows>tr>td:nth-child(3)::before { content:'Jenis'; }
+ .app-shell #log-rows>tr>td:nth-child(4)::before { content:'Mitra'; }
+ .app-shell #log-rows>tr>td:nth-child(5)::before { content:'Tabung'; }
+ .app-shell #log-rows>tr>td:nth-child(6)::before { content:'Penuh'; }
+ .app-shell #log-rows>tr>td:nth-child(7)::before { content:'Kosong'; }
+ .app-shell #log-rows>tr>td:nth-child(8)::before { content:'Status'; }
+ .app-shell #log-rows>tr>td:nth-child(9) { padding-top:12px!important;border-top:1px solid #344d5b;gap:8px; }
+ .app-shell #log-rows>tr>td:nth-child(9)::before { content:'Aksi'; }
+ .app-shell #log-rows>tr>td button { width:100%!important;min-width:0!important;max-width:100%;min-height:44px;padding:10px 12px!important;white-space:normal!important;word-break:normal!important; }
+ .app-shell #log-rows>tr>td[colspan] { grid-column:1/-1; }
+ .app-shell #log-rows>tr>td[colspan]::before { content:none; }
+}
