@@ -10,6 +10,7 @@ export async function loadWorkQueue(api, role) {
  const trips=async()=>{const result=await readAll(api.from('gas_trips').select('id,request_id,status,gas_logistics_requests(sj_group_id)').eq('status','ON_ROUTE').order('id'));return result.error?null:new Set((result.data||[]).filter(t=>t.status==='ON_ROUTE').map(t=>t.gas_logistics_requests?.sj_group_id||t.request_id)).size;};
  const signatures=()=>count('gas_trip_stops',[['eq','receiver_confirmed',false]]);
  const tasks=[];
+ if(role==='LOGISTIK')tasks.push({label:'Tabung kosong Sopir menunggu penerimaan',view:'cylinder_returns',run:()=>count('gas_customer_cylinder_returns',[['eq','status','IN_VEHICLE'],['is','trip_id',null]])});
  if(role==='LOGISTIK')tasks.push({label:'Pembelian menunggu barang',view:'warehouse_receipts',run:async()=>{const r=await api.rpc('gaspos_pending_purchase_lines');return r.error?null:new Set((r.data||[]).map(x=>x.document_id)).size}});
  if(role==='OWNER')tasks.push({label:'Faktur Sopir belum dibuat INV',view:'trips',run:()=>count('gas_trip_stops',[['eq','receiver_confirmed',true],['is','invoice_document_id',null]])});
  if(['LOGISTIK','SALES_SOPIR'].includes(role))tasks.push({label:role==='SALES_SOPIR'?'Perjalanan saya belum selesai':'Perjalanan menunggu kembali',view:role==='SALES_SOPIR'?'trips':'trip_returns',run:trips});
