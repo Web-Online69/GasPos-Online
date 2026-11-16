@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "GASPOS Online",
+  "short_name": "GASPOS",
+  "description": "Pencatatan stok dan distribusi tabung gas.",
+  "lang": "id",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f1c27",
+  "theme_color": "#142633",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/gaspos-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/gaspos-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
