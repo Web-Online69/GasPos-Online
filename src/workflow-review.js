@@ -11,7 +11,7 @@ export async function loadWorkQueue(api, role) {
  const signatures=()=>count('gas_trip_stops',[['eq','receiver_confirmed',false]]);
  const tasks=[];
  if(['OWNER','LOGISTIK'].includes(role))tasks.push({label:'Pembelian menunggu barang',view:'warehouse_receipts',run:async()=>{const r=await api.rpc('gaspos_pending_purchase_lines');return r.error?null:new Set((r.data||[]).map(x=>x.document_id)).size}});
- if(role==='OWNER')tasks.push({label:'Faktur siap dikonfirmasi menjadi INV',view:'trips',run:()=>count('gas_trip_stops',[['eq','receiver_confirmed',true],['is','invoice_document_id',null]])});
+ if(role==='OWNER')tasks.push({label:'Faktur Sopir belum dibuat INV',view:'trips',run:()=>count('gas_trip_stops',[['eq','receiver_confirmed',true],['is','invoice_document_id',null]])});
  if(['OWNER','LOGISTIK','SALES_SOPIR'].includes(role))tasks.push({label:role==='SALES_SOPIR'?'Perjalanan saya belum selesai':'Perjalanan menunggu kembali',view:role==='SALES_SOPIR'?'trips':'trip_returns',run:trips});
  if(['OWNER','SALES_SOPIR'].includes(role))tasks.push({label:'Faktur belum ditandatangani',view:'trips',run:signatures});
  if(['OWNER','KEUANGAN'].includes(role)){
