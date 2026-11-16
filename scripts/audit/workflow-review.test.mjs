@@ -7,7 +7,7 @@ test('Stored receipt evidence rejects script strings, invalid coordinates and ma
 });
 function client({error=false}={}){
  const calls=[];
- return {calls,rpc:async name=>{calls.push(name);return {data:[{document_id:'same'},{document_id:'same'},{document_id:'second'}],error:error?{}:null}},from(table){calls.push(table);const query={select(){return this},eq(){return this},is(){return this},then(resolve){return Promise.resolve({count:3,data:[{document_type:'SALE',document_total:100,paid_total:50},{document_type:'SALE',document_total:100,paid_total:100},{document_type:'PURCHASE',document_total:100,paid_total:0}],error:error?{}:null}).then(resolve)}};return query}};
+ return {calls,rpc:async name=>{calls.push(name);return {data:[{document_id:'same'},{document_id:'same'},{document_id:'second'}],error:error?{}:null}},from(table){calls.push(table);const query={offset:0,select(){return this},eq(){return this},is(){return this},order(){return this},range(from){this.offset=from;return this},then(resolve){return Promise.resolve({count:3,data:table==='gas_trips'?(this.offset?[]:[{id:'active12',request_id:'load12',status:'ON_ROUTE',gas_logistics_requests:{sj_group_id:'same-sj'}},{id:'active50',request_id:'load50',status:'ON_ROUTE',gas_logistics_requests:{sj_group_id:'same-sj'}},{id:'old',request_id:'old-load',status:'RETURNED',gas_logistics_requests:{sj_group_id:null}}]):[{document_type:'SALE',document_total:100,paid_total:50},{document_type:'SALE',document_total:100,paid_total:100},{document_type:'PURCHASE',document_total:100,paid_total:0}],error:error?{}:null}).then(resolve)}};return query}};
 }
 test('Driver queue never queries prices, payments, purchase or all-driver data',async()=>{
  const api=client(),jobs=await loadWorkQueue(api,'SALES_SOPIR');assert.deepEqual(api.calls.sort(),['gas_trip_stops','gas_trips']);assert.equal(jobs.length,2);assert(jobs.every(x=>x.view==='trips'));
@@ -24,3 +24,5 @@ test('Owner can follow all six work queues',async()=>{
 test('Query failure is unavailable, never a misleading zero pending work',async()=>{
  for(const role of ['OWNER','LOGISTIK','SALES_SOPIR','KEUANGAN'])assert((await loadWorkQueue(client({error:true}),role)).every(x=>x.count===null));
 });
+
+test('Driver task counts one active SJ for two products and excludes a returned SJ',async()=>{const jobs=await loadWorkQueue(client(),'SALES_SOPIR');assert.equal(jobs.find(j=>j.label==='Perjalanan saya belum selesai').count,1);});
