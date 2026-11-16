@@ -388,3 +388,46 @@
  .app-shell #trip-detail>p { font-size:12px;line-height:1.65;overflow-wrap:break-word; }
  .app-shell .app-data-panel:has(#trip-list) .transaction-outputs button { padding:8px 12px;min-height:44px;font-size:12px; }
 }
+
+/* Shared mobile layout: one compact export menu, contained tables, vertical forms. */
+.app-shell .transaction-outputs { display:block;max-width:100%;margin:12px 0; }
+.app-shell .output-menu { max-width:100%;border:1px solid var(--line);border-radius:9px;background:#193441; }
+.app-shell .output-menu>summary { cursor:pointer;padding:10px 13px;min-height:44px;color:#c9e7e9;font-size:13px;font-weight:650; }
+.app-shell .output-options { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 10px 10px; }
+.app-shell .output-options button { width:100%;min-width:0;padding:9px;font-size:12px;white-space:normal;word-break:normal; }
+.app-shell .transaction-outputs>[role=status]:empty { display:none; }
+.app-shell .transaction-outputs>[role=status]:not(:empty) { display:block;margin-top:8px;line-height:1.5; }
+@media screen and (max-width:650px) {
+ .app-shell { font-size:13px;line-height:1.5; }
+ .app-shell .app-content { padding:18px 12px max(24px,env(safe-area-inset-bottom)); }
+ .app-shell .app-heading { margin-bottom:18px; }
+ .app-shell .app-heading h1 { font-size:21px;line-height:1.3;word-break:normal;overflow-wrap:break-word; }
+ .app-shell .app-heading>span { font-size:12px;line-height:1.6; }
+ .app-shell .app-data-panel { padding:14px;margin-bottom:14px;border-radius:12px; }
+ .app-shell .app-data-panel>h2,
+ .app-shell :is(.trade-toolbar,.product-toolbar,.supplier-toolbar,.customer-toolbar,.app-panel-head) h2 { font-size:17px;line-height:1.4;margin:0; }
+ .app-shell :is(.trade-toolbar,.product-toolbar,.supplier-toolbar,.customer-toolbar,.app-panel-head) { align-items:flex-start;gap:10px;margin-bottom:14px; }
+ .app-shell :is(.trade-toolbar,.product-toolbar,.supplier-toolbar,.customer-toolbar,.app-panel-head)>* { max-width:100%;min-width:0; }
+ .app-shell :is(.product-table-wrap,.supplier-table-wrap,.customer-table-wrap,.users-table-wrap) { width:100%;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch; }
+ .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table):not(.cylinder-balance-table):not(.cylinder-overview-table):not(:has(>tbody#trip-list)):not(#trip-detail table) { width:100%;min-width:600px!important;table-layout:auto; }
+ .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table) :is(th,td) { word-break:normal;overflow-wrap:break-word;line-height:1.5; }
+ .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table) th { white-space:nowrap; }
+ .app-shell :is(.product-table,.supplier-table,.customer-table,.trade-table,.users-table,.report-table) td button { min-width:76px;white-space:normal;word-break:normal;overflow-wrap:normal; }
+ .app-shell .history-filters { padding:11px 12px;margin:12px 0;border-radius:9px; }
+ .app-shell .history-filters>summary { font-size:12px;line-height:1.5;min-height:24px; }
+ .app-shell .history-filter-form { margin:12px 0 0; }
+ .app-shell .output-options { grid-template-columns:minmax(0,1fr); }
+ .app-shell .output-menu>summary { padding:10px 12px; }
+ .app-shell :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog) { width:100%;padding:18px 14px;max-height:calc(100dvh - 24px);overflow-y:auto; }
+ .app-shell :is(input:not([type=checkbox]):not([type=radio]),select,textarea) { font-size:16px;min-width:0;max-width:100%; }
+ .app-shell form { width:100%;min-width:0; }
+ .app-shell form label { line-height:1.45; }
+ .app-shell :is(.trade-actions,.product-actions,.supplier-actions,.customer-actions) { gap:8px; }
+ .app-shell .report-totals { gap:8px; }
+ .app-shell .report-totals>div { padding:12px; }
+ .app-shell .cylinder-overview-table :is(th,td) { font-size:11px;padding:8px 4px; }
+ .app-shell .cylinder-overview-table th { white-space:normal; }
+ .app-shell .cylinder-balance-table th { white-space:normal; }
+ .app-shell .cylinder-overview-table :is(td,th):not(:first-child),
+ .app-shell .cylinder-balance-table :is(td,th):last-child { white-space:nowrap; }
+}
