@@ -49,6 +49,7 @@ export function watchHistoryFilters(root) {
   const status=form.querySelector('.filter-result');let rows=[];
   const updateTotals=()=>{
    const id=table.tBodies[0].id,visible=rows.filter(r=>!r.element.hidden);
+   table.dispatchEvent(new Event('history-filter-change'));
    if(id==='expense-rows'){const sum=visible.reduce((n,r)=>n+Number(r.element.dataset.amount||0),0);const label=root.querySelector('#expense-sum');if(label)label.textContent='Total hasil filter: Rp '+sum.toLocaleString('id-ID');}
    if(id==='stock-list'||id==='stock-history-list'){const host=root.querySelector(id==='stock-list'?'#stock-balance-total':'#stock-movement-total');if(!host)return;
     const message=table.tBodies[0].querySelector('td[colspan]')?.textContent||'';

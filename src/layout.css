@@ -329,3 +329,16 @@
 .app-shell .app-nav-child { padding: 10px 12px !important; white-space: normal; text-align: left; line-height: 1.45; }
 .app-shell .app-side-link > .nav-item-label { display: block; width: auto; height: auto; flex: 1; min-width: 0; background: none; border-radius: 0; overflow-wrap: anywhere; }
 .app-shell .app-side-link[aria-current=page] { background: #214b53; color: #c8fff4; }
+
+/* Customer custody: compact three-column table, with filtered totals. */
+.app-shell .cylinder-balance-table { width: 100%; min-width: 0 !important; table-layout: fixed; }
+.app-shell .cylinder-balance-table :is(th,td) { padding: 9px 8px; font-size: 13px; overflow-wrap: anywhere; }
+.app-shell .cylinder-balance-table th:first-child { width: 40%; }
+.app-shell .cylinder-balance-table th:nth-child(2) { width: 38%; }
+.app-shell .cylinder-balance-table :is(th,td):last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.app-shell .cylinder-balance-table tfoot { background: #203e49; color: #c9fff1; }
+.app-shell .cylinder-balance-table tfoot th { border-top: 2px solid #5b9d9b; }
+.app-shell .cylinder-totals { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 12px; font-size: 12px; }
+.app-shell .cylinder-totals > span { padding: 5px 9px; border-radius: 7px; background: #203e49; }
+.app-shell .cylinder-totals > small { flex-basis: 100%; color: var(--muted); font-size: 11px; }
+@media(max-width: 420px) { .app-shell .cylinder-balance-table :is(th,td) { padding: 8px 6px; font-size: 12px; } }
