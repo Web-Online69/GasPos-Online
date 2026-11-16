@@ -349,3 +349,42 @@
 .app-shell .cylinder-overview-table :is(th,td):not(:first-child) { text-align:right;font-variant-numeric:tabular-nums; }
 .app-shell .cylinder-overview-table tfoot { background:#203e49;font-weight:700; }
 @media(max-width:380px){.app-shell .cylinder-overview-table :is(th,td){padding:8px 3px;font-size:11px;}}
+
+/* Trip screens use readable cards on phones instead of narrow table columns. */
+.app-shell #trip-detail:empty { display:none; }
+@media screen and (max-width:650px) {
+ .app-shell .product-table-wrap:has(>table #trip-list),
+ .app-shell #trip-detail .product-table-wrap { overflow:visible; }
+ .app-shell table:has(>tbody#trip-list),
+ .app-shell #trip-detail .product-table { display:block;width:100%;min-width:0!important; }
+ .app-shell table:has(>tbody#trip-list)>thead,
+ .app-shell #trip-detail .product-table>thead { position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%); }
+ .app-shell #trip-list,.app-shell #trip-detail .product-table>tbody { display:grid;gap:12px; }
+ .app-shell #trip-list>tr,.app-shell #trip-detail .product-table>tbody>tr { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:14px;border:1px solid #3b5869;border-radius:12px;background:#142936; }
+ .app-shell #trip-list>tr>td,.app-shell #trip-detail .product-table>tbody>tr>td { display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0!important;width:auto!important;padding:0!important;border:0;font-size:13px;line-height:1.5;word-break:normal!important;overflow-wrap:break-word;white-space:normal; }
+ .app-shell #trip-list>tr>td::before,.app-shell #trip-detail .product-table>tbody>tr>td::before { color:#9ab9c8;font-size:11px;font-weight:600; }
+ .app-shell #trip-list>tr>td:nth-child(1) { grid-column:1/-1; }
+ .app-shell #trip-list>tr>td:nth-child(1)::before { content:'Berangkat'; }
+ .app-shell #trip-list>tr>td:nth-child(2)::before { content:'Sopir'; }
+ .app-shell #trip-list>tr>td:nth-child(3)::before { content:'Kendaraan'; }
+ .app-shell #trip-list>tr>td:nth-child(4)::before { content:'Muatan'; }
+ .app-shell #trip-list>tr>td:nth-child(5)::before { content:'Status'; }
+ .app-shell #trip-list>tr>td:nth-child(6) { grid-column:1/-1;gap:8px;border-top:1px solid #344d5b;padding-top:12px!important; }
+ .app-shell #trip-list>tr>td:nth-child(6)::before { content:'Aksi'; }
+ .app-shell #trip-list>tr>td button,
+ .app-shell #trip-detail .product-table td button { width:100%!important;min-width:0!important;max-width:100%;min-height:44px!important;padding:10px 12px!important;font-size:13px!important;white-space:normal;word-break:normal!important;overflow-wrap:normal; }
+ .app-shell #trip-detail .product-table>tbody>tr>td:nth-child(1),
+ .app-shell #trip-detail .product-table>tbody>tr>td:nth-child(4),
+ .app-shell #trip-detail .product-table>tbody>tr>td:nth-child(5) { grid-column:1/-1; }
+ .app-shell #trip-detail .product-table>tbody>tr>td:nth-child(1)::before { content:'Pelanggan'; }
+ .app-shell #trip-detail .product-table>tbody>tr>td:nth-child(2)::before { content:'Penuh'; }
+ .app-shell #trip-detail .product-table>tbody>tr>td:nth-child(3)::before { content:'Kosong'; }
+ .app-shell #trip-detail .product-table>tbody>tr>td:nth-child(4)::before { content:'Catatan'; }
+ .app-shell #trip-detail .product-table>tbody>tr>td:nth-child(5)::before { content:'Penerima / Aksi'; }
+ .app-shell #trip-list>tr>td[colspan],
+ .app-shell #trip-detail .product-table td[colspan] { grid-column:1/-1; }
+ .app-shell #trip-list>tr>td[colspan]::before { content:none; }
+ .app-shell #trip-detail h2 { font-size:18px;line-height:1.4;overflow-wrap:break-word; }
+ .app-shell #trip-detail>p { font-size:12px;line-height:1.65;overflow-wrap:break-word; }
+ .app-shell .app-data-panel:has(#trip-list) .transaction-outputs button { padding:8px 12px;min-height:44px;font-size:12px; }
+}
