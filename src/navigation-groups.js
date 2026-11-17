@@ -30,11 +30,11 @@ export function renderNavigation(menus, role, icon, escape) {
 /** Compact home dashboard groups. Show only menus belonging to the current workspace. */
 export function dashboardMenuGroups(menus) {
  const groups=[
-  {id:'trade',label:'Pembelian & Penjualan',icon:'⇄',ids:['purchases','sales']},
-  {id:'warehouse',label:'Logistik',icon:'▤',ids:['warehouse_receipts','warehouse_dispatch','trip_returns','cylinder_returns','cylinder_overview','gas_stock_movements','logistics']},
-  {id:'driver',label:'Sopir',icon:'🚚',ids:['trips']},
-  {id:'finance',label:'Keuangan',icon:'▣',ids:['gas_payments','gas_financial_entries','operational']},
   {id:'master',label:'Master Data',icon:'▦',ids:['gas_products','gas_partners','customers','gas_customer_prices']},
+  {id:'trade',label:'Pembelian & Penjualan',icon:'⇄',ids:['purchases','sales']},
+  {id:'warehouse',label:'Gudang / Logistik',icon:'▤',ids:['cylinder_overview','warehouse_receipts','warehouse_dispatch','trip_returns','cylinder_returns','gas_stock_movements','logistics']},
+  {id:'driver',label:'Sales / Sopir',icon:'🚚',ids:['trips']},
+  {id:'finance',label:'Keuangan',icon:'▣',ids:['gas_payments','operational','gas_financial_entries']},
   {id:'report',label:'Laporan',icon:'▥',ids:['reports']},
   {id:'settings',label:'Pengaturan',icon:'⚙',ids:['gas_members','invoice_profile']}
  ];
