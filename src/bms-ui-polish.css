@@ -934,7 +934,7 @@
    font-size:13px!important;
    line-height:1.4!important;
  }
- .app-shell #app-content :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog) form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),select,textarea) {
+ .app-shell #app-content :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog) form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),select:not(.trade-native-select),textarea) {
    box-sizing:border-box!important;
    width:100%!important;
    min-width:0!important;
@@ -994,7 +994,7 @@
  .app-shell #app-content :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog) form {
    gap:9px!important;
  }
- .app-shell #app-content :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog) form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),select,textarea) {
+ .app-shell #app-content :is(.trade-dialog,.product-modal,.supplier-dialog,.customer-dialog) form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),select:not(.trade-native-select),textarea) {
    min-height:44px!important;
    font-size:16px!important;
  }
