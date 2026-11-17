@@ -349,3 +349,123 @@
     padding:18px 16px max(20px,env(safe-area-inset-bottom));
   }
 }
+
+/* Mobile master compactness corrected from the real handset screenshot.
+   Keep original GASPOS colors; desktop and CRUD remain untouched. */
+@media screen and (max-width:650px) {
+  .app-shell #app-content :is(.product-toolbar,.supplier-toolbar,.customer-toolbar) {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:8px!important;
+    align-items:center!important;
+    margin:0 0 10px!important;
+  }
+  .app-shell #app-content :is(.product-toolbar,.supplier-toolbar,.customer-toolbar)>h2 {
+    margin:0!important;
+    font-size:15px!important;
+  }
+  .app-shell #app-content :is(.product-toolbar,.supplier-toolbar,.customer-toolbar)>button {
+    justify-self:end!important;
+    width:auto!important;
+    min-width:96px!important;
+    min-height:40px!important;
+    margin:0!important;
+    padding:8px 13px!important;
+  }
+  .app-shell #app-content :is(.product-search,.supplier-search,.customer-search) {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:6px 10px!important;
+    align-items:center!important;
+    margin:0 0 8px!important;
+    padding:0 0 8px!important;
+  }
+  .app-shell #app-content :is(.product-search,.supplier-search,.customer-search)>input {
+    grid-column:1/-1!important;
+    width:100%!important;
+    height:44px!important;
+    min-height:44px!important;
+    font-size:16px!important;
+    margin:0!important;
+  }
+  .app-shell #app-content :is(.product-search,.supplier-search,.customer-search)>span {
+    grid-column:1/-1!important;
+    font-size:12px!important;
+    text-align:left!important;
+    margin:0!important;
+  }
+  .app-shell #app-content .master-column-controls {
+    margin:-1px 0 10px!important;
+  }
+  .app-shell #app-content .master-column-controls .master-filter-toggle {
+    width:auto!important;
+    min-height:36px!important;
+    padding:7px 12px!important;
+    justify-content:flex-start!important;
+    font-size:12px!important;
+  }
+  .app-shell #app-content .master-filter-panel { margin-top:8px!important; }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody {
+    gap:7px!important;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr {
+    padding:11px 12px!important;
+    gap:7px!important;
+    min-height:0!important;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr>td {
+    font-size:13px!important;
+    line-height:1.35!important;
+    gap:2px!important;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr>td::before {
+    font-size:10px!important;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr>td.mobile-actions {
+    margin:3px 0 0!important;
+    padding:7px 0 0!important;
+    gap:0!important;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr>td.mobile-actions button {
+    min-height:36px!important;
+    padding:6px 12px!important;
+    font-size:12px!important;
+  }
+  /* Product is only code, name, and edit: one compact list row. */
+  .app-shell #app-content table.mobile-records.product-table:has(>tbody#product-list)>tbody>tr:not(:has(td[colspan])) {
+    display:grid!important;
+    grid-template-columns:minmax(68px,85px) minmax(0,1fr) auto!important;
+    align-items:center!important;
+    gap:7px!important;
+    padding:10px!important;
+  }
+  .app-shell #app-content table.mobile-records.product-table:has(>tbody#product-list)>tbody>tr:not(:has(td[colspan]))>td {
+    display:block!important;
+    grid-column:auto!important;
+    min-width:0!important;
+    width:auto!important;
+    padding:0!important;
+    margin:0!important;
+    border:0!important;
+    overflow-wrap:anywhere!important;
+  }
+  .app-shell #app-content table.mobile-records.product-table #product-list>tr>td:not([colspan])::before {
+    display:none!important;
+  }
+  .app-shell #app-content table.mobile-records.product-table #product-list>tr>td.product-name-cell {
+    font-weight:600;
+  }
+  .app-shell #app-content table.mobile-records.product-table #product-list>tr>td.product-action-cell {
+    width:auto!important;
+    min-width:0!important;
+  }
+  .app-shell #app-content table.mobile-records.product-table #product-list>tr>td.product-action-cell button {
+    width:auto!important;
+    min-width:54px!important;
+    max-width:none!important;
+    height:36px!important;
+    min-height:36px!important;
+    padding:6px 9px!important;
+    margin:0!important;
+  }
+}
