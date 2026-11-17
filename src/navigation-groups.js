@@ -41,7 +41,8 @@ export function dashboardMenuGroups(menus) {
  ];
  const used=new Set(['ringkasan']);
  const result=groups.map(group=>{
-  const hasWarehouseActions=group.id==='warehouse'&&group.ids.some(id=>id!=='logistics'&&menus.some(item=>item[0]===id));
+  const hasWarehouseActions=group.id==='warehouse'&&group.ids.some(id=>['warehouse_receipts','warehouse_dispatch','trip_returns'].includes(id)&&menus.some(item=>item[0]===id));
+  if(hasWarehouseActions)used.add('logistics');
   const entries=group.ids
    .filter(key=>!(hasWarehouseActions&&key==='logistics'))
    .map(key=>menus.find(item=>item[0]===key))
@@ -49,7 +50,7 @@ export function dashboardMenuGroups(menus) {
   for(const entry of entries)used.add(entry[0]);
   return {...group,menus:entries};
  }).filter(group=>group.menus.length);
- const extra=menus.filter(item=>!used.has(item[0])&&item[0]!=='logistics'&&!used.has(item[0]));
+ const extra=menus.filter(item=>!used.has(item[0]));
  if(extra.length)result.push({id:'other',label:'Menu Lainnya',icon:'▤',menus:extra});
  return result;
 }
