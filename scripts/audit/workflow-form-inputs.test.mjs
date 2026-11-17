@@ -24,7 +24,7 @@ test('Edit Surat Jalan uses a dedicated quantity field as well',()=>{
  const start=src.indexOf('const openSJEditor='),end=src.indexOf('const deleteSJ=',start);
  assert.ok(start>0&&end>start,'Edit SJ handler exists');
  const edit=src.slice(start,end);
- assert.match(edit,/class=\\"sj-edit-quantity\\" type=\\"number\\"/);
+ assert.match(edit,/class="sj-edit-quantity" type="number"/);
  assert.match(edit,/readNumber\(row\.querySelector\('\.sj-edit-quantity'\)\)/);
  assert.doesNotMatch(edit,/row\.querySelector\(['"]input['"]\)/);
 });
