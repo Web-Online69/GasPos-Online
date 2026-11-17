@@ -13,4 +13,15 @@ window.addEventListener('beforeinstallprompt',event=>{
  banner.querySelector('[data-dismiss]').onclick=remove;
  banner.querySelector('[data-install]').onclick=async()=>{if(!installPrompt)return;const button=banner.querySelector('[data-install]'),prompt=installPrompt;installPrompt=null;button.disabled=true;try{await prompt.prompt();await prompt.userChoice;}catch{}finally{remove();}};
 });
+// iPhone/iPad Safari has no beforeinstallprompt; explain the native Add to Home Screen flow.
+window.addEventListener('load',()=>{
+ if(installed()||banner)return;
+ const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ if(!ios||sessionStorage.getItem('lpe-install-tip-dismissed'))return;
+ const notice=document.createElement('aside');notice.className='gaspos-install';notice.setAttribute('aria-label','Petunjuk memasang aplikasi');
+ notice.innerHTML='<span><strong>Pasang Lingkar Perdana Energi</strong><small>Ketuk Bagikan (□↑), lalu Tambahkan ke Layar Utama.</small></span><button type="button" data-dismiss aria-label="Tutup petunjuk pemasangan">×</button>';
+ const style=document.createElement('style');style.textContent='.gaspos-install{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#193441;color:#eff9fa;border-bottom:1px solid #3c6274;font:13px system-ui}.gaspos-install>span{flex:1;min-width:0}.gaspos-install strong,.gaspos-install small{display:block}.gaspos-install small{color:#b9d2dd;margin-top:2px}.gaspos-install button{flex:none;width:auto;min-width:44px;min-height:44px;padding:6px 12px;border:0;background:transparent;color:white;font-size:22px}';
+ notice.append(style);document.body.prepend(notice);banner=notice;
+ notice.querySelector('[data-dismiss]').onclick=()=>{sessionStorage.setItem('lpe-install-tip-dismissed','1');remove();};
+});
 if('serviceWorker' in navigator){const register=()=>navigator.serviceWorker.register(import.meta.env.BASE_URL+'sw.js',{scope:import.meta.env.BASE_URL,updateViaCache:'none'}).catch(()=>{});if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true});}
