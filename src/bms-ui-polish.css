@@ -1807,3 +1807,34 @@
   }
   .app-shell #app-content .dashboard-menu-label {font-size:12px!important;}
 }
+
+/* Purchase receipt: one clear task and separate full/empty balances. */
+.app-shell #app-content .flow-panel[hidden] {display:none!important;}
+.app-shell #app-content .pending-purchase-row>div {gap:3px;}
+.app-shell #app-content #arrival-remaining {
+ display:grid;
+ gap:4px;
+ margin:0;
+ padding:10px 12px;
+ border:1px solid var(--line);
+ border-radius:9px;
+ background:var(--surface-2);
+ font-size:12px;
+ line-height:1.45;
+}
+.app-shell #app-content #arrival-remaining:empty {display:none;}
+.app-shell #app-content #arrival-remaining>strong {font-size:13px;color:var(--ink);}
+.app-shell #app-content #arrival-remaining>span {display:block;}
+.app-shell #app-content #arrival-remaining>small {display:block;font-size:11px;color:var(--muted);}
+.app-shell #app-content .pending-purchase-panel .pending-purchase-row {
+ gap:10px;
+ align-items:center;
+}
+.app-shell #app-content .pending-purchase-panel .pending-purchase-row>button {
+ min-width:90px!important;
+ max-width:115px!important;
+}
+@media screen and (max-width:650px){
+ .app-shell #app-content .pending-purchase-panel .pending-purchase-row {padding:10px!important;}
+ .app-shell #app-content #arrival-remaining {padding:9px 10px;}
+}
