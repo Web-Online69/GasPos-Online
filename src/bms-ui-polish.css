@@ -1679,110 +1679,131 @@
  .app-shell #app-content #app-kpis>.app-kpi strong {font-size:19px!important;}
 }
 
-/* Dashboard: segregated department menus, not a single stack of oversized tiles. */
+/* Compact dashboard accordion: each section restores original menu illustrations. */
 .app-shell #app-content .dashboard-departments {
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:10px;
- width:100%;
- margin:0 0 18px;
- min-width:0;
- align-items:start;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  align-items:start;
+  gap:8px;
+  width:100%;
+  min-width:0;
+  margin:0 0 16px;
 }
 .app-shell #app-content .dashboard-department {
- display:block;
- box-sizing:border-box;
- min-width:0;
- padding:12px;
- border:1px solid var(--line);
- border-radius:11px;
- background:var(--surface);
+  min-width:0;
+  margin:0;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface);
 }
-.app-shell #app-content .dashboard-department>h3 {
- display:flex;
- align-items:center;
- gap:8px;
- margin:0 0 10px;
- padding:0 0 8px;
- border-bottom:1px solid var(--line);
- font-size:13px;
- font-weight:700;
- line-height:1.3;
- overflow-wrap:anywhere;
+.app-shell #app-content .dashboard-department-heading {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  box-sizing:border-box;
+  min-height:57px;
+  padding:9px 12px;
+  cursor:pointer;
+  list-style:none;
 }
-.app-shell #app-content .dashboard-department-icon {
- display:grid;
- place-items:center;
- width:26px;
- height:26px;
- min-width:26px;
- border-radius:7px;
- background:var(--surface-2);
- font-size:14px;
+.app-shell #app-content .dashboard-department-heading::-webkit-details-marker {display:none;}
+.app-shell #app-content .dashboard-department-heading strong {
+  min-width:0;
+  flex:1;
+  font-size:13px;
+  line-height:1.35;
+  font-weight:700;
 }
+.app-shell #app-content .dashboard-department-heading small {
+  color:var(--muted);
+  font-size:11px;
+  white-space:nowrap;
+}
+.app-shell #app-content .dashboard-department-icon,
+.app-shell #app-content .dashboard-menu-icon {
+  display:grid;
+  flex:none;
+  place-items:center;
+  width:33px;
+  height:33px;
+  border-radius:8px;
+  background:var(--surface-2);
+}
+.app-shell #app-content .dashboard-department-icon .menu-illustration,
+.app-shell #app-content .dashboard-menu-icon .menu-illustration {
+  width:23px;
+  height:23px;
+}
+.app-shell #app-content .dashboard-department-chevron {
+  color:var(--muted);
+  font-size:19px;
+  line-height:1;
+  transition:transform .15s ease;
+}
+.app-shell #app-content .dashboard-department[open] .dashboard-department-chevron {transform:rotate(180deg);}
 .app-shell #app-content .dashboard-department-links {
- display:grid;
- grid-template-columns:minmax(0,1fr);
- gap:5px;
- min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:5px;
+  min-width:0;
+  padding:3px 10px 10px;
 }
 .app-shell #app-content .dashboard-department-link {
- box-sizing:border-box;
- display:flex;
- width:100%;
- min-width:0;
- max-width:100%;
- min-height:33px;
- align-items:center;
- justify-content:flex-start;
- padding:7px 9px;
- border:1px solid var(--line);
- border-radius:7px;
- background:var(--surface-2);
- color:var(--ink);
- text-align:left;
- font-size:12px;
- font-weight:600;
- line-height:1.25;
- overflow-wrap:anywhere;
- cursor:pointer;
+  display:flex;
+  box-sizing:border-box;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  min-height:43px;
+  padding:5px 9px;
+  text-align:left;
+  color:var(--ink);
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  cursor:pointer;
 }
 .app-shell #app-content .dashboard-department-link:hover,
-.app-shell #app-content .dashboard-department-link:focus-visible {
- border-color:var(--muted);
+.app-shell #app-content .dashboard-department-link:focus-visible {border-color:var(--muted);}
+.app-shell #app-content .dashboard-menu-icon {
+  width:30px;
+  height:30px;
+  border-radius:7px;
+  background:transparent;
 }
-@media screen and (min-width:1000px){
- .app-shell #app-content .dashboard-departments {grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.app-shell #app-content .dashboard-menu-label {
+  min-width:0;
+  flex:1;
+  font-size:12px;
+  font-weight:600;
+  line-height:1.35;
+  overflow-wrap:anywhere;
 }
-@media screen and (max-width:650px){
- .app-shell #app-content .dashboard-departments {
-   grid-template-columns:repeat(2,minmax(0,1fr))!important;
-   gap:8px!important;
-   margin:0 0 12px!important;
- }
- .app-shell #app-content .dashboard-department {
-   padding:9px!important;
-   border-radius:10px!important;
- }
- .app-shell #app-content .dashboard-department>h3 {
-   gap:6px!important;
-   font-size:12px!important;
-   margin:0 0 7px!important;
-   padding:0 0 7px!important;
- }
- .app-shell #app-content .dashboard-department-icon {
-   width:23px;min-width:23px;height:23px;font-size:12px;
- }
- .app-shell #app-content .dashboard-department-links {gap:5px!important;}
- .app-shell #app-content .dashboard-department-link {
-   min-height:34px!important;
-   padding:6px 7px!important;
-   font-size:11px!important;
-   border-radius:7px!important;
- }
+.app-shell #app-content .dashboard-menu-arrow {
+  color:var(--muted);
+  font-size:19px;
+  line-height:1;
 }
-@media screen and (max-width:340px){
- .app-shell #app-content .dashboard-department{padding:7px!important;}
- .app-shell #app-content .dashboard-department>h3{font-size:11px!important;}
- .app-shell #app-content .dashboard-department-link{font-size:10px!important;}
+@media screen and (min-width:860px) {
+  .app-shell #app-content .dashboard-departments {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+}
+@media screen and (max-width:650px) {
+  .app-shell #app-content .dashboard-departments {
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:7px!important;
+    margin:0 0 12px!important;
+  }
+  .app-shell #app-content .dashboard-department-heading {
+    min-height:52px!important;
+    padding:7px 10px!important;
+  }
+  .app-shell #app-content .dashboard-department-links {gap:4px!important;padding:2px 9px 9px!important;}
+  .app-shell #app-content .dashboard-department-link {
+    min-height:42px!important;
+    padding:5px 8px!important;
+  }
+  .app-shell #app-content .dashboard-menu-label {font-size:12px!important;}
 }
