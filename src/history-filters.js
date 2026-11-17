@@ -57,7 +57,7 @@ export function watchHistoryFilters(root) {
   const headers=[...table.tHead.rows[0].cells].map(c=>c.textContent.trim());
   const dateIndex=headers.findIndex(h=>dateHeader.test(h));
   const isSJ=table.classList.contains('sj-history-records');
-  const isPaged=!table.matches('.report-table,.users-table,.cylinder-balance-table,.cylinder-overview-table')&&!['stock-list','product-list','supplier-rows','customer-rows','user-rows','users-list','price-rows'].includes(table.tBodies[0].id)&&!table.closest('#trip-detail');
+  const isPaged=!table.matches('.report-table,.users-table,.cylinder-balance-table,.cylinder-overview-table')&&!['stock-list','product-list','supplier-rows','customer-rows','user-rows','users-list','price-rows','price-list'].includes(table.tBodies[0].id)&&!table.closest('#trip-detail');
   const pageSize=5;
   if(isPaged)table.dataset.filterPaging='5';
   let page=0;
