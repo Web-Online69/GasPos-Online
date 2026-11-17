@@ -223,6 +223,8 @@ async function showLogistics(status='',mode=''){
   if(!rows?.isConnected)return;
   if(error){content.querySelector('#log-error').textContent=error.message;return}
   const grouped=groupedRequests(data||[]);
+  const sjEditState=new Map();
+  if(!isReceipt&&grouped.length){const state=await api.rpc('gaspos_delivery_sj_edit_status');if(state.error)content.querySelector('#log-error').textContent='Status edit Surat Jalan belum tersedia: '+state.error.message;else for(const item of state.data||[])sjEditState.set(item.group_id,item);}
   let locked=new Set();
   if(isReceipt&&role==='LOGISTIK'&&grouped.length){
    const locks=await api.rpc('gaspos_receipt_edit_locks');
@@ -237,7 +239,8 @@ async function showLogistics(status='',mode=''){
   rows.innerHTML=grouped.length?grouped.map(x=>{
    const isCorrectable=isReceipt&&x.status==='APPROVED'&&Boolean(x.purchase_document_id);
    const canCorrect=isCorrectable&&(role==='OWNER'||!locked.has(x.id));
-   const action=isCorrectable?'<button type="button" class="trade-secondary" data-log-view="'+x.id+'">Lihat</button>'+(canCorrect?'<button type="button" class="trade-secondary" data-log-correct="'+x.id+'">Edit</button>':'<button type="button" class="trade-secondary" disabled title="Sudah ada transaksi berikutnya. Hanya Owner bisa mengedit.">Terkunci</button>')+'<button type="button" class="trade-secondary" data-log-print="'+x.id+'">Cetak</button>':(x.status==='APPROVED'?'<button type="button" class="trade-secondary" data-log-print="'+x.id+'">Cetak</button>':'')+(['OWNER','LOGISTIK'].includes(role)?'<button type="button" class="trade-secondary" data-log-edit="'+x.id+'">Edit Catatan</button>':'');
+   const editableSJ=!isReceipt&&['OWNER','LOGISTIK'].includes(role)&&sjEditState.get(x.id)?.editable===true;
+   const action=isCorrectable?'<button type="button" class="trade-secondary" data-log-view="'+x.id+'">Lihat</button>'+(canCorrect?'<button type="button" class="trade-secondary" data-log-correct="'+x.id+'">Edit</button>':'<button type="button" class="trade-secondary" disabled title="Sudah ada transaksi berikutnya. Hanya Owner bisa mengedit.">Terkunci</button>')+'<button type="button" class="trade-secondary" data-log-print="'+x.id+'">Cetak</button>':(x.status==='APPROVED'?'<button type="button" class="trade-secondary" data-log-print="'+x.id+'">Cetak</button>':'')+(editableSJ?'<button type="button" class="trade-secondary" data-sj-edit="'+x.id+'">Edit</button><button type="button" class="trade-cancel-btn" data-sj-delete="'+x.id+'">Hapus</button>':'')+(isReceipt&&['OWNER','LOGISTIK'].includes(role)?'<button type="button" class="trade-secondary" data-log-edit="'+x.id+'">Edit Catatan</button>':'');
    return '<tr><td>'+htmlEscape(new Date(x.created_at).toLocaleString('id-ID',{timeZone:'Asia/Jakarta'}))+'</td><td>'+htmlEscape(x.display_no||'—')+'</td><td>'+(x.direction==='IN'?'Penerimaan':'Surat Jalan')+'</td><td>'+htmlEscape((partners.data||[]).find(p=>p.id===x.partner_id)?.name||'Mengikuti perjalanan')+'</td><td>'+htmlEscape(x.loads.map(l=>names.get(l.product_id)||'Tabung').join(', '))+'</td><td>'+formatNumberId(x.full_qty)+'</td><td>'+formatNumberId(x.empty_qty)+'</td><td>'+htmlEscape(({APPROVED:'Tercatat',PENDING:'Menunggu',REJECTED:'Ditolak'})[x.status]||x.status)+'</td><td class="warehouse-history-actions">'+action+'</td></tr>';
   }).join(''):'<tr><td colspan="9">Belum ada riwayat gudang.</td></tr>';
   const editor=content.querySelector('#warehouse-receipt-editor')||document.createElement('div');
@@ -268,11 +271,44 @@ async function showLogistics(status='',mode=''){
     const form=editor.querySelector('#receipt-edit-form');if(form)form.onsubmit=e=>{e.preventDefault();perform(false)};
     const del=editor.querySelector('#receipt-edit-delete');if(del)del.onclick=()=>perform(true);
   };
+  const openSJEditor=record=>{
+    const state=sjEditState.get(record.id);
+    if(!state?.editable){notifyGaspos('Surat Jalan sudah diproses Sopir atau belum dapat diedit.');return;}
+    editor.innerHTML='<div class="trade-overlay"><div class="trade-dialog warehouse-receipt-dialog" role="dialog" aria-modal="true"><h2>Edit Surat Jalan</h2><p>'+htmlEscape(record.display_no||'Surat Jalan')+'</p><form id="sj-edit-form" class="logistics-form"><div id="sj-edit-loads"></div><div class="sj-driver-grid"><label>Sopir<select id="sj-edit-driver" required><option value="">Pilih Sopir</option>'+((drivers.data||[]).map(d=>'<option value="'+htmlEscape(d.user_id)+'" '+(d.user_id===state.driver_user_id?'selected':'')+'>'+htmlEscape(d.username)+'</option>').join(''))+'</select></label><label>Nomor Kendaraan<input id="sj-edit-plate" minlength="3" maxlength="24" required value="'+htmlEscape(state.vehicle_plate||'')+'"></label></div><label>Catatan (opsional)<textarea id="sj-edit-notes" maxlength="500" rows="2">'+htmlEscape(record.notes||'')+'</textarea></label><p class="trade-error" id="sj-edit-error" role="alert"></p><div class="trade-actions"><button type="button" class="trade-secondary" id="sj-edit-close">Batal</button><button type="submit" class="trade-add" id="sj-edit-save">Simpan Perubahan</button></div></form></div></div>';
+    const modalForm=editor.querySelector('#sj-edit-form'),items=editor.querySelector('#sj-edit-loads');
+    const currentStock=new Map((stockResult.data||[]).map(v=>[v.product_id,Number(v.full_balance)]));
+    for(const item of record.loads){
+      const row=document.createElement('fieldset');row.className='sj-load-row';row.dataset.requestId=item.id;
+      row.innerHTML='<legend>Rincian Muatan</legend><div class="sj-load-fields"><label>Jenis Tabung<select required>'+products.map(p=>'<option value="'+htmlEscape(p.id)+'" '+(p.id===item.product_id?'selected':'')+'>'+htmlEscape(p.name)+'</option>').join('')+'</select></label><label>Jumlah Tabung Isi<input type="number" min="1" max="1000000" step="1" required value="'+Number(item.full_qty)+'"></label></div><small class="sj-stock-note">Stok tersedia menyesuaikan jumlah muatan sebelumnya.</small>';items.append(row);
+    }
+    const close=()=>editor.replaceChildren();
+    editor.querySelector('#sj-edit-close').onclick=close;
+    editor.querySelector('.trade-overlay').onclick=e=>{if(e.target===editor.querySelector('.trade-overlay'))close();};
+    modalForm.onsubmit=async e=>{
+      e.preventDefault();
+      const lines=[...items.querySelectorAll('.sj-load-row')].map(row=>({id:row.dataset.requestId,product_id:row.querySelector('select').value,full_qty:readNumber(row.querySelector('input'))}));
+      const error=editor.querySelector('#sj-edit-error');
+      if(lines.some(l=>!l.product_id||!Number.isSafeInteger(l.full_qty)||l.full_qty<1||l.full_qty>1000000)||new Set(lines.map(l=>l.product_id)).size!==lines.length){error.textContent='Periksa jenis dan jumlah muatan. Jenis tabung tidak boleh sama.';return;}
+      const button=editor.querySelector('#sj-edit-save');button.disabled=true;
+      const result=await api.rpc('gaspos_manage_delivery_sj',{p_group:record.id,p_delete:false,p_lines:lines,p_driver:modalForm.querySelector('#sj-edit-driver').value,p_plate:modalForm.querySelector('#sj-edit-plate').value.trim(),p_notes:modalForm.querySelector('#sj-edit-notes').value.trim()});
+      if(result.error){error.textContent=result.error.message;button.disabled=false;return;}
+      close();await showLogistics('Surat Jalan diperbarui. Stok disesuaikan satu kali.',mode);
+    };
+  };
+  const deleteSJ=async record=>{
+    if(sjEditState.get(record.id)?.editable!==true)return;
+    if(!await confirmGaspos('Hapus '+(record.display_no||'Surat Jalan')+' beserta seluruh muatan dan perjalanan yang belum diproses? Stok dikembalikan.'))return;
+    const result=await api.rpc('gaspos_manage_delivery_sj',{p_group:record.id,p_delete:true});
+    if(result.error){notifyGaspos('Gagal hapus Surat Jalan: '+result.error.message);return;}
+    await showLogistics('Surat Jalan dihapus, stok dikembalikan.',mode);
+  };
   rows.onclick=e=>{
    const b=e.target.closest('button');if(!b)return;
-   const record=grouped.find(x=>x.id===(b.dataset.logView||b.dataset.logCorrect||b.dataset.logEdit||b.dataset.logPrint));
+   const record=grouped.find(x=>x.id===(b.dataset.logView||b.dataset.logCorrect||b.dataset.logEdit||b.dataset.logPrint||b.dataset.sjEdit||b.dataset.sjDelete));
    if(!record)return;
-   if(b.dataset.logView)openDetails(record,false);
+   if(b.dataset.sjEdit)openSJEditor(record);
+   else if(b.dataset.sjDelete)deleteSJ(record);
+   else if(b.dataset.logView)openDetails(record,false);
    else if(b.dataset.logCorrect)openDetails(record,true);
    else if(b.dataset.logPrint)printSJ(record);
    else if(b.dataset.logEdit){
