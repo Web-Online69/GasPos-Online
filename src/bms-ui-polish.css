@@ -1288,3 +1288,192 @@
    grid-column:1/-1!important;
  }
 }
+
+/* Compact BMS-like transaction records: one row for primary actions, safe overflow menu. */
+@media screen {
+ .app-shell #app-content .transaction-more {
+   position:relative;
+   display:inline-block;
+   min-width:0;
+   vertical-align:middle;
+ }
+ .app-shell #app-content .transaction-more>summary {
+   display:flex;
+   align-items:center;
+   justify-content:center;
+   box-sizing:border-box;
+   min-height:36px;
+   min-width:74px;
+   padding:7px 10px;
+   border:1px solid var(--line);
+   border-radius:8px;
+   background:var(--surface);
+   color:var(--ink);
+   cursor:pointer;
+   font-size:12px;
+   font-weight:600;
+   list-style:none;
+   white-space:nowrap;
+ }
+ .app-shell #app-content .transaction-more>summary::-webkit-details-marker {display:none;}
+ .app-shell #app-content .transaction-more>summary:after {content:'⋯';padding-left:7px;font-weight:800;}
+ .app-shell #app-content .transaction-more[open]>summary {
+   outline:1px solid var(--muted);
+ }
+ .app-shell #app-content .transaction-more-options {
+   position:absolute;
+   z-index:100;
+   top:calc(100% + 5px);
+   right:0;
+   display:grid;
+   grid-template-columns:minmax(0,1fr);
+   min-width:160px;
+   max-width:min(250px,80vw);
+   gap:4px;
+   padding:7px;
+   background:var(--surface);
+   border:1px solid var(--line);
+   border-radius:9px;
+   box-shadow:0 12px 24px rgba(0,0,0,.35);
+ }
+ .app-shell #app-content .transaction-more-options>button {
+   box-sizing:border-box!important;
+   display:block!important;
+   width:100%!important;
+   max-width:100%!important;
+   min-width:0!important;
+   min-height:38px!important;
+   margin:0!important;
+   padding:8px 10px!important;
+   border-radius:7px!important;
+   text-align:left!important;
+   font-size:12px!important;
+   white-space:normal!important;
+ }
+ .app-shell #app-content .transaction-quick-search {
+   margin:8px 0;
+   min-width:0;
+ }
+ .app-shell #app-content .transaction-quick-search label {display:block;min-width:0;}
+ .app-shell #app-content .transaction-quick-search input {
+   box-sizing:border-box;
+   width:100%;
+   min-height:42px;
+   min-width:0;
+   padding:9px 12px;
+   border:1px solid var(--line);
+   border-radius:9px;
+   background:var(--surface);
+   color:var(--ink);
+   font-size:14px;
+ }
+ .app-shell #app-content .transaction-quick-search .sr-only {
+   position:absolute;
+   width:1px;height:1px;
+   overflow:hidden;
+   clip:rect(0,0,0,0);
+   white-space:nowrap;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records)>.history-filters {
+   margin:6px 0 10px;
+   padding:0 10px;
+   border:1px solid var(--line);
+   border-radius:8px;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records)>.history-filters>summary {
+   min-height:34px;
+   padding:6px 0;
+   font-size:12px;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records)>.transaction-outputs {
+   margin:5px 0 9px;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records)>.transaction-outputs .output-menu>summary {
+   min-height:34px;
+   padding:7px 10px;
+   font-size:12px;
+ }
+}
+@media screen and (max-width:650px) {
+ .app-shell #app-content .app-heading:has(+.app-data-panel table.transaction-records) {
+   margin-bottom:10px;
+ }
+ .app-shell #app-content .app-heading:has(+.app-data-panel table.transaction-records)>span {
+   display:none;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records) {
+   padding:12px!important;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records) .trade-toolbar {
+   gap:8px!important;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records) .purchase-toolbar-actions {
+   display:grid!important;
+   grid-template-columns:minmax(0,1fr) auto!important;
+   gap:8px!important;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records) .purchase-toolbar-actions>.trade-add {
+   grid-column:1!important;
+   grid-row:1!important;
+   order:0;
+   min-width:0!important;
+ }
+ .app-shell #app-content .app-data-panel:has(table.transaction-records) .purchase-toolbar-actions>.trade-secondary {
+   grid-column:2!important;
+   grid-row:1!important;
+   order:1;
+   font-size:11px!important;
+   padding:8px!important;
+   width:auto!important;
+   max-width:none!important;
+   min-width:112px!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody {gap:7px!important;}
+ .app-shell #app-content table.transaction-records>tbody>tr {
+   padding:10px!important;
+   gap:3px 8px!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-document:before,
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-partner:before,
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-status:before,
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-date:before {
+   margin-bottom:1px!important;
+   font-size:10px!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions {
+   display:grid!important;
+   grid-template-columns:repeat(3,minmax(0,1fr))!important;
+   gap:6px!important;
+   align-items:center!important;
+   padding-top:7px!important;
+   margin-top:6px!important;
+   overflow:visible!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions>button,
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions>.transaction-more {
+   box-sizing:border-box!important;
+   width:100%!important;
+   min-width:0!important;
+   max-width:100%!important;
+   min-height:36px!important;
+   margin:0!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions>button {
+   padding:7px 4px!important;
+   font-size:12px!important;
+   white-space:nowrap!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions>.transaction-more {
+   grid-column:3!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions>.transaction-more>summary {
+   min-width:0!important;
+   width:100%!important;
+   min-height:36px!important;
+   padding:7px 4px!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions .transaction-more-options>button {
+   min-height:40px!important;
+   font-size:12px!important;
+ }
+}
