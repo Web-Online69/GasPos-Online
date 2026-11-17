@@ -16,6 +16,11 @@ export function matchesFilter(row,{search='',from='',to='',values={}}={}) {
  if(from||to){const day=dateKey(row.date);if(!day||(from&&day<from)||(to&&day>to))return false;}
  return Object.entries(values).every(([key,value])=>!value||String(row[key]??'')===value);
 }
+export function transactionPage(items,page=0,pageSize=5){
+ const pages=Math.max(1,Math.ceil(items.length/pageSize));
+ const current=Math.min(Math.max(0,page),pages-1);
+ return {page:current,pages,items:items.slice(current*pageSize,(current+1)*pageSize)};
+}
 // Continue to an empty page, including when the server caps responses below batchSize.
 // Fail closed on errors: a partial fetch must never look like a complete report.
 export async function readAll(query,{batchSize=500,maxRows=100000}={}) {
@@ -90,9 +95,9 @@ export function watchHistoryFilters(root) {
    const invalidRange=Boolean(from&&to&&from>to),values=Object.fromEntries(fields.map(f=>['col'+f.index,data.get('col'+f.index)||'']));
    const matching=[];
    for(const row of rows){const match=!invalidRange&&matchesFilter(row,{search:data.get('search')||'',from,to,values});row.element.dataset.filterMatch=String(match);if(match)matching.push(row);}
-   const pages=Math.max(1,Math.ceil(matching.length/pageSize));page=Math.min(Math.max(0,page),pages-1);
+   const currentPage=transactionPage(matching,page,pageSize);page=currentPage.page;const pages=currentPage.pages;
    for(const row of rows)row.element.hidden=true;
-   const display=isPaged?matching.slice(page*pageSize,(page+1)*pageSize):matching;
+   const display=isPaged?currentPage.items:matching;
    for(const row of display)row.element.hidden=false;
    const base=isSJ?'Filter Surat Jalan':'Filter & Cari Riwayat';
    summary.textContent=base+' ('+matching.length+'/'+rows.length+')';
