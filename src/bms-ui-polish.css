@@ -1136,3 +1136,70 @@
 @media(max-width:650px) {
  .gaspos-confirm-dialog .gaspos-system-input {font-size:16px;}
 }
+
+/* Purchase entry: all fillable fields remain visible; no collapsed sections.
+   Match BMS field spacing while retaining GASPOS theme and calculations. */
+@media screen {
+ .app-shell .trade-dialog #trade-form .purchase-visible-fields {
+   display:block;
+   width:100%;
+   min-width:0;
+   max-width:100%;
+   margin:2px 0;
+ }
+ .app-shell .trade-dialog #trade-form .purchase-visible-fields .purchase-meta {
+   display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:10px!important;
+   width:100%;
+   min-width:0;
+ }
+ .app-shell .trade-dialog #trade-form .purchase-line-visible {
+   display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:9px!important;
+   width:100%;
+   min-width:0;
+   max-width:100%;
+ }
+ .app-shell .trade-dialog #trade-form .purchase-line-visible > :is(.trade-line-field,.trade-mode-field,.trade-exchange) {
+   min-width:0!important;
+   max-width:100%!important;
+   width:100%!important;
+ }
+ .app-shell .trade-dialog #trade-form .purchase-line-visible > .trade-mode-field,
+ .app-shell .trade-dialog #trade-form .purchase-line-visible > .trade-exchange {
+   grid-column:1/-1!important;
+ }
+ .app-shell .trade-dialog #trade-form .purchase-line-visible > .trade-exchange {
+   display:flex!important;
+   flex-direction:row!important;
+   align-items:center!important;
+   gap:8px!important;
+ }
+ .app-shell .trade-dialog #trade-form .purchase-line-visible .trade-exchange input[type="checkbox"] {
+   width:20px!important;
+   min-width:20px!important;
+   height:20px!important;
+   min-height:20px!important;
+   flex:0 0 20px!important;
+   margin:0!important;
+ }
+ .app-shell .trade-dialog #trade-form .purchase-line-visible .trade-exchange span {flex:1;min-width:0;}
+}
+@media screen and (max-width:650px) {
+ .app-shell .trade-dialog #trade-form .purchase-visible-fields .purchase-meta {
+   grid-template-columns:minmax(0,1fr)!important;
+   gap:9px!important;
+ }
+ .app-shell .trade-dialog #trade-form .purchase-line-visible {
+   grid-column:1/-1!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:8px!important;
+ }
+}
+@media screen and (max-width:360px) {
+ .app-shell .trade-dialog #trade-form .purchase-line-visible {
+   grid-template-columns:minmax(0,1fr)!important;
+ }
+}
