@@ -1101,7 +1101,7 @@
  min-width:0;min-height:44px;padding:10px 12px;
  border:1px solid #496273;border-radius:9px;
  background:#284554;color:#eaf2f6;
- font:600 14px/1.4 inherit;
+ font-family:inherit;font-weight:600;font-size:14px;line-height:1.4;
  cursor:pointer;
 }
 .gaspos-confirm-actions .gaspos-confirm-continue {background:#129da0;border-color:#129da0;color:#fff;}
@@ -1110,4 +1110,29 @@
  .gaspos-confirm-dialog {padding:20px 16px;border-radius:12px;}
  .gaspos-confirm-dialog h2 {font-size:16px;}
  .gaspos-confirm-dialog p {font-size:13px;}
+}
+
+/* Input prompts use the same branded dialog as confirmations. */
+.gaspos-confirm-dialog .gaspos-system-input {
+ display:block;
+ width:100%;
+ min-width:0;
+ box-sizing:border-box;
+ min-height:86px;
+ max-height:35dvh;
+ resize:vertical;
+ margin:0 0 18px;
+ padding:10px 12px;
+ border:1px solid #496273;
+ border-radius:9px;
+ background:#0d1e2c;
+ color:#eaf2f6;
+ font:400 14px/1.5 system-ui,sans-serif;
+}
+.gaspos-confirm-dialog .gaspos-system-input:focus-visible {
+ outline:2px solid #94d6d6;
+ outline-offset:2px;
+}
+@media(max-width:650px) {
+ .gaspos-confirm-dialog .gaspos-system-input {font-size:16px;}
 }
