@@ -239,3 +239,113 @@
   .app-shell :is(.product-toolbar,.supplier-toolbar,.customer-toolbar) { gap:8px; }
   .app-shell :is(.product-table,.supplier-table,.customer-table) :is(th,td) { padding:9px 7px; }
 }
+
+/* Phone-only Master Data: one record per card, never horizontal scrolling.
+   Desktop keeps its original tables and dark GASPOS palette. */
+@media screen and (max-width:650px) {
+  .app-shell #app-content :is(.product-table-wrap,.supplier-table-wrap,.customer-table-wrap):has(>table.mobile-records) {
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    overflow:visible;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table) {
+    display:block;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    table-layout:auto!important;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody {
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    width:100%;
+    gap:10px;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr {
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:10px;
+    min-width:0;
+    width:100%;
+    padding:13px;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr>td {
+    display:flex!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    grid-column:1/-1;
+    text-align:left!important;
+    word-break:normal!important;
+    overflow-wrap:anywhere!important;
+    line-height:1.4;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr>td::before {
+    font-size:11px;
+    line-height:1.3;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr>td.mobile-actions {
+    padding-top:10px!important;
+    margin-top:2px;
+  }
+  .app-shell #app-content table.mobile-records:is(.product-table,.supplier-table,.customer-table)>tbody>tr>td.mobile-actions button {
+    width:100%!important;
+    max-width:100%!important;
+    min-height:42px!important;
+  }
+  .app-shell #app-content :is(.product-toolbar,.supplier-toolbar,.customer-toolbar) {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:10px;
+  }
+  .app-shell #app-content :is(.product-toolbar,.supplier-toolbar,.customer-toolbar) h2 {
+    margin:0;
+    min-width:0;
+    font-size:15px;
+    line-height:1.35;
+  }
+  .app-shell #app-content :is(.product-toolbar,.supplier-toolbar,.customer-toolbar)>button {
+    min-width:0;
+    max-width:100%;
+    min-height:40px;
+    padding:8px 12px;
+    white-space:nowrap;
+  }
+  .app-shell #app-content :is(.product-search,.supplier-search,.customer-search) {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+  }
+  .app-shell #app-content :is(.product-search,.supplier-search,.customer-search)>input {
+    flex:1 1 100%;
+    width:100%;
+    min-width:0;
+  }
+  .app-shell #app-content :is(.product-search,.supplier-search,.customer-search)>span {
+    flex:1 1 auto;
+    text-align:right;
+  }
+  .app-shell #app-content .master-column-controls {
+    width:100%;
+    min-width:0;
+    margin-bottom:12px;
+  }
+  .app-shell #app-content .master-column-controls .master-filter-toggle { width:100%;justify-content:center; }
+  .app-shell #app-content .master-filter-panel { grid-template-columns:minmax(0,1fr); }
+  .app-shell #app-content .master-filter-panel input { font-size:16px; }
+  .app-shell #app-content :is(.product-modal-overlay,.supplier-overlay,.customer-overlay) {
+    align-items:end;
+    padding:0;
+  }
+  .app-shell #app-content :is(.product-modal,.supplier-dialog,.customer-dialog) {
+    width:100%;
+    max-width:100%;
+    max-height:90dvh;
+    overflow-y:auto;
+    border-radius:16px 16px 0 0;
+    padding:18px 16px max(20px,env(safe-area-inset-bottom));
+  }
+}
