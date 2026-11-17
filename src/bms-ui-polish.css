@@ -1477,3 +1477,13 @@
    font-size:12px!important;
  }
 }
+
+/* Approved/closed transactions have no Edit action, so keep both buttons balanced. */
+@media screen and (max-width:650px) {
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions:not(:has(>button[data-edit-purchase])) {
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions:not(:has(>button[data-edit-purchase]))>.transaction-more {
+   grid-column:2!important;
+ }
+}
