@@ -56,9 +56,10 @@ export function watchHistoryFilters(root) {
   let refresh=controls.get(table);if(refresh){refresh();return;}
   const headers=[...table.tHead.rows[0].cells].map(c=>c.textContent.trim());
   const dateIndex=headers.findIndex(h=>dateHeader.test(h));
-  const fields=headers.flatMap((label,index)=>selectHeader.test(label)?[{label,index}]:[]);
-  const box=document.createElement('details');box.className='history-filters';box.open=false;
-  const summary=document.createElement('summary');summary.textContent='Filter & Cari Riwayat';box.append(summary);
+  const isSJ=table.classList.contains('sj-history-records');
+  const fields=headers.flatMap((label,index)=>(isSJ?/produk|status/i.test(label):selectHeader.test(label))?[{label,index}]:[]);
+  const box=document.createElement('details');box.className='history-filters'+(isSJ?' sj-history-filters':'');box.open=isSJ;
+  const summary=document.createElement('summary');summary.textContent=isSJ?'Filter Surat Jalan':'Filter & Cari Riwayat';box.append(summary);
   const form=document.createElement('form');form.className='history-filter-form';form.innerHTML='<label>Cari data<input type="search" name="search" placeholder="Nomor dokumen, nama, catatan…"></label>'+(dateIndex>=0?'<label>Dari '+escapeText(headers[dateIndex].toLowerCase())+'<input type="date" name="from"></label><label>Sampai '+escapeText(headers[dateIndex].toLowerCase())+'<input type="date" name="to"></label>':'')+fields.map(f=>'<label>'+escapeText(f.label)+'<select name="col'+f.index+'"><option value="">Semua</option></select></label>').join('')+'<button type="reset" class="trade-secondary">Reset Filter</button><p class="filter-result" role="status" aria-live="polite"></p>';
   box.append(form);table.parentElement.before(box);
   const quick=table.classList.contains('transaction-records')?document.createElement('div'):null;
@@ -79,9 +80,9 @@ export function watchHistoryFilters(root) {
     try{host.innerHTML=stockTotalsHtml(visible.map(r=>({full:r.element.dataset.stockFull,empty:r.element.dataset.stockEmpty})),id==='stock-history-list');}catch{host.textContent='Total tidak tersedia: data jumlah tidak valid.';}
    }
   };
-  const apply=()=>{const data=new FormData(form),from=data.get('from')||'',to=data.get('to')||'';if(from&&to&&from>to){status.textContent='Tanggal awal tidak boleh melewati tanggal akhir.';rows.forEach(r=>{r.element.hidden=true});summary.textContent='Filter & Cari Riwayat (0/'+rows.length+')';updateTotals();return;}
+  const apply=()=>{const data=new FormData(form),from=data.get('from')||'',to=data.get('to')||'';if(from&&to&&from>to){status.textContent='Tanggal awal tidak boleh melewati tanggal akhir.';rows.forEach(r=>{r.element.hidden=true});summary.textContent=(isSJ?'Filter Surat Jalan':'Filter & Cari Riwayat')+' (0/'+rows.length+')';updateTotals();return;}
    let visible=0;for(const row of rows){const values=Object.fromEntries(fields.map(f=>['col'+f.index,data.get('col'+f.index)||'']));const show=matchesFilter(row,{search:data.get('search'),from,to,values});row.element.hidden=!show;if(show)visible++;}
-   summary.textContent='Filter & Cari Riwayat ('+visible+'/'+rows.length+')';status.textContent=visible+' dari '+rows.length+' catatan'+(rows.length&&visible===0?' — tidak ada data sesuai filter.':'.');
+   summary.textContent=(isSJ?'Filter Surat Jalan':'Filter & Cari Riwayat')+' ('+visible+'/'+rows.length+')';status.textContent=visible+' dari '+rows.length+' catatan'+(rows.length&&visible===0?' — tidak ada data sesuai filter.':'.');
    updateTotals();
   };
   if(quick){
