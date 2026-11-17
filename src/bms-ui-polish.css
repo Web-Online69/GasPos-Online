@@ -615,3 +615,53 @@
     margin-top:1px!important;
   }
 }
+
+/* Single mobile summary cell for supplier/customer: bypass the legacy mobile-records grid.
+   Only layout is changed, never the existing GASPOS color palette. */
+.app-shell #app-content table.partner-compact-table .partner-mobile-cell { display:none; }
+@media screen and (max-width:650px) {
+ .app-shell #app-content :is(.supplier-table-wrap,.customer-table-wrap):has(>table.partner-compact-table) {
+   width:100%!important;min-width:0!important;max-width:100%!important;overflow:visible!important;
+ }
+ .app-shell #app-content table.partner-compact-table {
+   display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;table-layout:auto!important;
+ }
+ .app-shell #app-content table.partner-compact-table>thead { display:none!important; }
+ .app-shell #app-content table.partner-compact-table>tbody {
+   display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:7px!important;width:100%!important;
+ }
+ .app-shell #app-content table.partner-compact-table>tbody>tr {
+   display:block!important;width:100%!important;min-width:0!important;padding:10px 12px!important;
+   margin:0!important;border:1px solid var(--line)!important;border-radius:10px!important;
+   background:var(--surface)!important;box-sizing:border-box!important;
+ }
+ .app-shell #app-content table.partner-compact-table>tbody>tr>td:not(.partner-mobile-cell) {
+   display:none!important;
+ }
+ .app-shell #app-content table.partner-compact-table>tbody>tr>td.partner-mobile-cell {
+   display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;
+   padding:0!important;margin:0!important;border:0!important;text-align:left!important;
+   white-space:normal!important;overflow-wrap:anywhere!important;
+ }
+ .app-shell #app-content table.partner-compact-table>tbody>tr>td.partner-mobile-cell::before { display:none!important; }
+ .app-shell #app-content .partner-mobile-line {
+   display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;
+   gap:10px!important;width:100%!important;min-width:0!important;
+ }
+ .app-shell #app-content .partner-mobile-name {
+   display:block;min-width:0;flex:1 1 auto;font-size:13px;font-weight:600;
+   line-height:1.35;overflow-wrap:anywhere;
+ }
+ .app-shell #app-content .partner-mobile-line>button {
+   display:inline-flex!important;flex:0 0 auto!important;justify-content:center!important;align-items:center!important;
+   position:static!important;width:auto!important;min-width:54px!important;max-width:none!important;
+   height:36px!important;min-height:36px!important;padding:6px 9px!important;margin:0!important;font-size:12px!important;
+ }
+ .app-shell #app-content :is(.partner-mobile-phone,.partner-mobile-address) {
+   display:block;margin:3px 0 0;min-width:0;overflow-wrap:anywhere;font-size:11px;line-height:1.35;
+   color:var(--muted);
+ }
+ .app-shell #app-content table.partner-compact-table>tbody>tr:has(>td[colspan])>td[colspan] {
+   display:block!important;text-align:center!important;padding:8px!important;width:100%!important;
+ }
+}
