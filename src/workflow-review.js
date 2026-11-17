@@ -11,10 +11,12 @@ export async function loadWorkQueue(api,role,options={}){
  };
  const tasks=[];
  const add=(label,view,run,category='action')=>tasks.push({label,view,run,category});
- const pendingPurchases=async()=>{
+ const pendingPurchaseLines=async()=>{
   const result=await api.rpc('gaspos_pending_purchase_lines');
-  return result.error?null:new Set((result.data||[]).map(x=>x.document_id)).size;
+  return result.error?null:result.data||[];
  };
+ const pendingFull=async()=>{const lines=await pendingPurchaseLines();return lines===null?null:new Set(lines.filter(x=>Number(x.remaining_full)>0).map(x=>x.document_id)).size;};
+ const pendingEmpty=async()=>{const lines=await pendingPurchaseLines();return lines===null?null:new Set(lines.filter(x=>Number(x.remaining_empty)>0).map(x=>x.document_id)).size;};
  const trips=async(driverOnly=false)=>{
   let query=api.from('gas_trips').select('id,request_id,status,driver_user_id,gas_logistics_requests(sj_group_id)').eq('status','ON_ROUTE').order('id');
   if(driverOnly){
@@ -39,11 +41,13 @@ export async function loadWorkQueue(api,role,options={}){
   add('Draft Pembelian perlu ditinjau','purchases',()=>count('gas_documents',[['eq','document_type','PURCHASE'],['eq','status','DRAFT']]));
   add('Draft Penjualan perlu ditinjau','sales',()=>count('gas_documents',[['eq','document_type','SALE'],['eq','status','DRAFT']]));
   add('Faktur Sopir menunggu pembuatan INV','trips',()=>count('gas_trip_stops',[['eq','receiver_confirmed',true],['is','invoice_document_id',null]]));
-  add('Pembelian menunggu penerimaan Gudang','purchases',pendingPurchases,'monitor');
+  add('Barang pembelian belum diterima Gudang','warehouse_receipts',pendingFull,'monitor');
+  add('Tabung kosong belum dikirim supplier','warehouse_receipts',pendingEmpty,'monitor');
   add('Perjalanan masih berlangsung','trips',()=>trips(false),'monitor');
  }
  if(role==='LOGISTIK'){
-  add('Pembelian menunggu penerimaan','warehouse_receipts',pendingPurchases);
+  add('Barang pembelian belum diterima','warehouse_receipts',pendingFull);
+  add('Tabung kosong belum dikirim supplier','warehouse_receipts',pendingEmpty);
   add('Perjalanan menunggu kembali','trip_returns',()=>trips(false));
   add('Tabung kosong menunggu penerimaan Gudang','cylinder_returns',()=>count('gas_customer_cylinder_returns',[['eq','status','IN_VEHICLE'],['is','trip_id',null]]));
  }
