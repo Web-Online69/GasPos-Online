@@ -7,10 +7,10 @@ test('Stored receipt evidence rejects script strings, invalid coordinates and ma
 });
 function client({error=false}={}){
  const calls=[];
- return {calls,rpc:async name=>{calls.push(name);return {data:[{document_id:'same'},{document_id:'same'},{document_id:'second'}],error:error?{}:null}},from(table){calls.push(table);const query={offset:0,select(){return this},eq(){return this},is(){return this},order(){return this},range(from){this.offset=from;return this},then(resolve){return Promise.resolve({count:3,data:table==='gas_trips'?(this.offset?[]:[{id:'active12',request_id:'load12',status:'ON_ROUTE',gas_logistics_requests:{sj_group_id:'same-sj'}},{id:'active50',request_id:'load50',status:'ON_ROUTE',gas_logistics_requests:{sj_group_id:'same-sj'}},{id:'old',request_id:'old-load',status:'RETURNED',gas_logistics_requests:{sj_group_id:null}}]):[{document_type:'SALE',document_total:100,paid_total:50},{document_type:'SALE',document_total:100,paid_total:100},{document_type:'PURCHASE',document_total:100,paid_total:0}],error:error?{}:null}).then(resolve)}};return query}};
+ return {calls,auth:{getUser:async()=>({data:{user:{id:'driver-test'}},error:null})},rpc:async name=>{calls.push(name);return {data:[{document_id:'same',remaining_full:1,remaining_empty:1},{document_id:'same',remaining_full:1,remaining_empty:1},{document_id:'second',remaining_full:1,remaining_empty:1}],error:error?{}:null}},from(table){calls.push(table);const query={offset:0,select(){return this},eq(){return this},is(){return this},in(){return this},order(){return this},range(from){this.offset=from;return this},then(resolve){return Promise.resolve({count:3,data:table==='gas_trips'?(this.offset?[]:[{id:'active12',request_id:'load12',status:'ON_ROUTE',gas_logistics_requests:{sj_group_id:'same-sj'}},{id:'active50',request_id:'load50',status:'ON_ROUTE',gas_logistics_requests:{sj_group_id:'same-sj'}},{id:'old',request_id:'old-load',status:'RETURNED',gas_logistics_requests:{sj_group_id:null}}]):[{document_type:'SALE',document_total:100,paid_total:50},{document_type:'SALE',document_total:100,paid_total:100},{document_type:'PURCHASE',document_total:100,paid_total:0}],error:error?{}:null}).then(resolve)}};return query}};
 }
 test('Driver queue never queries prices, payments, purchase or all-driver data',async()=>{
- const api=client(),jobs=await loadWorkQueue(api,'SALES_SOPIR');assert.deepEqual(api.calls.sort(),['gas_trip_stops','gas_trips']);assert.equal(jobs.length,2);assert(jobs.every(x=>x.view==='trips'));
+ const api=client(),jobs=await loadWorkQueue(api,'SALES_SOPIR');assert.deepEqual(api.calls.sort(),['gas_trips','gas_trips','gas_trip_stops']);assert.equal(jobs.length,2);assert(jobs.every(x=>x.view==='trips'));
 });
 test('Logistics receives distinct pending purchases and physical return work only',async()=>{
  const api=client(),jobs=await loadWorkQueue(api,'LOGISTIK');assert.equal(jobs[0].count,2);assert.deepEqual(api.calls.sort(),['gas_trips','gaspos_pending_purchase_lines']);
@@ -19,7 +19,7 @@ test('Finance work excludes settled invoices, includes unpaid supplier, and expo
  const api=client(),jobs=await loadWorkQueue(api,'KEUANGAN');assert.deepEqual(jobs.map(x=>x.count),[1,1]);assert(jobs.every(x=>x.view==='gas_payments'));assert.deepEqual(api.calls,['gaspos_trade_balances']);
 });
 test('Owner can follow all six work queues',async()=>{
- const jobs=await loadWorkQueue(client(),'OWNER');assert.equal(jobs.length,6);assert(jobs.some(x=>x.label==='Faktur siap dikonfirmasi menjadi INV'));
+ const jobs=await loadWorkQueue(client(),'OWNER');assert.equal(jobs.length,8);assert(jobs.some(x=>x.label==='Faktur Sopir menunggu pembuatan INV'));
 });
 test('Query failure is unavailable, never a misleading zero pending work',async()=>{
  for(const role of ['OWNER','LOGISTIK','SALES_SOPIR','KEUANGAN'])assert((await loadWorkQueue(client({error:true}),role)).every(x=>x.count===null));
