@@ -2185,3 +2185,32 @@
  }
  .app-shell #app-content .sj-history-filters .history-filter-form button{min-height:36px!important;font-size:11px!important;}
 }
+
+/* Shared 5-transaction paging and quick search for all transaction histories. */
+.app-shell #app-content .transaction-pagination{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ margin:9px 0 14px;padding:7px 0;min-width:0;
+}
+.app-shell #app-content .transaction-pagination[hidden]{display:none!important;}
+.app-shell #app-content .transaction-pagination .page-summary{
+ font-size:11px;color:var(--muted);text-align:center;flex:1;white-space:normal;
+}
+.app-shell #app-content .transaction-pagination button{
+ flex:none;max-width:34%;min-width:0;padding:7px 9px;font-size:11px;min-height:34px;
+}
+.app-shell #app-content .transaction-quick-search{
+ margin:0 0 8px;width:100%;max-width:100%;box-sizing:border-box;
+}
+.app-shell #app-content .transaction-quick-search label{display:block;width:100%;min-width:0;}
+.app-shell #app-content .transaction-quick-search input{
+ box-sizing:border-box;width:100%;max-width:100%;min-width:0;min-height:38px;font-size:12px;
+}
+.app-shell #app-content table[data-filter-paging="5"] tbody tr[hidden]{
+ display:none!important;visibility:hidden!important;
+}
+@media screen and (max-width:650px){
+ .app-shell #app-content .transaction-pagination{gap:5px;}
+ .app-shell #app-content .transaction-pagination .page-summary{font-size:10px;}
+ .app-shell #app-content .transaction-pagination button{font-size:10px;padding:6px 5px;min-height:34px;}
+ .app-shell #app-content .transaction-quick-search input{min-height:38px!important;}
+}
