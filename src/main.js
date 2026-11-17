@@ -225,16 +225,13 @@ async function showLogistics(status='',mode=''){
   const grouped=groupedRequests(data||[]);
   let locked=new Set();
   if(isReceipt&&role==='LOGISTIK'&&grouped.length){
-   const ids=(data||[]).filter(x=>x.purchase_document_id).map(x=>x.id);
-   const movements=await readAll(api.from('gas_stock_movements').select('id,created_at,movement_key,gas_document_items(product_id)').order('created_at'));
-   if(!movements.error){
-    const items=movements.data||[];
-    for(const request of data||[]){
-     if(!ids.includes(request.id))continue;
-     const own=items.find(m=>String(m.movement_key||'').startsWith('RECEIPT-'+request.id+'-'));
-     if(own&&items.some(m=>m.id!==own.id&&m.gas_document_items?.product_id===request.product_id&&(m.created_at>own.created_at||(m.created_at===own.created_at&&m.id>own.id))))locked.add(request.id);
-    }
-   }
+   const locks=await api.rpc('gaspos_receipt_edit_locks');
+   if(locks.error){
+    // If lock status cannot be verified, show a safe locked state;
+    // the server also checks authorization when saving.
+    locked=new Set((data||[]).filter(x=>x.direction==='IN').map(x=>x.id));
+    content.querySelector('#log-error').textContent='Status kunci edit belum dapat diperiksa. Muat ulang sebelum mengedit.';
+   }else locked=new Set((locks.data||[]).filter(x=>x.locked).map(x=>x.request_id));
   }
   const viewNote=record=>record.direction==='IN'?'Tabung penuh diterima: '+formatNumberId(record.full_qty)+'. Tabung kosong diserahkan: '+formatNumberId(record.empty_qty)+'.':'Barang keluar: '+formatNumberId(record.full_qty)+' penuh, '+formatNumberId(record.empty_qty)+' kosong.';
   rows.innerHTML=grouped.length?grouped.map(x=>{
