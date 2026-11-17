@@ -1,0 +1,137 @@
+/* GASPOS presentation refinement: BMS-inspired scale and spacing.
+   No palette changes, no data/workflow changes, print styles untouched. */
+@media screen {
+  .app-shell {
+    --ui-font-body: 14px;
+    --ui-font-table: 13px;
+    --ui-font-note: 12px;
+    --ui-font-title: 24px;
+    font-size: var(--ui-font-body);
+    line-height: 1.45;
+  }
+  .app-shell :is(.app-heading h1) {
+    font-size: var(--ui-font-title);
+    line-height: 1.25;
+    letter-spacing: -.25px;
+  }
+  .app-shell :is(.app-heading, .app-panel-head, .trade-toolbar) {
+    margin-bottom: 16px;
+  }
+  .app-shell .app-heading > span {
+    font-size: var(--ui-font-body);
+    line-height: 1.45;
+  }
+  .app-shell :is(.app-panel-head, .product-toolbar, .supplier-toolbar, .customer-toolbar, .trade-toolbar) h2 {
+    font-size: 16px;
+    line-height: 1.35;
+  }
+  .app-shell :is(.app-section-label, .app-nav-group-title) {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .app-shell .app-content {
+    width: min(100%, 1200px);
+    padding: 22px clamp(14px, 2.4vw, 30px) 36px;
+  }
+  .app-shell .app-data-panel {
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .app-shell .app-kpis {
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .app-shell .app-kpi {
+    min-height: 88px;
+    padding: 14px 16px;
+  }
+  .app-shell .app-kpi strong {
+    margin-top: 5px;
+    font-size: 20px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+  }
+  .app-shell .app-kpi small { font-size: var(--ui-font-note); }
+  .app-shell .app-menu-grid { gap: 12px; }
+  .app-shell .app-menu-tile {
+    min-height: 108px;
+    padding: 14px;
+    justify-content: center;
+  }
+  .app-shell .app-menu-tile strong { font-size: var(--ui-font-body); }
+  .app-shell .app-menu-tile small { font-size: var(--ui-font-note); }
+  .app-shell :is(.app-side-link, .app-nav-group-title) {
+    line-height: 1.4;
+  }
+  .app-shell .app-side-link {
+    min-height: 42px;
+    font-size: var(--ui-font-body);
+  }
+  .app-shell .app-sidebar { padding-top: 18px; }
+  .app-shell .app-topbar {
+    min-height: 60px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .app-shell :is(.product-table, .supplier-table, .customer-table, .trade-table, .users-table, .report-table) :is(th, td) {
+    font-size: var(--ui-font-table);
+    line-height: 1.4;
+    vertical-align: middle;
+  }
+  .app-shell :is(.product-table, .supplier-table, .customer-table, .trade-table, .users-table, .report-table) th {
+    font-weight: 650;
+  }
+  .app-shell :is(.product-search, .supplier-search, .customer-search) { gap: 10px; }
+  .app-shell :is(.product-toolbar, .supplier-toolbar, .customer-toolbar) { gap: 10px; }
+  .app-shell :is(.product-table-wrap, .supplier-table-wrap, .customer-table-wrap, .trade-table-wrap) { max-width: 100%; }
+  .app-shell :is(.trade-dialog, .supplier-dialog, .customer-dialog, .product-modal) {
+    max-width: calc(100vw - 28px);
+  }
+  .app-shell :is(.trade-dialog, .supplier-dialog, .customer-dialog, .product-modal) :is(label, input, select, textarea) {
+    line-height: 1.45;
+  }
+  .app-shell :is(button, input, select, textarea):focus-visible {
+    outline-offset: 2px;
+  }
+}
+@media screen and (max-width: 760px) {
+  .app-shell .app-content {
+    padding: 16px 12px 28px;
+    min-width: 0;
+  }
+  .app-shell .app-heading h1 { font-size: 21px; }
+  .app-shell .app-heading { margin-bottom: 14px; }
+  .app-shell .app-data-panel { padding: 14px 12px; }
+  .app-shell .app-kpis { gap: 8px; }
+  .app-shell .app-kpi { min-height: 82px; padding: 12px; }
+  .app-shell .app-kpi strong { font-size: 18px; }
+  .app-shell .app-menu-grid { gap: 9px; }
+  .app-shell .app-menu-tile {
+    min-height: 96px;
+    padding: 12px;
+  }
+  .app-shell .app-topbar {
+    min-height: 58px;
+    padding: 8px 12px;
+  }
+  .app-shell :is(.product-search, .supplier-search, .customer-search) {
+    flex-wrap: wrap;
+  }
+  .app-shell :is(.product-search, .supplier-search, .customer-search) > input {
+    min-width: 0;
+  }
+  .app-shell :is(.trade-dialog, .supplier-dialog, .customer-dialog, .product-modal) {
+    max-width: 100vw;
+  }
+  /* iOS font-size prevents unintended zoom when entering form values. */
+  .app-shell :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    font-size: 16px;
+  }
+}
+@media screen and (max-width: 380px) {
+  .app-shell .app-menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .app-shell .app-menu-tile { min-height: 92px; padding: 10px; }
+  .app-shell .app-kpi { padding: 10px; }
+  .app-shell .app-kpi strong { font-size: 17px; }
+}
