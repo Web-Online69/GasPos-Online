@@ -1505,3 +1505,14 @@
  .app-shell .pending-purchase-panel {padding:12px!important;}
  .app-shell .pending-purchase-row {padding:9px 10px;gap:8px;}
 }
+
+/* Pekerjaan Saya: active tasks are distinct from Owner read-only monitoring. */
+.app-shell #app-content .work-role-group {display:grid;gap:8px;min-width:0;}
+.app-shell #app-content .work-monitor-title {margin:16px 0 5px;font-size:14px;line-height:1.4;}
+.app-shell #app-content .work-monitor-note {margin:0 0 10px;color:var(--muted);font-size:12px;line-height:1.45;}
+.app-shell #app-content .work-role-monitor {padding-top:0;}
+.app-shell #app-content .work-role-monitor>button {border-style:dashed;}
+@media(max-width:650px) {
+ .app-shell #app-content .work-role-group {gap:7px;}
+ .app-shell #app-content .work-monitor-title {margin-top:14px;}
+}
