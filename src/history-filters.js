@@ -61,6 +61,12 @@ export function watchHistoryFilters(root) {
   const summary=document.createElement('summary');summary.textContent='Filter & Cari Riwayat';box.append(summary);
   const form=document.createElement('form');form.className='history-filter-form';form.innerHTML='<label>Cari data<input type="search" name="search" placeholder="Nomor dokumen, nama, catatan…"></label>'+(dateIndex>=0?'<label>Dari '+escapeText(headers[dateIndex].toLowerCase())+'<input type="date" name="from"></label><label>Sampai '+escapeText(headers[dateIndex].toLowerCase())+'<input type="date" name="to"></label>':'')+fields.map(f=>'<label>'+escapeText(f.label)+'<select name="col'+f.index+'"><option value="">Semua</option></select></label>').join('')+'<button type="reset" class="trade-secondary">Reset Filter</button><p class="filter-result" role="status" aria-live="polite"></p>';
   box.append(form);table.parentElement.before(box);
+  const quick=table.classList.contains('transaction-records')?document.createElement('div'):null;
+  if(quick){
+   quick.className='transaction-quick-search';
+   quick.innerHTML='<label><span class="sr-only">Cari dokumen atau mitra</span><input type="search" placeholder="Cari faktur / supplier / pelanggan..." aria-label="Cari dokumen atau mitra"></label>';
+   box.before(quick);
+  }
   const status=form.querySelector('.filter-result');let rows=[];
   const updateTotals=()=>{
    const id=table.tBodies[0].id,visible=rows.filter(r=>!r.element.hidden);
@@ -78,6 +84,13 @@ export function watchHistoryFilters(root) {
    summary.textContent='Filter & Cari Riwayat ('+visible+'/'+rows.length+')';status.textContent=visible+' dari '+rows.length+' catatan'+(rows.length&&visible===0?' — tidak ada data sesuai filter.':'.');
    updateTotals();
   };
+  if(quick){
+   const q=quick.querySelector('input');
+   const source=form.querySelector('input[name="search"]');
+   q.addEventListener('input',()=>{source.value=q.value;apply()});
+   source.addEventListener('input',()=>{q.value=source.value});
+   form.addEventListener('reset',()=>{q.value=''});
+  }
   refresh=()=>{rows=[...table.tBodies[0].rows].filter(r=>!r.cells[0]?.hasAttribute('colspan')).map(element=>{const cells=[...element.cells].map(cellText);const search=element.cloneNode(true);search.querySelectorAll('details.compact-reference').forEach(el=>el.replaceWith(document.createTextNode(el.dataset.full)));search.querySelectorAll('button,details').forEach(el=>el.remove());return {element,date:dateIndex<0?'':cells[dateIndex],search:search.textContent+' '+(element.dataset.legacyReference||''),...Object.fromEntries(fields.map(f=>['col'+f.index,cells[f.index]]))};});
    for(const f of fields){const select=form.elements.namedItem('col'+f.index),old=select.value;const opts=[...new Set(rows.map(r=>r['col'+f.index]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'id'));select.replaceChildren(new Option('Semua',''),...opts.map(v=>new Option(v,v)));select.value=opts.includes(old)?old:'';}
    apply();
