@@ -327,13 +327,63 @@ const gasposConfirmForms={
  'trade-form':'Simpan dokumen transaksi ini? Periksa mitra, barang, dan jumlah.',
  'user-form':'Buat akun petugas ini? Pastikan ID dan hak akses benar.'
 };
+const gasposApprovedSubmit=new WeakSet();
+let gasposConfirmDialogOpen=false;
+function askGasposConfirmation(message){
+ return new Promise(resolve=>{
+  if(gasposConfirmDialogOpen){resolve(false);return}
+  gasposConfirmDialogOpen=true;
+  const backdrop=document.createElement('div');
+  backdrop.className='gaspos-confirm-backdrop';
+  const dialog=document.createElement('section');
+  dialog.className='gaspos-confirm-dialog';
+  dialog.setAttribute('role','alertdialog');
+  dialog.setAttribute('aria-modal','true');
+  dialog.setAttribute('aria-labelledby','gaspos-confirm-title');
+  dialog.setAttribute('aria-describedby','gaspos-confirm-message');
+  const title=document.createElement('h2');title.id='gaspos-confirm-title';title.textContent='Sistem Menyatakan';
+  const description=document.createElement('p');description.id='gaspos-confirm-message';description.textContent=message;
+  const actions=document.createElement('div');actions.className='gaspos-confirm-actions';
+  const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Batal';
+  const proceed=document.createElement('button');proceed.type='button';proceed.textContent='Lanjutkan';
+  proceed.className='gaspos-confirm-continue';
+  actions.append(cancel,proceed);dialog.append(title,description,actions);backdrop.append(dialog);
+  const previousFocus=document.activeElement;
+  let settled=false;
+  const done=result=>{if(settled)return;settled=true;document.removeEventListener('keydown',onKey,true);backdrop.remove();gasposConfirmDialogOpen=false;if(previousFocus?.isConnected)previousFocus.focus();resolve(result)};
+  const onKey=e=>{if(e.key==='Escape'){e.preventDefault();done(false)}else if(e.key==='Tab'){
+    const target=e.shiftKey?cancel:proceed;
+    if(document.activeElement===target){e.preventDefault();(e.shiftKey?proceed:cancel).focus()}
+  }};
+  document.addEventListener('keydown',onKey,true);
+  cancel.onclick=()=>done(false);proceed.onclick=()=>done(true);
+  backdrop.addEventListener('click',e=>{if(e.target===backdrop)done(false)});
+  document.body.append(backdrop);
+  cancel.focus();
+ });
+}
 document.addEventListener('submit',event=>{
  const form=event.target;
  if(!(form instanceof HTMLFormElement)||!form.closest('.app-shell'))return;
+ if(gasposApprovedSubmit.has(form)){
+  gasposApprovedSubmit.delete(form);
+  gasposActionTimes.set(form,Date.now());
+  return;
+ }
  const now=Date.now(),prior=gasposActionTimes.get(form)||0;
  if(now-prior<1800){event.preventDefault();event.stopImmediatePropagation();return}
  const message=gasposConfirmForms[form.id];
- if(message&&!window.confirm(message)){event.preventDefault();event.stopImmediatePropagation();return}
+ if(message){
+  event.preventDefault();event.stopImmediatePropagation();
+  const submitter=event.submitter;
+  askGasposConfirmation(message).then(approved=>{
+   if(!approved||!form.isConnected)return;
+   gasposApprovedSubmit.add(form);
+   try{form.requestSubmit(submitter?.isConnected?submitter:undefined)}
+   finally{gasposApprovedSubmit.delete(form)}
+  });
+  return;
+ }
  gasposActionTimes.set(form,now);
 },true);
 document.addEventListener('click',event=>{
