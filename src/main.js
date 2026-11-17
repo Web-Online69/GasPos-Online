@@ -279,14 +279,14 @@ async function showLogistics(status='',mode=''){
     const currentStock=new Map((stockResult.data||[]).map(v=>[v.product_id,Number(v.full_balance)]));
     for(const item of record.loads){
       const row=document.createElement('fieldset');row.className='sj-load-row';row.dataset.requestId=item.id;
-      row.innerHTML='<legend>Rincian Muatan</legend><div class="sj-load-fields"><label>Jenis Tabung<select required>'+products.map(p=>'<option value="'+htmlEscape(p.id)+'" '+(p.id===item.product_id?'selected':'')+'>'+htmlEscape(p.name)+'</option>').join('')+'</select></label><label>Jumlah Tabung Isi<input type="number" min="1" max="1000000" step="1" required value="'+Number(item.full_qty)+'"></label></div><small class="sj-stock-note">Stok tersedia menyesuaikan jumlah muatan sebelumnya.</small>';items.append(row);
+      row.innerHTML='<legend>Rincian Muatan</legend><div class="sj-load-fields"><label>Jenis Tabung<select required>'+products.map(p=>'<option value="'+htmlEscape(p.id)+'" '+(p.id===item.product_id?'selected':'')+'>'+htmlEscape(p.name)+'</option>').join('')+'</select></label><label>Jumlah Tabung Isi<input class="sj-edit-quantity" type="number" min="1" max="1000000" step="1" required value="'+Number(item.full_qty)+'"></label></div><small class="sj-stock-note">Stok tersedia menyesuaikan jumlah muatan sebelumnya.</small>';items.append(row);
     }
     const close=()=>editor.replaceChildren();
     editor.querySelector('#sj-edit-close').onclick=close;
     editor.querySelector('.trade-overlay').onclick=e=>{if(e.target===editor.querySelector('.trade-overlay'))close();};
     modalForm.onsubmit=async e=>{
       e.preventDefault();
-      const lines=[...items.querySelectorAll('.sj-load-row')].map(row=>({id:row.dataset.requestId,product_id:row.querySelector('select').value,full_qty:readNumber(row.querySelector('input'))}));
+      const lines=[...items.querySelectorAll('.sj-load-row')].map(row=>({id:row.dataset.requestId,product_id:row.querySelector('select').value,full_qty:readNumber(row.querySelector('.sj-edit-quantity'))}));
       const error=editor.querySelector('#sj-edit-error');
       if(lines.some(l=>!l.product_id||!Number.isSafeInteger(l.full_qty)||l.full_qty<1||l.full_qty>1000000)||new Set(lines.map(l=>l.product_id)).size!==lines.length){error.textContent='Periksa jenis dan jumlah muatan. Jenis tabung tidak boleh sama.';return;}
       const button=editor.querySelector('#sj-edit-save');button.disabled=true;
