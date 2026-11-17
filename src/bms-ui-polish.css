@@ -2054,3 +2054,34 @@
    text-align:center!important;
  }
 }
+
+/* Desktop: transaction "Lainnya" popup must escape the scroll-clipped table wrapper. */
+@media screen and (min-width:651px) {
+ .app-shell #app-content .product-table-wrap:has(>table.transaction-records) {
+   overflow:visible!important;
+   overflow-x:visible!important;
+   overflow-y:visible!important;
+   position:relative;
+ }
+ .app-shell #app-content table.transaction-records {
+   min-width:0!important;
+   width:100%!important;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr {
+   position:relative;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr:has(.transaction-more[open]) {
+   z-index:20;
+ }
+ .app-shell #app-content table.transaction-records>tbody>tr>td.transaction-actions {
+   overflow:visible!important;
+   white-space:nowrap;
+ }
+ .app-shell #app-content table.transaction-records .transaction-more[open] {
+   z-index:30;
+ }
+ .app-shell #app-content table.transaction-records .transaction-more-options {
+   z-index:50;
+   min-width:180px;
+ }
+}
