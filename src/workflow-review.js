@@ -1,7 +1,8 @@
 import {readAll} from './history-filters.js';
 // Read-only work queues. Every query uses the signed-in client and existing RLS.
 export const workRoleNames={OWNER:'Owner',LOGISTIK:'Logistik',SALES_SOPIR:'Sopir',KEUANGAN:'Keuangan'};
-export async function loadWorkQueue(api,role){
+export async function loadWorkQueue(api,role,options={}){
+ const overview=options.ownerOverview===true;
  const count=async(table,filters)=>{
   let query=api.from(table).select('id',{count:'exact',head:true});
   for(const [method,...args] of filters)query=query[method](...args);
@@ -47,8 +48,8 @@ export async function loadWorkQueue(api,role){
   add('Tabung kosong menunggu penerimaan Gudang','cylinder_returns',()=>count('gas_customer_cylinder_returns',[['eq','status','IN_VEHICLE'],['is','trip_id',null]]));
  }
  if(role==='SALES_SOPIR'){
-  add('Perjalanan saya belum selesai','trips',()=>trips(true));
-  add('Faktur perjalanan saya belum ditandatangani','trips',()=>unsignedStops(true));
+  add(overview?'Perjalanan Sopir belum selesai':'Perjalanan saya belum selesai','trips',()=>trips(!overview));
+  add(overview?'Faktur Sopir belum ditandatangani':'Faktur perjalanan saya belum ditandatangani','trips',()=>unsignedStops(!overview));
  }
  if(role==='KEUANGAN'||role==='OWNER'){
   const r=await api.from('gaspos_trade_balances').select('document_type,document_total,paid_total').eq('status','APPROVED');
