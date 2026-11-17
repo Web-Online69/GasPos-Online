@@ -17,3 +17,25 @@ export function renderNavigation(menus, role, icon, escape) {
   const home = menus.find(menu => menu[0] === 'ringkasan');
   return (home ? link(home) : '') + '<button type="button" data-view="work_queue" class="app-side-link app-nav-child"><span aria-hidden="true">▣</span><span class="nav-item-label">Pekerjaan Saya</span></button>' + navigationGroups(menus, role).map(group => '<details class="app-nav-group" data-nav-group="' + group.id + '"><summary class="app-nav-group-title">' + group.label + '<span class="nav-group-count">' + group.menus.length + '</span></summary><div class="app-nav-children">' + group.menus.map(link).join('') + '</div></details>').join('');
 }
+
+/** Compact home dashboard groups. Show only menus belonging to the current workspace. */
+export function dashboardMenuGroups(menus) {
+ const groups=[
+  {id:'trade',label:'Pembelian & Penjualan',icon:'⇄',ids:['purchases','sales']},
+  {id:'warehouse',label:'Logistik',icon:'▤',ids:['logistics','warehouse_receipts','warehouse_dispatch','trip_returns','cylinder_returns','cylinder_overview','gas_stock_movements']},
+  {id:'driver',label:'Sopir',icon:'🚚',ids:['trips']},
+  {id:'finance',label:'Keuangan',icon:'▣',ids:['gas_payments','gas_financial_entries','operational']},
+  {id:'master',label:'Master Data',icon:'▦',ids:['gas_products','gas_partners','customers','gas_customer_prices']},
+  {id:'report',label:'Laporan',icon:'▥',ids:['reports']},
+  {id:'settings',label:'Pengaturan',icon:'⚙',ids:['gas_members','invoice_profile']}
+ ];
+ const used=new Set(['ringkasan']);
+ const result=groups.map(group=>{
+  const entries=group.ids.map(key=>menus.find(item=>item[0]===key)).filter(Boolean);
+  for(const entry of entries)used.add(entry[0]);
+  return {...group,menus:entries};
+ }).filter(group=>group.menus.length);
+ const extra=menus.filter(item=>!used.has(item[0]));
+ if(extra.length)result.push({id:'other',label:'Menu Lainnya',icon:'▤',menus:extra});
+ return result;
+}
