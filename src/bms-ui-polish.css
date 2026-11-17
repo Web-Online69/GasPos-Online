@@ -1203,3 +1203,88 @@
    grid-template-columns:minmax(0,1fr)!important;
  }
 }
+
+/* Purchase form: BMS-inspired direct choices in the order users fill them. */
+@media screen {
+ .app-shell #app-content .trade-dialog #trade-form select.purchase-mode-native {
+   position:absolute!important;
+   width:1px!important;height:1px!important;
+   min-width:1px!important;min-height:1px!important;
+   max-width:1px!important;max-height:1px!important;
+   padding:0!important;margin:0!important;
+   border:0!important;opacity:0!important;
+   pointer-events:none!important;overflow:hidden!important;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .trade-item>.purchase-mode-field {
+   width:100%!important;
+   min-width:0!important;
+   max-width:100%!important;
+   grid-column:1/-1!important;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-mode-options {
+   display:grid!important;
+   grid-template-columns:repeat(3,minmax(0,1fr))!important;
+   gap:8px!important;
+   width:100%!important;
+   margin:4px 0 0!important;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-mode-option {
+   display:flex!important;
+   flex-direction:row!important;
+   align-items:center!important;
+   justify-content:flex-start!important;
+   min-width:0!important;
+   min-height:44px!important;
+   padding:9px 10px!important;
+   gap:7px!important;
+   border:1px solid var(--line)!important;
+   border-radius:9px!important;
+   background:var(--surface)!important;
+   cursor:pointer;
+   line-height:1.35!important;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-mode-option:has(input:checked) {
+   outline:2px solid var(--muted);
+   outline-offset:-2px;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-mode-option input[type="radio"] {
+   display:block!important;
+   flex:0 0 18px!important;
+   width:18px!important;height:18px!important;
+   min-width:18px!important;min-height:18px!important;
+   max-width:18px!important;max-height:18px!important;
+   padding:0!important;margin:0!important;
+   accent-color:var(--muted);
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-mode-option span {
+   display:block!important;
+   min-width:0;
+   overflow-wrap:break-word;
+   font-size:12px;
+   font-weight:600;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-line-visible [hidden] {
+   display:none!important;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-line-visible:empty {display:none!important;}
+ .app-shell #app-content .trade-dialog #trade-form .trade-item>.trade-line-quantity,
+ .app-shell #app-content .trade-dialog #trade-form .trade-item>.trade-line-price {
+   min-width:0;
+ }
+}
+@media screen and (max-width:650px) {
+ .app-shell #app-content .trade-dialog #trade-form .purchase-mode-options {
+   grid-template-columns:minmax(0,1fr)!important;
+   gap:6px!important;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-mode-option {
+   min-height:40px!important;
+   padding:8px 10px!important;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .purchase-mode-option span {
+   font-size:13px!important;
+ }
+ .app-shell #app-content .trade-dialog #trade-form .trade-item>.purchase-mode-field {
+   grid-column:1/-1!important;
+ }
+}
