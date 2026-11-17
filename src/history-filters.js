@@ -59,6 +59,7 @@ export function watchHistoryFilters(root) {
   const isSJ=table.classList.contains('sj-history-records');
   const isPaged=!table.matches('.report-table,.users-table,.cylinder-balance-table,.cylinder-overview-table')&&!['stock-list','product-list','supplier-rows','customer-rows','user-rows','users-list','price-rows'].includes(table.tBodies[0].id)&&!table.closest('#trip-detail');
   const pageSize=5;
+  if(isPaged)table.dataset.filterPaging='5';
   let page=0;
   const fields=headers.flatMap((label,index)=>(isSJ?/produk|status/i.test(label):selectHeader.test(label))?[{label,index}]:[]);
   const box=document.createElement('details');box.className='history-filters'+(isSJ?' sj-history-filters':'');box.open=isSJ;
@@ -67,10 +68,10 @@ export function watchHistoryFilters(root) {
   box.append(form);table.parentElement.before(box);
   const pager=isPaged?document.createElement('nav'):null;
   if(pager){pager.className='transaction-pagination';pager.setAttribute('aria-label','Halaman transaksi');pager.innerHTML='<button type="button" class="trade-secondary" data-page="prev">Sebelumnya</button><span class="page-summary" aria-live="polite"></span><button type="button" class="trade-secondary" data-page="next">Berikutnya</button>';table.parentElement.after(pager);}
-  const quick=table.classList.contains('transaction-records')?document.createElement('div'):null;
+  const quick=isPaged?document.createElement('div'):null;
   if(quick){
    quick.className='transaction-quick-search';
-   quick.innerHTML='<label><span class="sr-only">Cari dokumen atau mitra</span><input type="search" placeholder="Cari faktur / supplier / pelanggan..." aria-label="Cari dokumen atau mitra"></label>';
+   quick.innerHTML='<label><span class="sr-only">Cari transaksi</span><input type="search" placeholder="Cari nomor / nama / transaksi..." aria-label="Cari transaksi"></label>';
    box.before(quick);
   }
   const status=form.querySelector('.filter-result');let rows=[];
