@@ -1,11 +1,10 @@
 // Group only menus already authorized by the active role; never add permissions.
 export function navigationGroups(menus, role) {
-  const warehouseReturns = role === 'SALES_SOPIR' ? [] : ['cylinder_returns'];
   const definitions = [
     ['master', 'Master Data', ['gas_products', 'gas_partners', 'customers', 'gas_customer_prices']],
     ['trade', 'Pembelian & Penjualan', ['purchases', 'sales']],
-    ['warehouse', 'Gudang / Logistik', ['cylinder_overview', 'warehouse_receipts', 'warehouse_dispatch', 'trip_returns', ...warehouseReturns, 'gas_stock_movements']],
-    ['driver', 'Sales / Sopir', ['trips', ...(role === 'SALES_SOPIR' ? ['cylinder_returns'] : [])]],
+    ['warehouse', 'Gudang / Logistik', ['cylinder_overview', 'warehouse_receipts', 'warehouse_dispatch', 'trip_returns', 'cylinder_returns', 'gas_stock_movements']],
+    ['driver', 'Sales / Sopir', ['trips']],
     ['finance', 'Keuangan', ['gas_payments', 'operational', 'gas_financial_entries']],
     ['reports', 'Laporan', ['reports']],
     ['settings', 'Pengaturan', ['gas_members', 'invoice_profile']],
