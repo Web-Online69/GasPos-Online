@@ -1,4 +1,4 @@
-# GASPOS Online
+# Lingkar Perdana Energi
 
 Aplikasi operasional tabung gas dengan empat peran: Owner, Logistik, Sales/Sopir, Keuangan.
 
@@ -8,7 +8,7 @@ Alur: Owner membeli/menetapkan harga → Logistik menerima fisik → Logistik me
 
 Validasi lokal: `npm run test:flow`, `npm run test:audit`, `npm run test:members`, `npm run test:workflow-ui`, `npm run build`.
 
-Perbaikan retry pengiriman/biaya/refund: `supabase/audit_form_retry.sql` dan `supabase/audit_refund_replay.sql` (sudah diterapkan ke GASPOS). Laporan laba rugi masih estimasi rata-rata tertimbang seluruh data. Trial browser INV/pembayaran final dan verifikasi HP fisik belum selesai; aplikasi belum dinyatakan100%.
+Perbaikan retry pengiriman/biaya/refund: `supabase/audit_form_retry.sql` dan `supabase/audit_refund_replay.sql` (sudah diterapkan ke Lingkar Perdana Energi). Laporan laba rugi masih estimasi rata-rata tertimbang seluruh data. Trial browser INV/pembayaran final dan verifikasi HP fisik belum selesai; aplikasi belum dinyatakan100%.
 
 Tata letak desktop/HP: [perubahan dan batas verifikasi](docs/audit/ui-layout-20261029.md).
 
@@ -34,6 +34,6 @@ Pembuatan petugas menerima username 3–30 karakter atau email lengkap, dinormal
 
 Surat Jalan mendukung **+ Tambah Muatan** dan **Hapus Muatan** untuk beberapa jenis tabung. Satu SJ/perjalanan tampil sebagai kelompok; masing-masing jenis tetap memiliki catatan stok dan pengiriman sendiri. Sopir memilih jenis muatan sebelum mencatat faktur pelanggan. Penerimaan kembali kelompok memeriksa semua jenis dalam satu transaksi. Cetak SJ mencakup seluruh muatan. Jenis duplikat, stok kurang, klik ulang, dan hitungan pulang yang tidak cocok ditolak atau diproses sekali tanpa menggandakan stok.
 
-GASPOS dapat dipasang sebagai aplikasi web melalui **Pasang** atau menu browser **Instal aplikasi** pada browser yang mendukungnya. Manifest memakai scope `/GasPos-Online/`, mode standalone, dan ikon PNG 192/512. Service worker tidak menyimpan cache atau mencegat permintaan; login, stok, dan transaksi tetap memerlukan internet. Pemasangan harus disetujui pengguna pada perangkatnya. Pintasan browser lama mungkin perlu diganti dengan pemasangan aplikasi yang baru.
+Lingkar Perdana Energi dapat dipasang sebagai aplikasi web melalui **Pasang** atau menu browser **Instal aplikasi** pada browser yang mendukungnya. Manifest memakai scope `/GasPos-Online/`, mode standalone, dan ikon PNG 192/512. Service worker tidak menyimpan cache atau mencegat permintaan; login, stok, dan transaksi tetap memerlukan internet. Pemasangan harus disetujui pengguna pada perangkatnya. Pintasan browser lama mungkin perlu diganti dengan pemasangan aplikasi yang baru.
 
 Pada faktur Sopir, pilihan **Jenis Tabung** berada langsung setelah Pelanggan, dengan sisa muatan per jenis. Penggantian jenis mempertahankan pelanggan dan catatan, lalu menghitung ulang batas pengiriman. Daftar Sopir dan penerimaan kembali menampilkan tugas aktif secara default; perjalanan selesai tersedia melalui tombol riwayat. Jumlah tugas perjalanan dihitung per kelompok SJ, sehingga dua jenis muatan dalam satu SJ tetap satu perjalanan.
