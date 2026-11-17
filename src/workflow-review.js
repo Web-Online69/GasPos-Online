@@ -1,25 +1,66 @@
 import {readAll} from './history-filters.js';
 // Read-only work queues. Every query uses the signed-in client and existing RLS.
-export async function loadWorkQueue(api, role) {
+export const workRoleNames={OWNER:'Owner',LOGISTIK:'Logistik',SALES_SOPIR:'Sopir',KEUANGAN:'Keuangan'};
+export async function loadWorkQueue(api,role){
  const count=async(table,filters)=>{
   let query=api.from(table).select('id',{count:'exact',head:true});
   for(const [method,...args] of filters)query=query[method](...args);
   const result=await query;
   return result.error?null:result.count;
  };
- const trips=async()=>{const result=await readAll(api.from('gas_trips').select('id,request_id,status,gas_logistics_requests(sj_group_id)').eq('status','ON_ROUTE').order('id'));return result.error?null:new Set((result.data||[]).filter(t=>t.status==='ON_ROUTE').map(t=>t.gas_logistics_requests?.sj_group_id||t.request_id)).size;};
- const signatures=()=>count('gas_trip_stops',[['eq','receiver_confirmed',false]]);
  const tasks=[];
- if(role==='LOGISTIK')tasks.push({label:'Tabung kosong Sopir menunggu penerimaan',view:'cylinder_returns',run:()=>count('gas_customer_cylinder_returns',[['eq','status','IN_VEHICLE'],['is','trip_id',null]])});
- if(['OWNER','LOGISTIK'].includes(role))tasks.push({label:'Pembelian menunggu barang',view:'warehouse_receipts',run:async()=>{const r=await api.rpc('gaspos_pending_purchase_lines');return r.error?null:new Set((r.data||[]).map(x=>x.document_id)).size}});
- if(role==='OWNER')tasks.push({label:'Faktur Sopir belum dibuat INV',view:'trips',run:()=>count('gas_trip_stops',[['eq','receiver_confirmed',true],['is','invoice_document_id',null]])});
- if(['LOGISTIK','SALES_SOPIR'].includes(role))tasks.push({label:role==='SALES_SOPIR'?'Perjalanan saya belum selesai':'Perjalanan menunggu kembali',view:role==='SALES_SOPIR'?'trips':'trip_returns',run:trips});
- if(['LOGISTIK','SALES_SOPIR'].includes(role))tasks.push({label:'Faktur belum ditandatangani',view:'trips',run:signatures});
- if(['OWNER','KEUANGAN'].includes(role)){
-  const r=await api.from('gaspos_trade_balances').select('document_type,document_total,paid_total').eq('status','APPROVED');
-  for(const [type,label] of [['SALE','INV menunggu uang masuk'],['PURCHASE','Pembelian belum lunas']])tasks.push({label,view:'gas_payments',run:async()=>r.error?null:(r.data||[]).filter(x=>x.document_type===type&&Number(x.document_total)>Number(x.paid_total)).length});
+ const add=(label,view,run,category='action')=>tasks.push({label,view,run,category});
+ const pendingPurchases=async()=>{
+  const result=await api.rpc('gaspos_pending_purchase_lines');
+  return result.error?null:new Set((result.data||[]).map(x=>x.document_id)).size;
+ };
+ const trips=async(driverOnly=false)=>{
+  let query=api.from('gas_trips').select('id,request_id,status,driver_user_id,gas_logistics_requests(sj_group_id)').eq('status','ON_ROUTE').order('id');
+  if(driverOnly){
+   const user=await api.auth.getUser();
+   if(user.error||!user.data?.user)return null;
+   query=query.eq('driver_user_id',user.data.user.id);
+  }
+  const result=await readAll(query);
+  return result.error?null:new Set((result.data||[]).map(t=>t.gas_logistics_requests?.sj_group_id||t.request_id||t.id)).size;
+ };
+ const unsignedStops=async(driverOnly=false)=>{
+  if(!driverOnly)return count('gas_trip_stops',[['eq','receiver_confirmed',false]]);
+  const user=await api.auth.getUser();
+  if(user.error||!user.data?.user)return null;
+  const tripResult=await readAll(api.from('gas_trips').select('id').eq('driver_user_id',user.data.user.id));
+  if(tripResult.error)return null;
+  const ids=(tripResult.data||[]).map(x=>x.id);
+  if(!ids.length)return 0;
+  return count('gas_trip_stops',[['eq','receiver_confirmed',false],['in','trip_id',ids]]);
+ };
+ if(role==='OWNER'){
+  add('Draft Pembelian perlu ditinjau','purchases',()=>count('gas_documents',[['eq','document_type','PURCHASE'],['eq','status','DRAFT']]));
+  add('Draft Penjualan perlu ditinjau','sales',()=>count('gas_documents',[['eq','document_type','SALE'],['eq','status','DRAFT']]));
+  add('Faktur Sopir menunggu pembuatan INV','trips',()=>count('gas_trip_stops',[['eq','receiver_confirmed',true],['is','invoice_document_id',null]]));
+  add('Pembelian menunggu penerimaan Gudang','purchases',pendingPurchases,'monitor');
+  add('Perjalanan masih berlangsung','trips',()=>trips(false),'monitor');
  }
- return Promise.all(tasks.map(async({label,view,run})=>({label,view,count:await run()})));
+ if(role==='LOGISTIK'){
+  add('Pembelian menunggu penerimaan','warehouse_receipts',pendingPurchases);
+  add('Perjalanan menunggu kembali','trip_returns',()=>trips(false));
+  add('Tabung kosong menunggu penerimaan Gudang','cylinder_returns',()=>count('gas_customer_cylinder_returns',[['eq','status','IN_VEHICLE'],['is','trip_id',null]]));
+ }
+ if(role==='SALES_SOPIR'){
+  add('Perjalanan saya belum selesai','trips',()=>trips(true));
+  add('Faktur perjalanan saya belum ditandatangani','trips',()=>unsignedStops(true));
+ }
+ if(role==='KEUANGAN'||role==='OWNER'){
+  const r=await api.from('gaspos_trade_balances').select('document_type,document_total,paid_total').eq('status','APPROVED');
+  for(const [type,label] of [['SALE','Penjualan menunggu pembayaran'],['PURCHASE','Pembelian belum lunas']]){
+   add(label,'gas_payments',async()=>r.error?null:(r.data||[]).filter(x=>x.document_type===type&&Number(x.document_total)>Number(x.paid_total)).length,role==='OWNER'?'monitor':'action');
+  }
+ }
+ const results=await Promise.all(tasks.map(async({label,view,run,category})=>{
+  try{return {label,view,category,count:await run()};}
+  catch{return {label,view,category,count:null};}
+ }));
+ return results;
 }
 
 // Never interpolate stored signature values into SVG without numeric validation.
