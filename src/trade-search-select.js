@@ -27,6 +27,7 @@ export function enhanceTradeSelect(select, label='Cari pilihan'){
     input.value=select.value && selected?selected.textContent.trim():'';
     input.placeholder=select.options[0]?.textContent.trim()||label;
     input.disabled=select.disabled;
+    input.required=select.required;
     input.setAttribute('aria-invalid',select.validity.valid?'false':'true');
   };
   const close=()=>{open=false;list.hidden=true;input.setAttribute('aria-expanded','false');};
@@ -60,7 +61,7 @@ export function enhanceTradeSelect(select, label='Cari pilihan'){
     open=true;list.hidden=false;input.setAttribute('aria-expanded','true');
   };
   input.addEventListener('focus',()=>{if(!select.disabled){input.select();draw('');}});
-  input.addEventListener('input',()=>{select.value='';draw(input.value);});
+  input.addEventListener('input',()=>{select.value='';select.dispatchEvent(new Event('change',{bubbles:true}));draw(input.value);});
   input.addEventListener('keydown',e=>{
     if(e.key==='Escape'){close();sync();input.blur();}
     if(e.key==='ArrowDown'&&open){e.preventDefault();list.querySelector('button')?.focus();}
@@ -72,11 +73,55 @@ export function enhanceTradeSelect(select, label='Cari pilihan'){
   list.addEventListener('keydown',e=>{
     if(e.key==='Escape'){close();input.focus();}
   });
-  select.addEventListener('change',sync);
+  select.addEventListener('change',()=>{if(!open)sync();});
   select.addEventListener('invalid',e=>{e.preventDefault();input.setAttribute('aria-invalid','true');input.focus();draw('');});
   document.addEventListener('pointerdown',e=>{if(!box.isConnected)return;if(!box.contains(e.target))close();});
   // Programmatic selections (editing a draft) update the search label.
   const observer=new MutationObserver(()=>{if(!open)sync();});
   observer.observe(select,{childList:true,subtree:true});
   sync();
+}
+
+/** Enhance data selectors across the app, including content inserted asynchronously.
+ * Native selects remain the underlying value/validation controls. Simple yes/no
+ * and two-option switches retain native browser appearance. */
+export function installGlobalSearchableSelects(root){
+  if(!root || root.dataset.searchableSelectsInstalled==='1')return;
+  root.dataset.searchableSelectsInstalled='1';
+  const isDataSelect=select=>{
+    if(!(select instanceof HTMLSelectElement))return false;
+    if(select.dataset.tradeEnhanced==='1'||select.multiple||select.dataset.nativeSelect==='true')return false;
+    if(select.closest('.trade-search-select,.trade-search-options,[role="listbox"]'))return false;
+    const opts=[...select.options].filter(option=>!option.disabled);
+    if(opts.length<3)return false;
+    const values=opts.filter(o=>o.value!=='');
+    if(values.length<2)return false;
+    // Avoid replacing simple binary toggles and short workflow-state controls.
+    if(values.length===2 && !/(partner|supplier|suplayer|pelanggan|customer|produk|product|tabung|barang|kandang|mitra|sopir|driver|perjalanan|trip|invoice|dokumen|document|akun|user|member)/i.test(
+      [select.id,select.name,select.getAttribute('aria-label'),select.closest('label')?.textContent?.slice(0,75)].join(' ')
+    ))return false;
+    return true;
+  };
+  const enhance=select=>{
+    if(!root.contains(select)||!select.closest('.app-shell')||!isDataSelect(select))return;
+    const label=select.getAttribute('aria-label')||
+      select.closest('label')?.textContent?.trim().slice(0,70)||
+      select.previousElementSibling?.tagName==='LABEL'&&select.previousElementSibling.textContent?.trim()||
+      'Cari pilihan data';
+    enhanceTradeSelect(select,'Cari '+String(label).replace(/^Cari\s+/i,'').slice(0,60));
+  };
+  const scan=node=>{
+    if(node instanceof HTMLSelectElement){enhance(node);return;}
+    if(!(node instanceof Element))return;
+    node.querySelectorAll('select:not([multiple])').forEach(enhance);
+  };
+  scan(root);
+  const observer=new MutationObserver(records=>{
+    for(const record of records){
+      if(record.target instanceof HTMLOptionElement)enhance(record.target.closest('select'));
+      else if(record.target instanceof HTMLSelectElement)enhance(record.target);
+      for(const node of record.addedNodes)scan(node);
+    }
+  });
+  observer.observe(root,{subtree:true,childList:true});
 }
