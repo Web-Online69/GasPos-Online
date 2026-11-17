@@ -39,7 +39,7 @@ function dashboard(role,jobs=[role]){disposeHistoryFilters();disposeTransactionO
 const content=document.getElementById('app-content'),side=document.getElementById('side-nav');disposeHistoryFilters=watchHistoryFilters(content);disposeTransactionOutputs=installTransactionOutputs(content,role);const jobSelect=el.querySelector('#active-job-switch');if(jobSelect)jobSelect.onchange=async()=>{jobSelect.disabled=true;const message=el.querySelector('#active-job-message');const result=await api.rpc('gaspos_switch_job',{p_role:jobSelect.value});if(result.error){message.textContent=result.error.message;jobSelect.value=role;jobSelect.disabled=false;return}const user=await api.auth.getUser();if(user.error||!user.data?.user){el.onclick=null;currentRole=null;login('Sesi berakhir. Silakan masuk kembali.');return}await enter(user.data.user)};
 side.innerHTML=renderNavigation(menus,role,menuIcon,htmlEscape);
 const areaSelect=el.querySelector('#owner-area-switch');
-if(isOwnerAccount&&areaSelect)areaSelect.onchange=()=>{if(!Object.hasOwn(features,areaSelect.value))return;ownerArea=areaSelect.value;role=ownerArea;menus=features[ownerArea];side.innerHTML=renderNavigation(menus,ownerArea,menuIcon,htmlEscape);navigate('ringkasan');};
+if(isOwnerAccount&&areaSelect)areaSelect.onchange=()=>{if(!Object.hasOwn(features,areaSelect.value))return;ownerArea=areaSelect.value;role=ownerArea;menus=features[ownerArea];disposeTransactionOutputs();disposeTransactionOutputs=installTransactionOutputs(content,ownerArea);side.innerHTML=renderNavigation(menus,ownerArea,menuIcon,htmlEscape);navigate('ringkasan');};
 
 
 async function showWorkPage(){
