@@ -15,5 +15,5 @@ export function navigationGroups(menus, role) {
 export function renderNavigation(menus, role, icon, escape) {
   const link = ([id, , label]) => '<button type="button" data-view="' + escape(id) + '" class="app-side-link app-nav-child"><span aria-hidden="true">' + icon(id) + '</span><span class="nav-item-label">' + escape(label) + '</span></button>';
   const home = menus.find(menu => menu[0] === 'ringkasan');
-  return (home ? link(home) : '') + navigationGroups(menus, role).map(group => '<details class="app-nav-group" data-nav-group="' + group.id + '"><summary class="app-nav-group-title">' + group.label + '<span class="nav-group-count">' + group.menus.length + '</span></summary><div class="app-nav-children">' + group.menus.map(link).join('') + '</div></details>').join('');
+  return (home ? link(home) : '') + '<button type="button" data-view="work_queue" class="app-side-link app-nav-child"><span aria-hidden="true">▣</span><span class="nav-item-label">Pekerjaan Saya</span></button>' + navigationGroups(menus, role).map(group => '<details class="app-nav-group" data-nav-group="' + group.id + '"><summary class="app-nav-group-title">' + group.label + '<span class="nav-group-count">' + group.menus.length + '</span></summary><div class="app-nav-children">' + group.menus.map(link).join('') + '</div></details>').join('');
 }
