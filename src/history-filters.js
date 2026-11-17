@@ -57,11 +57,16 @@ export function watchHistoryFilters(root) {
   const headers=[...table.tHead.rows[0].cells].map(c=>c.textContent.trim());
   const dateIndex=headers.findIndex(h=>dateHeader.test(h));
   const isSJ=table.classList.contains('sj-history-records');
+  const isPaged=!table.matches('.report-table,.users-table,.cylinder-balance-table,.cylinder-overview-table')&&!['stock-list','product-list','supplier-rows','customer-rows','user-rows','users-list','price-rows'].includes(table.tBodies[0].id)&&!table.closest('#trip-detail');
+  const pageSize=5;
+  let page=0;
   const fields=headers.flatMap((label,index)=>(isSJ?/produk|status/i.test(label):selectHeader.test(label))?[{label,index}]:[]);
   const box=document.createElement('details');box.className='history-filters'+(isSJ?' sj-history-filters':'');box.open=isSJ;
   const summary=document.createElement('summary');summary.textContent=isSJ?'Filter Surat Jalan':'Filter & Cari Riwayat';box.append(summary);
   const form=document.createElement('form');form.className='history-filter-form';form.innerHTML='<label>Cari data<input type="search" name="search" placeholder="Nomor dokumen, nama, catatan…"></label>'+(dateIndex>=0?'<label>Dari '+escapeText(headers[dateIndex].toLowerCase())+'<input type="date" name="from"></label><label>Sampai '+escapeText(headers[dateIndex].toLowerCase())+'<input type="date" name="to"></label>':'')+fields.map(f=>'<label>'+escapeText(f.label)+'<select name="col'+f.index+'"><option value="">Semua</option></select></label>').join('')+'<button type="reset" class="trade-secondary">Reset Filter</button><p class="filter-result" role="status" aria-live="polite"></p>';
   box.append(form);table.parentElement.before(box);
+  const pager=isPaged?document.createElement('nav'):null;
+  if(pager){pager.className='transaction-pagination';pager.setAttribute('aria-label','Halaman transaksi');pager.innerHTML='<button type="button" class="trade-secondary" data-page="prev">Sebelumnya</button><span class="page-summary" aria-live="polite"></span><button type="button" class="trade-secondary" data-page="next">Berikutnya</button>';table.parentElement.after(pager);}
   const quick=table.classList.contains('transaction-records')?document.createElement('div'):null;
   if(quick){
    quick.className='transaction-quick-search';
@@ -70,7 +75,7 @@ export function watchHistoryFilters(root) {
   }
   const status=form.querySelector('.filter-result');let rows=[];
   const updateTotals=()=>{
-   const id=table.tBodies[0].id,visible=rows.filter(r=>!r.element.hidden);
+   const id=table.tBodies[0].id,visible=rows.filter(r=>r.element.dataset.filterMatch==='true');
    table.dispatchEvent(new Event('history-filter-change'));
    if(id==='expense-rows'){const sum=visible.reduce((n,r)=>n+Number(r.element.dataset.amount||0),0);const label=root.querySelector('#expense-sum');if(label)label.textContent='Total hasil filter: Rp '+sum.toLocaleString('id-ID');}
    if(id==='stock-list'||id==='stock-history-list'){const host=root.querySelector(id==='stock-list'?'#stock-balance-total':'#stock-movement-total');if(!host)return;
@@ -80,15 +85,25 @@ export function watchHistoryFilters(root) {
     try{host.innerHTML=stockTotalsHtml(visible.map(r=>({full:r.element.dataset.stockFull,empty:r.element.dataset.stockEmpty})),id==='stock-history-list');}catch{host.textContent='Total tidak tersedia: data jumlah tidak valid.';}
    }
   };
-  const apply=()=>{const data=new FormData(form),from=data.get('from')||'',to=data.get('to')||'';if(from&&to&&from>to){status.textContent='Tanggal awal tidak boleh melewati tanggal akhir.';rows.forEach(r=>{r.element.hidden=true});summary.textContent=(isSJ?'Filter Surat Jalan':'Filter & Cari Riwayat')+' (0/'+rows.length+')';updateTotals();return;}
-   let visible=0;for(const row of rows){const values=Object.fromEntries(fields.map(f=>['col'+f.index,data.get('col'+f.index)||'']));const show=matchesFilter(row,{search:data.get('search'),from,to,values});row.element.hidden=!show;if(show)visible++;}
-   summary.textContent=(isSJ?'Filter Surat Jalan':'Filter & Cari Riwayat')+' ('+visible+'/'+rows.length+')';status.textContent=visible+' dari '+rows.length+' catatan'+(rows.length&&visible===0?' — tidak ada data sesuai filter.':'.');
+  const apply=()=>{const data=new FormData(form),from=data.get('from')||'',to=data.get('to')||'';
+   const invalidRange=Boolean(from&&to&&from>to),values=Object.fromEntries(fields.map(f=>['col'+f.index,data.get('col'+f.index)||'']));
+   const matching=[];
+   for(const row of rows){const match=!invalidRange&&matchesFilter(row,{search:data.get('search')||'',from,to,values});row.element.dataset.filterMatch=String(match);if(match)matching.push(row);}
+   const pages=Math.max(1,Math.ceil(matching.length/pageSize));page=Math.min(Math.max(0,page),pages-1);
+   for(const row of rows)row.element.hidden=true;
+   const display=isPaged?matching.slice(page*pageSize,(page+1)*pageSize):matching;
+   for(const row of display)row.element.hidden=false;
+   const base=isSJ?'Filter Surat Jalan':'Filter & Cari Riwayat';
+   summary.textContent=base+' ('+matching.length+'/'+rows.length+')';
+   status.textContent=invalidRange?'Tanggal awal tidak boleh melewati tanggal akhir.':matching.length+' dari '+rows.length+' catatan sesuai filter'+(matching.length===0?' — tidak ada data.':'.');
+   if(pager){pager.hidden=matching.length<=pageSize;pager.querySelector('.page-summary').textContent='Halaman '+(page+1)+' / '+pages+' · '+matching.length+' transaksi';pager.querySelector('[data-page=prev]').disabled=page===0;pager.querySelector('[data-page=next]').disabled=page>=pages-1;}
    updateTotals();
   };
+  if(pager)pager.onclick=e=>{const direction=e.target.closest('button[data-page]')?.dataset.page;if(!direction)return;page+=direction==='next'?1:-1;apply();};
   if(quick){
    const q=quick.querySelector('input');
    const source=form.querySelector('input[name="search"]');
-   q.addEventListener('input',()=>{source.value=q.value;apply()});
+   q.addEventListener('input',()=>{source.value=q.value;page=0;apply()});
    source.addEventListener('input',()=>{q.value=source.value});
    form.addEventListener('reset',()=>{q.value=''});
   }
@@ -96,7 +111,7 @@ export function watchHistoryFilters(root) {
    for(const f of fields){const select=form.elements.namedItem('col'+f.index),old=select.value;const opts=[...new Set(rows.map(r=>r['col'+f.index]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'id'));select.replaceChildren(new Option('Semua',''),...opts.map(v=>new Option(v,v)));select.value=opts.includes(old)?old:'';}
    apply();
   };
-  form.onsubmit=e=>e.preventDefault();form.oninput=apply;form.onchange=apply;form.onreset=()=>setTimeout(apply,0);controls.set(table,refresh);refresh();
+  form.onsubmit=e=>e.preventDefault();form.oninput=()=>{page=0;apply();};form.onchange=()=>{page=0;apply();};form.onreset=()=>setTimeout(()=>{page=0;apply();},0);controls.set(table,refresh);refresh();
  }
  const scan=()=>root.querySelectorAll('table').forEach(setup);
  const observer=new MutationObserver(changes=>{const tables=new Set();for(const m of changes){const body=m.target.closest?.('tbody');if(body&&[...m.addedNodes,...m.removedNodes].some(n=>n.nodeName==='TR'))tables.add(body.closest('table'));else if([...m.addedNodes].some(n=>n.nodeType===1&&(n.matches('table')||n.querySelector('table'))))scan();}tables.forEach(t=>t?.isConnected&&setup(t));});
