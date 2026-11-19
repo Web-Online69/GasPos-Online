@@ -45,3 +45,23 @@ test('Pembelian tabung kosong uses one visible quantity field, with correct stoc
  assert.match(src,/quantity_empty:purchase&&line\.querySelector\('\.trade-mode'\)\.value==='EMPTY_ONLY'\?readNumber\(line\.querySelector\('\.trade-qty'\)\)/);
  assert.doesNotMatch(src,/if\(mode\?\.value==='EMPTY_ONLY'\)\{setFieldValue\(emptyInput,'0'\)/);
 });
+
+test('Pembelian retry reuses one request ID to prevent duplicate documents on network errors',()=>{
+ const src=read('src/main.js');
+ assert.match(src,/const createPurchase=purchase&&!editing/);
+ assert.match(src,/pendingPurchaseRequest=crypto\.randomUUID\(\)/);
+ assert.match(src,/rpcArgs\.p_request=pendingPurchaseRequest/);
+ assert.match(src,/purchase\?'gaspos_create_purchase_once':'gaspos_create_sale'/);
+ assert.match(src,/if\(createPurchase&&networkFailure\(result\.error\)&&navigator\.onLine!==false\)/);
+ assert.match(src,/result=await api\.rpc\(rpcName,rpcArgs\)/);
+ assert.match(src,/Periksa Riwayat Pembelian/);
+});
+test('Idempotent purchase procedure serializes retries and checks ownership',()=>{
+ const sql=read('supabase/purchase_idempotent_request.sql');
+ assert.match(sql,/purchase_request_id uuid/);
+ assert.match(sql,/unique index if not exists gas_documents_purchase_request_id_key/);
+ assert.match(sql,/pg_advisory_xact_lock\(948621\)/);
+ assert.match(sql,/v_author is distinct from auth\.uid\(\)/);
+ assert.match(sql,/return v_doc;/);
+ assert.match(sql,/grant execute on function public\.gaspos_create_purchase_once/);
+});
