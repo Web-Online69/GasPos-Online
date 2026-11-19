@@ -35,3 +35,13 @@ test('All transactional form numeric values keep the Indonesian-number parser',(
    assert.doesNotMatch(src,/readNumber\(\s*\w+\.querySelector\(['"]input['"]\)\s*\)/,path);
  }
 });
+
+test('Pembelian tabung kosong uses one visible quantity field, with correct stock payload',()=>{
+ const src=read('src/main.js');
+ assert.match(src,/qtyInput\.closest\('label'\)\.querySelector\('span'\)\.textContent=emptyOnly\?'Jumlah Tabung Kosong Dibeli':'Jumlah Tabung Isi'/);
+ assert.match(src,/qtyInput\.readOnly=false/);
+ assert.match(src,/emptyField\.style\.display=mode\.value==='EXCHANGE'\?'':'none'/);
+ assert.match(src,/quantity_full:purchase&&line\.querySelector\('\.trade-mode'\)\.value==='EMPTY_ONLY'\?0:readNumber\(line\.querySelector\('\.trade-qty'\)\)/);
+ assert.match(src,/quantity_empty:purchase&&line\.querySelector\('\.trade-mode'\)\.value==='EMPTY_ONLY'\?readNumber\(line\.querySelector\('\.trade-qty'\)\)/);
+ assert.doesNotMatch(src,/if\(mode\?\.value==='EMPTY_ONLY'\)\{setFieldValue\(emptyInput,'0'\)/);
+});
